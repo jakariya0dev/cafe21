@@ -17,6 +17,7 @@ class _InvoiceCardState extends State<InvoiceCard> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
+          
           const Text(
             'Invoice Summery',
             textAlign: TextAlign.center,
@@ -29,7 +30,7 @@ class _InvoiceCardState extends State<InvoiceCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                'Odered Item(s):',
+                'Invoice id:',
                 textAlign: TextAlign.center,
               ),
               Text(
@@ -45,7 +46,23 @@ class _InvoiceCardState extends State<InvoiceCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                'Total Amount:',
+                'Odered item(s):',
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                '11',
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          const Divider(
+            height: 5,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                'Total amount:',
                 textAlign: TextAlign.center,
               ),
               Text(
@@ -61,7 +78,7 @@ class _InvoiceCardState extends State<InvoiceCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                'Total Discount:',
+                'Total discount (5%):',
                 textAlign: TextAlign.center,
               ),
               Text(
@@ -77,7 +94,7 @@ class _InvoiceCardState extends State<InvoiceCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                'Total Tax:',
+                'Total tax (10%):',
                 textAlign: TextAlign.center,
               ),
               Text(
@@ -93,7 +110,7 @@ class _InvoiceCardState extends State<InvoiceCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                'Total Bill:',
+                'Total bill:',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),

@@ -1,6 +1,8 @@
-import 'package:cafe21/pages/invoice.dart';
-import 'package:flutter/material.dart';
+import 'dart:developer';
 
+import 'package:cafe21/pages/cart_page.dart';
+import 'package:flutter/material.dart';
+import '../network/services.dart';
 import '../widget/drawer.dart';
 import '../widget/list_item.dart';
 import '../widget/title_card.dart';
@@ -13,6 +15,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List sellsData = [];
+  List invoiceData = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getTodaysSellsData();
+  }
+
+
+  getTodaysSellsData() async{
+    sellsData = await Services().getTodaysSells();
+
+    invoiceData = await sellsData.reversed.toList();
+
+    setState(() {
+
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,15 +43,17 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Chef de cuisine'),
       ),
       body: Container(
-        margin: const EdgeInsets.all(5),
-        child: Column(
+        margin: const EdgeInsets.all(15),
+        child: sellsData.isEmpty ? const Center(child: CircularProgressIndicator(),) : Column(
           children: [
             const BuildTitleCard(),
             Expanded(
                 child: ListView.builder(
-              itemCount: 5,
+              reverse: false,
+
+              itemCount: invoiceData.length,
               itemBuilder: (context, index) {
-                return const BuildListItem();
+                return BuildListItem(index: index, invoiceData: invoiceData[index],);
               },
             )),
           ],
@@ -42,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const Invoice(),
+                builder: (context) => const CartPage(),
               ));
         },
       ),

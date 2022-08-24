@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "179382476765",
+    "project_id": "cafe-21",
+    "storage_bucket": "cafe-21.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179382476765:android:65332ae70e7b453b5fa034",
+        "android_client_info": {
+          "package_name": "com.brainstorm21.cafe21"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179382476765-8cotaco5cm7tboej3m4gp2ie0ih37hs7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmabeoCT8pUqn_qX4YhQzVIqBmsyvrziY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179382476765-8cotaco5cm7tboej3m4gp2ie0ih37hs7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

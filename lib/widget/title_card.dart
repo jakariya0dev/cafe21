@@ -1,3 +1,4 @@
+import 'package:cafe21/widget/title_text.dart';
 import 'package:flutter/material.dart';
 
 class BuildTitleCard extends StatelessWidget {
@@ -10,13 +11,11 @@ class BuildTitleCard extends StatelessWidget {
     return Container(
       color: Colors.amber,
       padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            'Todays Summery',
-            textAlign: TextAlign.center,
-          ),
+          const BulidTitleText(text: 'Today\'s summery'),
           const SizedBox(
             height: 20,
           ),
@@ -28,8 +27,9 @@ class BuildTitleCard extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               Text(
-                '\$ 110',
+                '10',
                 textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -43,6 +43,7 @@ class BuildTitleCard extends StatelessWidget {
               Text(
                 '\$ 110',
                 textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),

@@ -1,4 +1,4 @@
-package com.example.cafe21
+package com.brainstorm21.cafe21
 
 import io.flutter.embedding.android.FlutterActivity
 

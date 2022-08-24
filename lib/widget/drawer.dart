@@ -37,6 +37,18 @@ class MyDrawer extends StatelessWidget {
                   title: const Text('Last 30 day\'s summery'),
                   onTap: () {},
                 ),
+                ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.restaurant_sharp),
+                  title: const Text('Total summery'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.restaurant_sharp),
+                  title: const Text('Top selling item'),
+                  onTap: () {},
+                ),
               ],
             ),
           ),
