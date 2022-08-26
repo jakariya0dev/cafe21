@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cafe21/pages/cart_page.dart';
+import 'package:cafe21/pages/invoice_details.dart';
 import 'package:flutter/material.dart';
 import '../network/services.dart';
 import '../widget/drawer.dart';
@@ -23,8 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     getTodaysSellsData();
   }
-
-
+  
   getTodaysSellsData() async{
     sellsData = await Services().getTodaysSells();
 
@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
   }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +54,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
               itemCount: invoiceData.length,
               itemBuilder: (context, index) {
-                return BuildListItem(index: index, invoiceData: invoiceData[index],);
+                return InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceDetails()));
+                    },
+                    child: BuildListItem(index: index, invoiceData: invoiceData[index],));
               },
             )),
           ],
