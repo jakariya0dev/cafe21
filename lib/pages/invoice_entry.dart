@@ -1,7 +1,7 @@
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:flutter/material.dart';
 import '../network/services.dart';
-import 'invoice.dart';
+import 'invoice_print.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);

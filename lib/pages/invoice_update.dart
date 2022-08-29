@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../model/invoice_model.dart';
 import '../network/services.dart';
-import 'invoice.dart';
+import 'invoice_print.dart';
 
 class InvoiceUpdate extends StatefulWidget {
   const InvoiceUpdate({Key? key}) : super(key: key);

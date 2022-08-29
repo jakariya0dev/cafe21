@@ -1,11 +1,11 @@
-// import 'package:bluetooth_print/bluetooth_print.dart';
-// import 'package:bluetooth_print/bluetooth_print_model.dart';
+
+import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/pages/my_homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widget/title_text.dart';
-import 'bluetooth_printer.dart';
+
 
 class Invoice extends StatefulWidget {
   const Invoice({Key? key, required this.invoiceData, required this.isServerData}) : super(key: key);
@@ -23,27 +23,10 @@ class _InvoiceState extends State<Invoice> {
   double totalAmount = 0;
   late double totalAmountAfterDiscount;
 
-  final List<Map<String, dynamic>> data = [
-    {
-      'title': 'Produk 1',
-      'price': 10000,
-      'qty': 2,
-      'total_price': 20000,
-    },
-    {
-      'title': 'Produk 2',
-      'price': 20000,
-      'qty': 2,
-      'total_price': 40000,
-    },
-    {
-      'title': 'Produk 3',
-      'price': 12000,
-      'qty': 1,
-      'total_price': 12000,
-    },
-  ];
-
+  // printing services
+  BlueThermalPrinter printer = BlueThermalPrinter.instance;
+  List<BluetoothDevice> devices = [];
+  BluetoothDevice? selectedDevice;
 
   @override
   void initState() {
@@ -56,8 +39,17 @@ class _InvoiceState extends State<Invoice> {
     }
     totalAmountAfterDiscount = totalAmount - (totalAmount*(int.parse(widget.invoiceData.discount)/100));
     netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
+    initPrinter();
 
   }
+
+  Future<void> initPrinter() async {
+    devices = await printer.getBondedDevices();
+    setState(() {
+
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +64,7 @@ class _InvoiceState extends State<Invoice> {
           actions: [
             TextButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => BlueToothPrinter(data: data,)));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => BluePrintThermal()));
                 },
                 child: const Text(
                   'Print',
@@ -141,7 +133,7 @@ class _InvoiceState extends State<Invoice> {
                 ),
                 const SizedBox(height: 20),
                 BuildInvoiceRow('Total amount:', totalAmount.toString()),
-                BuildInvoiceRow('After discount (${widget.invoiceData.discount}%):', totalAmountAfterDiscount.toString()),
+                BuildInvoiceRow('After discount: (${widget.invoiceData.discount}%):', totalAmountAfterDiscount.toString()),
                 BuildInvoiceRow('With Tax (${widget.invoiceData.tax}%):', netBill.toString()),
                 BuildInvoiceRowLast(title: 'Net Bill:', value: '\$$netBill',)
               ],
@@ -151,10 +143,53 @@ class _InvoiceState extends State<Invoice> {
         bottomNavigationBar: Container(
           // color: Colors.amber,
           padding: const EdgeInsets.all(16),
-          child: const Text(
-            'Generated with cafe21 developed by Brain Storm 21',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 10),
+          child: Row(
+            children: [
+              DropdownButton(
+                items: devices.map((e) => DropdownMenuItem(value: e,child: Text(e.name.toString()),)).toList(),
+                onChanged: (value) {
+                  selectedDevice = value as BluetoothDevice?;
+                  printer.connect(selectedDevice!);
+
+                  setState(() {});
+                },
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(onPrimary: Colors.green),
+                onPressed: () async {
+                  if((await printer.isConnected)!){
+                    printer.printCustom('Chef De Cuisine', 3, 1);
+                    printer.printCustom('Badarganj Bus Stand, Badarganj', 1, 1);
+                    printer.printCustom('Cell: 01762940480', 1, 1);
+
+                    printer.printNewLine();
+                    printer.printCustom('inv. id: ${widget.invoiceData.invoiceId}', 0, 0);
+                    printer.printCustom('Timing: $date', 0, 0);
+                    printer.printCustom('Payment: Cash Payment', 0, 0);
+                    printer.printCustom('Ordered item(s)', 0, 0);
+                    for(var i = 0; i < widget.invoiceData.orders.length; i++) {
+                      printer.printCustom('----------------------------', 0, 0);
+                      printer.printCustom('${i+1}. ${widget.invoiceData.orders[i]['name']}', 0, 0);
+                      printer.printCustom('-${widget.invoiceData.orders[i]['quantity']}x${widget.invoiceData.orders[i]['price']}', 0, 2);
+                    }
+                    printer.printCustom('----------------------------', 0, 0);
+                    printer.printCustom('Total amount: $totalAmount', 0, 0);
+                    printer.printCustom('After discount: (${widget.invoiceData.discount}%): ${totalAmountAfterDiscount.toStringAsFixed(2)}', 0, 0);
+                    printer.printCustom('Added Tax (${widget.invoiceData.tax}%): ${(netBill-totalAmountAfterDiscount).toStringAsFixed(2)}', 0, 0);
+                    printer.printCustom('Net Bill(${widget.invoiceData.tax}%): ${netBill.toStringAsFixed(2)}', 3, 1);
+
+                    printer.printNewLine();
+                    printer.printNewLine();
+                    printer.printNewLine();
+
+                    // printer.printQRcode('Hi There', 200, 200, 1);
+                  }
+                },
+                child: const Text('Print Invo',
+                  style: TextStyle(color: Colors.white),
+                ),
+              )
+            ],
           ),
         ),
       ),
