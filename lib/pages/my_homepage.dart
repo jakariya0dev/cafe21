@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:cafe21/pages/cart_page.dart';
+import 'package:cafe21/pages/invoice_entry.dart';
 import 'package:cafe21/pages/invoice_details.dart';
 import 'package:flutter/material.dart';
 import '../network/services.dart';
@@ -16,8 +16,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   List sellsData = [];
   List invoiceData = [];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -26,14 +28,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   
   getTodaysSellsData() async{
-    sellsData = await Services().getTodaysSells();
 
-    invoiceData = await sellsData.reversed.toList();
+    sellsData = await Services().getTodaysSells();
+    invoiceData = sellsData.reversed.toList();
 
     setState(() {
 
     });
 
+    // print(invoiceData);
   }
   
   @override
@@ -56,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
               itemBuilder: (context, index) {
                 return InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceDetails()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => InvoiceDetails(invoiceData: invoiceData[index],)));
                     },
                     child: BuildListItem(index: index, invoiceData: invoiceData[index],));
               },

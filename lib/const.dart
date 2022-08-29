@@ -7,7 +7,9 @@ class Const {
   static const double headerFontSize = 18;
   static const TextStyle subHeadingStyle =
   TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w500);
-  static const invDetailsListTitle = TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.blueGrey);
+  static const invDetailsListTitle = TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.blueGrey);
+  static const invDetailsListPrice = TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.blueGrey);
+  static const italicStyleSubHeading = TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic);
 }
 
 var dummyImage =

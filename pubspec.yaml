@@ -20,6 +20,9 @@ dependencies:
   firebase_core: ^1.21.0
   cloud_firestore: ^3.4.5
   intl: ^0.17.0
+  esc_pos_bluetooth: ^0.4.1
+
+
 
 dev_dependencies:
   flutter_test:

@@ -1,15 +1,18 @@
 class InvoiceModel{
-   final invoiceId, customar, phone, discount, tax, waiter, table, dateTime, order;
-
+   final String invoiceId, customer, phone, discount, tax, waiter, table;
+   final dateTime;
+   final List orders;
   InvoiceModel(
       {
-        this.invoiceId,
-        this.customar,
-      this.phone,
-      this.discount,
-      this.tax,
-      this.waiter,
-      this.table,
-      this.dateTime,
-      this.order});
+        required this.invoiceId,
+        required this.customer,
+      required this.phone,
+      required this.discount,
+      required this.tax,
+      required this.waiter,
+      required this.table,
+      required this.dateTime,
+      required this.orders});
+
+
 }

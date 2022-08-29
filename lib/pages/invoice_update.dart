@@ -1,16 +1,18 @@
-import 'package:cafe21/model/invoice_model.dart';
 import 'package:flutter/material.dart';
+
+import '../model/invoice_model.dart';
 import '../network/services.dart';
 import 'invoice.dart';
 
-class CartPage extends StatefulWidget {
-  const CartPage({Key? key}) : super(key: key);
+class InvoiceUpdate extends StatefulWidget {
+  const InvoiceUpdate({Key? key}) : super(key: key);
 
   @override
-  State<CartPage> createState() => _CartPageState();
+  State<InvoiceUpdate> createState() => _InvoiceUpdate();
 }
 
-class _CartPageState extends State<CartPage> {
+class _InvoiceUpdate extends State<InvoiceUpdate> {
+
   List<String> category = [
     'burger ',
     'sandwich ',
@@ -40,22 +42,22 @@ class _CartPageState extends State<CartPage> {
           actions: [
             TextButton(
                 onPressed: () async {
-                  if(customerController.text.isNotEmpty && phoneController.text.isNotEmpty && discountController.text.isNotEmpty && taxController.text.isNotEmpty && waiterController.text.isNotEmpty && tableController.text.isNotEmpty && orderedItem.isNotEmpty){
-                    InvoiceModel invoice = InvoiceModel(customar: customerController.text, phone: phoneController.text, discount: discountController.text, tax: taxController.text, waiter: waiterController.text, table: tableController.text, dateTime: DateTime.now(), order: orderedItem);
-                    await Services().addDataToServer(invoice);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Invoice(),
-                        ));
-                  }else{
-                    
-                    SnackBar snackBar = SnackBar(content: const Text('Fill all field and add some product'), action: SnackBarAction(label: 'ok', onPressed: (){
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    }),);
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-                  }
+                  // if(customerController.text.isNotEmpty && phoneController.text.isNotEmpty && discountController.text.isNotEmpty && taxController.text.isNotEmpty && waiterController.text.isNotEmpty && tableController.text.isNotEmpty && orderedItem.isNotEmpty){
+                  //   InvoiceModel invoice = InvoiceModel(customer: customerController.text, phone: phoneController.text, discount: discountController.text, tax: taxController.text, waiter: waiterController.text, table: tableController.text, dateTime: DateTime.now(), orders: orderedItem);
+                  //   await Services().saveInvoiceToServer(invoice);
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => const Invoice(),
+                  //       ));
+                  // }else{
+                  //
+                  //   SnackBar snackBar = SnackBar(content: const Text('Fill all field and add some product'), action: SnackBarAction(label: 'ok', onPressed: (){
+                  //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  //   }),);
+                  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  //
+                  // }
 
                 },
                 child: const Text(
@@ -69,7 +71,7 @@ class _CartPageState extends State<CartPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-               TextField(
+              TextField(
                 controller: customerController,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.person),
@@ -238,7 +240,7 @@ class _CartPageState extends State<CartPage> {
                             // print(selectedButton);
                             foodData.clear();
                             foodData = await Services().getFoodData(category[index]);
-                           print(orderedItem);
+                            print(orderedItem);
                             setState(() {});
                           },
                           elevation: selectedButton == index ? 10 : 0,
@@ -320,6 +322,5 @@ class _CartPageState extends State<CartPage> {
       },
     );
   }
-
 
 }

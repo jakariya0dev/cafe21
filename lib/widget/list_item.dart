@@ -1,3 +1,4 @@
+import 'package:cafe21/model/invoice_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -8,11 +9,16 @@ class BuildListItem extends StatelessWidget {
     required this.invoiceData
   }) : super(key: key);
   final int index;
-  final invoiceData;
+  final InvoiceModel invoiceData;
 
+  
   @override
   Widget build(BuildContext context) {
-
+    int totalAmount = 0;
+    for(var i = 0; i < invoiceData.orders.length; i++ ){
+      totalAmount = totalAmount + (int.parse(invoiceData.orders[i]['price'])*int.parse(invoiceData.orders[i]['quantity']));
+    }
+    // print(totalAmount.toString());
     return Card(
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 2.5),
@@ -52,7 +58,6 @@ class BuildListItem extends StatelessWidget {
                   const SizedBox(
                     height: 5,
                   ),
-
                   Row(
                     children: [
                       const Icon(Icons.timer_sharp, color: Colors.grey, size: 16,),
@@ -67,10 +72,10 @@ class BuildListItem extends StatelessWidget {
                 ],
               ),
             ),
-            const Text(
-              '\$999',
+            Text(
+              '\$$totalAmount',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                   fontWeight: FontWeight.w900,
                   fontSize: 18,
                   color: Colors.black87),
