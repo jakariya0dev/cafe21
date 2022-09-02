@@ -87,38 +87,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  Container foodCategoryPage(){
-    return Container(
-      constraints: const BoxConstraints(),
-      margin: const EdgeInsets.all(16),
-      child: ListView.separated(
-        itemCount: categoryList.length,
-        itemBuilder: (context, index) {
-          return  ListTile(
-            onTap: (){
-              editCategory();
-            },
-            onLongPress: () async {
-              await deleteCategory(categoryList[index]);
-              setState(() {});
-            },
-            tileColor: index%2==0 ? Colors.blue.shade50 : Colors.blue.shade100,
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('25', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
-                Text('Total foods'.toUpperCase(), style: const TextStyle(fontSize: 10),)
-              ],
-            ),
-            title: Text('${index+1}. ${categoryList[index]}'),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(height: 4,);
-        },
-      ),
-    );
-  }
+  //  Build 3 pages
 
   Container foodItemPage(){
     return Container(
@@ -167,10 +136,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 return  ListTile(
                   dense: true,
                   onTap: (){
-                    editFoodItem();
+                    editFoodItem(index);
                   },
                   onLongPress: (){
-                    deleteFoodItemData(index);
+                    deleteFoodItem(index);
                   },
                   tileColor: index%2==0 ? Colors.blue.shade50 : Colors.blue.shade100,
                   leading: CircleAvatar(
@@ -201,7 +170,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           return  ListTile(
             dense: true,
             onTap: (){
-              editWaiter();
+              editWaiter(index);
             },
             onLongPress: (){
               deleteWaiter(index);
@@ -228,12 +197,47 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
+  Container foodCategoryPage(){
+    return Container(
+      constraints: const BoxConstraints(),
+      margin: const EdgeInsets.all(16),
+      child: ListView.separated(
+        itemCount: categoryList.length,
+        itemBuilder: (context, index) {
+          return  ListTile(
+            onTap: (){
+              editCategory(index);
+            },
+            onLongPress: () async {
+              await deleteCategory(categoryList[index]);
+              setState(() {});
+            },
+            tileColor: index%2==0 ? Colors.blue.shade50 : Colors.blue.shade100,
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('25', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
+                Text('Total foods'.toUpperCase(), style: const TextStyle(fontSize: 10),)
+              ],
+            ),
+            title: Text('${index+1}. ${categoryList[index]}'),
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(height: 4,);
+        },
+      ),
+    );
+  }
+
+  //  Foods Products
+
   addFoodItem(){
     TextEditingController nameController = TextEditingController();
     TextEditingController descriptionController = TextEditingController();
     TextEditingController priceController = TextEditingController();
 
-    List<String> category = ['category', 'desc', 'options', 'name', 'price'];
+    // List<String> category = ['category', 'desc', 'options', 'name', 'price'];
     String dropDownHeader = 'Select';
 
     showDialog(context: context, builder: (context) {
@@ -276,7 +280,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       isDense: true,
                       alignment: Alignment.centerRight,
                       hint: Text(dropDownHeader),
-                      items: category.map((e) => DropdownMenuItem(
+                      items: categoryList.map((e) => DropdownMenuItem(
                           value: e,
                           child: Text(e.toString()))).toList(),
                       onChanged: (value) {
@@ -346,7 +350,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
             MaterialButton(
               color: const Color(AppColor.box5),
               onPressed: () async {
-                await AdminDashboardController().addNewFoodData(name: nameController.text, category: dropDownHeader, description: descriptionController.text, price: priceController.text, context: context);
+                await AdminDashboardController().addNewFoodData({
+                  'name': nameController.text,
+                  'category': dropDownHeader,
+                  'description': descriptionController.text,
+                  'price': priceController.text
+                });
                 Navigator.pop(context);
                 SnackBar snackBar = SnackBar(
                   backgroundColor: Colors.purple,
@@ -372,42 +381,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
     },);
   }
 
-  deleteFoodItemData(index){
-    showDialog(context: context, builder: (context) {
-      return  AlertDialog(
-        title: const Text('Are you sure!', style: TextStyle(color: Colors.red),),
-        content: const Text('This item will be deleted.'),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          MaterialButton(onPressed: () async {
-            Navigator.pop(context);
-            String msg = await AdminDashboardController().deleteFoodData(foodList[index]['docId'], context);
-            foodList.clear();
-            getData();
-            SnackBar snackBar = SnackBar(content: Text(msg), action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          },
-            color: const Color(AppColor.box5),
-            child: const Text('OK', style: TextStyle(color: Colors.white),),
-          ),
-          MaterialButton(onPressed: (){
-            Navigator.pop(context);
-          },
-            color: const Color(AppColor.box4),
-            child: const Text('CANCEL', style: TextStyle(color: Colors.white),),
-          ),
-        ],
-      );
-    },);
-  }
+  editFoodItem(index){
 
-  editFoodItem(){
-    TextEditingController nameController = TextEditingController();
-    TextEditingController descriptionController = TextEditingController();
-    TextEditingController priceController = TextEditingController();
+    TextEditingController nameController = TextEditingController(text: foodList[index]['name']);
+    TextEditingController descriptionController = TextEditingController(text: foodList[index]['description']);
+    TextEditingController priceController = TextEditingController(text: foodList[index]['price']);
 
-    List<String> category = ['category', 'desc', 'options', 'name', 'price'];
-    String dropDownHeader = 'Select';
+    // List<String> category = ['category', 'desc', 'options', 'name', 'price'];
+    String dropDownHeader = foodList[index]['type'];
 
     showDialog(context: context, builder: (context) {
       return StatefulBuilder(builder: (context, setState){
@@ -450,11 +431,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       isDense: true,
                       alignment: Alignment.centerRight,
                       hint: Text(dropDownHeader),
-                      items: category.map((e) => DropdownMenuItem(
+                      items: categoryList.map((e) => DropdownMenuItem(
                           value: e,
                           child: Text(e.toString()))).toList(),
                       onChanged: (value) {
-                        print(value);
+                        // print(value);
                         dropDownHeader = value.toString();
                         setState(() {});
                       },
@@ -519,7 +500,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
             MaterialButton(
               color: const Color(AppColor.box5),
-              onPressed: () {},
+              onPressed: () async {
+                Navigator.pop(context);
+                String msg = await AdminDashboardController().updateFoodData({
+                  'name' : nameController.text,
+                  'category' : dropDownHeader,
+                  'description' : descriptionController.text,
+                  'price' : priceController.text
+                }, foodList[index]['docId']);
+                foodList.clear();
+                getData();
+                SnackBar snackBar = SnackBar(backgroundColor: Colors.purple, content: Text(msg), action: SnackBarAction(label: 'OK', textColor: Colors.white, onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              },
               child: const Text('OK', style: TextStyle(
                   color: Colors.white
               ),),
@@ -529,6 +522,37 @@ class _AdminDashboardState extends State<AdminDashboard> {
       },);
     },);
   }
+
+  deleteFoodItem(index){
+    showDialog(context: context, builder: (context) {
+      return  AlertDialog(
+        title: const Text('Are you sure!', style: TextStyle(color: Colors.red),),
+        content: const Text('This item will be deleted.'),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          MaterialButton(onPressed: () async {
+            Navigator.pop(context);
+            String msg = await AdminDashboardController().deleteFoodData(foodList[index]['docId'], context);
+            foodList.clear();
+            getData();
+            SnackBar snackBar = SnackBar(content: Text(msg), action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          },
+            color: const Color(AppColor.box5),
+            child: const Text('OK', style: TextStyle(color: Colors.white),),
+          ),
+          MaterialButton(onPressed: (){
+            Navigator.pop(context);
+          },
+            color: const Color(AppColor.box4),
+            child: const Text('CANCEL', style: TextStyle(color: Colors.white),),
+          ),
+        ],
+      );
+    },);
+  }
+
+  //  Waiter Data Manipulation
 
   addWaiter(){
     TextEditingController idController = TextEditingController();
@@ -690,15 +714,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
               color: const Color(AppColor.box5),
               onPressed: () async {
                 await AdminDashboardController().addNewWaiterData(
-                  id: idController.text,
-                  name: nameController.text,
-                  phone: phoneController.text,
-                  email: emailController.text,
-                  nid: nidController.text,
-                  address: addressController.text,
-                  image: '',
-                  context: context
-                );
+                    {
+                      'id': idController.text,
+                      'name': nameController.text,
+                      'phone': phoneController.text,
+                      'email': emailController.text,
+                      'nid': nidController.text,
+                      'address': addressController.text,
+                      'image': '',
+                    });
                 Navigator.pop(context);
                 foodList.clear();
                 getData();
@@ -715,46 +739,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
     },);
   }
 
-  deleteWaiter(index){
-    showDialog(context: context, builder: (context) {
-      return  AlertDialog(
-        title: const Text('Are you sure!', style: TextStyle(color: Colors.red),),
-        content: const Text('This item will be deleted.'),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          MaterialButton(onPressed: () async {
-            Navigator.pop(context);
-            String msg = await AdminDashboardController().deleteWaiterData(waiterList[index]['docId'], context);
-            waiterList.clear();
-            getData();
-            SnackBar snackBar = SnackBar(content: Text(msg), action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          },
-            color: const Color(AppColor.box5),
-            child: const Text('OK', style: TextStyle(color: Colors.white),),
-          ),
-          MaterialButton(onPressed: (){
-            Navigator.pop(context);
-          },
-            color: const Color(AppColor.box4),
-            child: const Text('CANCEL', style: TextStyle(color: Colors.white),),
-          ),
-        ],
-      );
-    },);
-  }
-
-  editWaiter(){
-    TextEditingController nameController = TextEditingController();
-    TextEditingController phoneController = TextEditingController();
-    TextEditingController nidController = TextEditingController();
-    TextEditingController emailController = TextEditingController();
-    TextEditingController addressController = TextEditingController();
+  editWaiter(index){
+    TextEditingController idController = TextEditingController(text: waiterList[index]['id']);
+    TextEditingController nameController = TextEditingController(text: waiterList[index]['name']);
+    TextEditingController phoneController = TextEditingController(text: waiterList[index]['phone']);
+    TextEditingController nidController = TextEditingController(text: waiterList[index]['nid']);
+    TextEditingController emailController = TextEditingController(text: waiterList[index]['email']);
+    TextEditingController addressController = TextEditingController(text: waiterList[index]['address']);
 
     showDialog(context: context, builder: (context) {
       return StatefulBuilder(builder: (context, setState){
         return AlertDialog(
           backgroundColor: AppColor.drawerListTileColor,
+          scrollable: true,
           title: const Text('Add waiter data', style: TextStyle(fontWeight: FontWeight.w500, color: Colors.deepPurple),),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -763,10 +760,32 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 margin: const EdgeInsets.only(bottom: 16),
                 height: 28,
                 child: TextField(
+                  controller: idController,
+                  style: TextStyle(color: Colors.deepPurple.shade900),
+                  decoration: InputDecoration(
+                    hintText: 'Waiter ID',
+                    prefix: const Text('ID: '),
+                    isDense: true,
+                    hintStyle: TextStyle(color: Colors.blue.shade300),
+                    suffixIcon: InkWell(
+                      onTap: () {
+                        idController.clear();
+                        setState(() {});
+                      },
+                      child:  Icon(Icons.clear, color: Colors.blue.shade300,),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                height: 28,
+                child: TextField(
                   controller: nameController,
                   style: TextStyle(color: Colors.deepPurple.shade900),
                   decoration: InputDecoration(
                     hintText: 'Waiter name',
+                    prefix: const Text('Name: '),
                     isDense: true,
                     hintStyle: TextStyle(color: Colors.blue.shade300),
                     suffixIcon: InkWell(
@@ -788,6 +807,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   style: TextStyle(color: Colors.deepPurple.shade900),
                   decoration: InputDecoration(
                     hintText: 'Phone number',
+                    prefix: const Text('Phone: '),
                     isDense: true,
                     hintStyle: TextStyle(color: Colors.blue.shade300),
                     suffixIcon: InkWell(
@@ -810,6 +830,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   style: TextStyle(color: Colors.deepPurple.shade900),
                   decoration: InputDecoration(
                     hintText: 'Email Address',
+                    prefix: const Text('Email: '),
                     isDense: true,
                     hintStyle: TextStyle(color: Colors.blue.shade300),
                     suffixIcon: InkWell(
@@ -831,6 +852,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   style: TextStyle(color: Colors.deepPurple.shade900),
                   decoration: InputDecoration(
                     hintText: 'National id number',
+                    prefix: const Text('Nid: '),
                     isDense: true,
                     hintStyle: TextStyle(color: Colors.blue.shade300),
                     suffixIcon: InkWell(
@@ -852,6 +874,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   decoration: InputDecoration(
                     hintText: 'Details Address',
                     isDense: true,
+                    prefix: const Text('Address: '),
                     hintStyle: TextStyle(color: Colors.blue.shade300),
                     suffixIcon: InkWell(
                       onTap: () {
@@ -882,7 +905,24 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
             MaterialButton(
               color: const Color(AppColor.box5),
-              onPressed: () {},
+              onPressed: () async {
+                Navigator.pop(context);
+                await AdminDashboardController().deleteWaiterData(waiterList[index]['docId']);
+                String msg = await AdminDashboardController().updateWaiterData({
+                  'id' : idController.text,
+                  'name' : nameController.text,
+                  'phone' : phoneController.text,
+                  'email' : emailController.text,
+                  'nid' : nidController.text,
+                  'address' : addressController.text,
+                  'image' : '',
+                });
+                waiterList.clear();
+                getData();
+
+                SnackBar snackBar = SnackBar(content: Text(msg), action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              },
               child: const Text('OK', style: TextStyle(
                   color: Colors.white
               ),),
@@ -892,6 +932,37 @@ class _AdminDashboardState extends State<AdminDashboard> {
       },);
     },);
   }
+
+  deleteWaiter(index){
+    showDialog(context: context, builder: (context) {
+      return  AlertDialog(
+        title: const Text('Are you sure!', style: TextStyle(color: Colors.red),),
+        content: const Text('This item will be deleted.'),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          MaterialButton(onPressed: () async {
+            Navigator.pop(context);
+            String msg = await AdminDashboardController().deleteWaiterData(waiterList[index]['docId']);
+            waiterList.clear();
+            getData();
+            SnackBar snackBar = SnackBar(content: Text(msg), action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          },
+            color: const Color(AppColor.box5),
+            child: const Text('OK', style: TextStyle(color: Colors.white),),
+          ),
+          MaterialButton(onPressed: (){
+            Navigator.pop(context);
+          },
+            color: const Color(AppColor.box4),
+            child: const Text('CANCEL', style: TextStyle(color: Colors.white),),
+          ),
+        ],
+      );
+    },);
+  }
+
+  // Category Mansion
 
   addCategory(){
     TextEditingController nameController = TextEditingController();
@@ -960,39 +1031,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
     },);
   }
 
-  deleteCategory(name){
-    showDialog(context: context, builder: (context) {
-      return  AlertDialog(
-        title: const Text('Are you sure!', style: TextStyle(color: Colors.red),),
-        content: const Text('This item will be deleted.'),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          MaterialButton(onPressed: () async {
-            String msg = await AdminDashboardController().deleteCategory(name);
-            Navigator.pop(context);
-            categoryList.clear();
-            getData();
-            SnackBar snackBar = SnackBar(backgroundColor: Colors.purple, content: Text(msg), action: SnackBarAction(label: 'OK', textColor: Colors.white, onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  editCategory(index){
 
-          },
-            color: const Color(AppColor.box5),
-            child: const Text('OK', style: TextStyle(color: Colors.white),),
-          ),
-          MaterialButton(onPressed: (){
-            Navigator.pop(context);
-          },
-            color: const Color(AppColor.box4),
-            child: const Text('CANCEL', style: TextStyle(color: Colors.white),),
-          ),
-        ],
-      );
-    },);
-  }
-
-  editCategory(){
-
-    TextEditingController nameController = TextEditingController();
+    TextEditingController nameController = TextEditingController(text: categoryList[index]);
 
     showDialog(context: context, builder: (context) {
       return StatefulBuilder(builder: (context, setState){
@@ -1040,7 +1081,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
             MaterialButton(
               color: const Color(AppColor.box5),
-              onPressed: () {},
+              onPressed: () async {
+
+                categoryList.removeAt(index);
+                categoryList.insert(index, nameController.text);
+                Navigator.pop(context);
+                String msg = await AdminDashboardController().updateCategoryName(categoryList);
+                categoryList.clear();
+                getData();
+                SnackBar snackBar = SnackBar(backgroundColor: Colors.purple, content: Text(msg), action: SnackBarAction(label: 'OK', textColor: Colors.white, onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              },
               child: const Text('OK', style: TextStyle(
                   color: Colors.white
               ),),
@@ -1050,6 +1101,37 @@ class _AdminDashboardState extends State<AdminDashboard> {
       },);
     },);
   }
+
+  deleteCategory(name){
+    showDialog(context: context, builder: (context) {
+      return  AlertDialog(
+        title: const Text('Are you sure!', style: TextStyle(color: Colors.red),),
+        content: const Text('This item will be deleted.'),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          MaterialButton(onPressed: () async {
+            String msg = await AdminDashboardController().deleteCategory(name);
+            Navigator.pop(context);
+            categoryList.clear();
+            getData();
+            SnackBar snackBar = SnackBar(backgroundColor: Colors.purple, content: Text(msg), action: SnackBarAction(label: 'OK', textColor: Colors.white, onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+          },
+            color: const Color(AppColor.box5),
+            child: const Text('OK', style: TextStyle(color: Colors.white),),
+          ),
+          MaterialButton(onPressed: (){
+            Navigator.pop(context);
+          },
+            color: const Color(AppColor.box4),
+            child: const Text('CANCEL', style: TextStyle(color: Colors.white),),
+          ),
+        ],
+      );
+    },);
+  }
+
 
 }
 

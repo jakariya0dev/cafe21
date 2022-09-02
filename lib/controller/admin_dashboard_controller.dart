@@ -6,46 +6,7 @@ class AdminDashboardController{
 
   var db = FirebaseFirestore.instance;
 
-  addNewFoodData({name, category, description, price, context}) async {
-    
-    await db.collection(Const.dbName).doc('foods').collection('products').doc().set({
-      'name' : name,
-      'category' : category,
-      'description' : description,
-      'price' : price
-    }).then((value) => (value) {
-
-    });
-  }
-
-  addNewWaiterData({id, name, phone, email, nid, address, image, context}) async {
-
-    await db.collection(Const.dbName).doc('users').collection('waiters').doc(phone).set({
-      'id' : id,
-      'name' : name,
-      'phone' : phone,
-      'email' : email,
-      'nid' : nid,
-      'address' : address,
-      'image' : image
-    });
-  }
-
-  addNewCategoryName({name, context}) async {
-
-    await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').update({
-      'names' : FieldValue.arrayUnion([name]),
-    }).then((value) => (value) {
-
-    });
-  }
-
-  getCategoryList() async {
-
-    var categoryList = await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').get();
-    return categoryList['names'];
-  }
-
+  // Food Data Manipulation
   getProductData() async {
     List data = [];
     await db.collection(Const.dbName).doc('foods').collection('products').get().then((value) {
@@ -62,7 +23,33 @@ class AdminDashboardController{
 
     return data;
   }
+  addNewFoodData(productData) async {
+    
+    await db.collection(Const.dbName).doc('foods').collection('products').doc().set(productData).then((value) => (value) {
 
+    });
+  }
+  updateFoodData(productData, docId) async {
+
+    await db.collection(Const.dbName).doc('foods').collection('products').doc(docId).set(productData).then((value) => (value) {
+
+    });
+  }
+  deleteFoodData(docName, context) async {
+
+    late String msg;
+    await db.collection(Const.dbName).doc('foods').collection('products').doc(docName).delete().then(
+          (doc){
+        msg = 'Successfully Deleted!';
+      },
+      onError: (e){
+        msg = 'Cant delete: $e';
+      },
+    );
+    return msg;
+  }
+
+  // Waiter Data Manipulation
   getWaiterData() async {
 
     List waiterList = [];
@@ -76,6 +63,7 @@ class AdminDashboardController{
           'name' : item['name'],
           'phone' : item['phone'],
           'email' : item['email'],
+          'nid' : item['nid'],
           'address' : item['address'],
           'image' : item['image']
         });
@@ -85,31 +73,25 @@ class AdminDashboardController{
 
     return waiterList;
   }
+  addNewWaiterData(waiterData) async {
 
-  deleteCategory(name) async {
+    await db.collection(Const.dbName).doc('users').collection('waiters').doc(waiterData['phone']).set(waiterData);
+  }
+  updateWaiterData(waiterList) async {
     late String msg;
-    await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').update({
-        'names' : FieldValue.arrayRemove([name])
-    }).then((value) => msg = 'Successfully Deleted!', onError: (e) => msg = 'Cant delete: $e');
+    await db.collection(Const.dbName).doc('users').collection('waiters').doc(waiterList['docId']).update({
+      'id' : waiterList['id'],
+      'name' : waiterList['name'],
+      'phone' : waiterList['phone'],
+      'email' : waiterList['email'],
+      'nid' : waiterList['nid'],
+      'address' : waiterList['address'],
+      'image' : waiterList['image']
+    }).then((value) => msg = 'Successfully Updated!', onError: (e) => msg = 'Cant Update: $e');
 
     return msg;
   }
-
-  deleteFoodData(docName, context) async {
-
-    late String msg;
-    await db.collection(Const.dbName).doc('foods').collection('products').doc(docName).delete().then(
-          (doc){
-            msg = 'Successfully Deleted!';
-          },
-      onError: (e){
-        msg = 'Cant delete: $e';
-      },
-    );
-    return msg;
-  }
-
-  deleteWaiterData(docName, context) async {
+  deleteWaiterData(docName) async {
 
     late String msg;
     await db.collection(Const.dbName).doc('users').collection('waiters').doc(docName).delete().then(
@@ -122,5 +104,38 @@ class AdminDashboardController{
     );
     return msg;
   }
+
+  // Category Data Manipulation
+  getCategoryList() async {
+
+    var categoryList = await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').get();
+    return categoryList['names'];
+  }
+  addNewCategoryName({name, context}) async {
+
+    await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').update({
+      'names' : FieldValue.arrayUnion([name]),
+    }).then((value) => (value) {
+
+    });
+  }
+  updateCategoryName(categoryList) async {
+    late String msg;
+    await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').set({
+      'names' : categoryList
+    }).then((value) => msg = 'Successfully Updated!', onError: (e) => msg = 'Cant Update: $e');
+
+    return msg;
+  }
+  deleteCategory(name) async {
+    late String msg;
+    await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').update({
+        'names' : FieldValue.arrayRemove([name])
+    }).then((value) => msg = 'Successfully Deleted!', onError: (e) => msg = 'Cant delete: $e');
+
+    return msg;
+  }
+
+
 
 }
