@@ -1,7 +1,7 @@
 
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:cafe21/model/invoice_model.dart';
-import 'package:cafe21/pages/my_homepage.dart';
+import 'package:cafe21/pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widget/title_text.dart';
@@ -59,24 +59,24 @@ class _InvoiceState extends State<Invoice> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => const MyHomePage()));
-          }, icon: const Icon(Icons.home)),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => BluePrintThermal()));
-                },
-                child: const Text(
-                  'Print',
-                  style: TextStyle(color: Colors.black),
-                )),
-            TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'Edit',
-                  style: TextStyle(color: Colors.black),
-                )),
-          ],
+            Navigator.pop(context);
+          }, icon: const Icon(Icons.clear)),
+          // actions: [
+            // TextButton(
+            //     onPressed: () {
+            //       // Navigator.push(context, MaterialPageRoute(builder: (context) => BluePrintThermal()));
+            //     },
+            //     child: const Text(
+            //       'Print',
+            //       style: TextStyle(color: Colors.black),
+            //     )),
+            // TextButton(
+            //     onPressed: () {},
+            //     child: const Text(
+            //       'Edit',
+            //       style: TextStyle(color: Colors.black),
+            //     )),
+          // ],
         ),
         body: Container(
           padding: const EdgeInsets.all(16),
@@ -117,18 +117,6 @@ class _InvoiceState extends State<Invoice> {
                         ]
                     ),
 
-                    // TableRow(
-                    //     children: [
-                    //       TableCell(child: Padding(
-                    //         padding: EdgeInsets.all(5.0),
-                    //         child: Text('1. This a big Title of burger'),
-                    //       ),),
-                    //       TableCell(child: Padding(
-                    //         padding: EdgeInsets.all(5.0),
-                    //         child: Text('2+200', textAlign: TextAlign.end, style: TextStyle(),),
-                    //       ),)
-                    //     ]
-                    // )
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -154,40 +142,8 @@ class _InvoiceState extends State<Invoice> {
                   setState(() {});
                 },
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(onPrimary: Colors.green),
-                onPressed: () async {
-                  if((await printer.isConnected)!){
-                    printer.printCustom('Chef De Cuisine', 3, 1);
-                    printer.printCustom('Badarganj Bus Stand, Badarganj', 1, 1);
-                    printer.printCustom('Cell: 01762940480', 1, 1);
-
-                    printer.printNewLine();
-                    printer.printCustom('inv. id: ${widget.invoiceData.invoiceId}', 0, 0);
-                    printer.printCustom('Timing: $date', 0, 0);
-                    printer.printCustom('Payment: Cash Payment', 0, 0);
-                    printer.printCustom('Ordered item(s)', 0, 0);
-                    for(var i = 0; i < widget.invoiceData.orders.length; i++) {
-                      printer.printCustom('----------------------------', 0, 0);
-                      printer.printCustom('${i+1}. ${widget.invoiceData.orders[i]['name']}', 0, 0);
-                      printer.printCustom('-${widget.invoiceData.orders[i]['quantity']}x${widget.invoiceData.orders[i]['price']}', 0, 2);
-                    }
-                    printer.printCustom('----------------------------', 0, 0);
-                    printer.printCustom('Total amount: $totalAmount', 0, 0);
-                    printer.printCustom('After discount: (${widget.invoiceData.discount}%): ${totalAmountAfterDiscount.toStringAsFixed(2)}', 0, 0);
-                    printer.printCustom('Added Tax (${widget.invoiceData.tax}%): ${(netBill-totalAmountAfterDiscount).toStringAsFixed(2)}', 0, 0);
-                    printer.printCustom('Net Bill(${widget.invoiceData.tax}%): ${netBill.toStringAsFixed(2)}', 3, 1);
-
-                    printer.printNewLine();
-                    printer.printNewLine();
-                    printer.printNewLine();
-
-                    // printer.printQRcode('Hi There', 200, 200, 1);
-                  }
-                },
-                child: const Text('Print Invo',
-                  style: TextStyle(color: Colors.white),
-                ),
+              const Text('Print Invo',
+                style: TextStyle(color: Colors.white),
               )
             ],
           ),

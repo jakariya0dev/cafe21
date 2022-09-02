@@ -22,6 +22,8 @@ class _CartPageState extends State<CartPage> {
     'Others'
   ];
 
+  List<String> paymentMethod = ['Cash payment', 'Online Payment', 'Mobile Banking', 'Payment Due'];
+
   List <int> quantity = [];
 
   List foodData = [];
@@ -153,6 +155,39 @@ class _CartPageState extends State<CartPage> {
                       decoration: const InputDecoration(
                         isDense: true,
                         labelText: 'Table no',
+                        hintText: 'ex: 5',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  SizedBox(
+                    height: 50,
+                    width: 150,
+
+                    child: DropdownButton(
+                      hint: const Text('Payment Method'),
+                      // value: paymentMethod,
+                      onTap: () {
+
+                      },
+                      items: paymentMethod.map((e) => DropdownMenuItem(value: e, child: Text(e.toString()))).toList(), onChanged: (value) {
+                      print(value);
+                    },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: tableController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        labelText: 'Waiter Tips',
                         hintText: 'ex: 5',
                         border: OutlineInputBorder(),
                       ),
