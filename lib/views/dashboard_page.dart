@@ -1,5 +1,5 @@
 import 'package:cafe21/app_color.dart';
-import 'package:cafe21/pages/invoice_list.dart';
+import 'package:cafe21/views//invoice_list.dart';
 import 'package:cafe21/widget/drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -21,10 +21,11 @@ class _DashBoardState extends State<DashBoard> {
     var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.deepPurple.shade100,
+      backgroundColor: Colors.deepPurple.shade50,
       appBar: AppBar(
+
         title: const Text('Sells Dashboard'),
-        titleTextStyle: const TextStyle(fontWeight: FontWeight.w500),
+        titleTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
       ),
       drawer: const MyDrawer(),
       body: SafeArea(
@@ -182,13 +183,44 @@ class _DashBoardState extends State<DashBoard> {
       ),
       bottomNavigationBar: SizedBox(
         height: height * 0.08,
-        child: Row(
-          children: [
-            _BuildBottomButton(isSelected: isSelectedBottomButtonOne, title: 'Dashboard',),
-            _BuildBottomButton(isSelected: isSelectedBottomButtonTwo, title: 'Invoice',),
-          ],
+        child: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+              color: Colors.white,
+            borderRadius: BorderRadius.circular(32)
+          ),
+
+          child: const BuildBottomNavbar(),
         ),
       ),
+    );
+  }
+}
+
+class BuildBottomNavbar extends StatelessWidget {
+  const BuildBottomNavbar({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Expanded(child: Container(
+          alignment: Alignment.center,
+            child: const Text('Dashboard'))),
+        Expanded(
+          child: MaterialButton(
+            height: double.infinity,
+            shape: const StadiumBorder(),
+            color: const Color(0xff40407a),
+            textColor: Colors.white,
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceList(),));
+            }, child: const Text('invoice'),),
+        )
+      ],
     );
   }
 }
@@ -281,31 +313,6 @@ class BuildBoxContent extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _BuildBottomButton extends StatelessWidget {
-  const _BuildBottomButton({
-    Key? key, required this.isSelected, required this.title,
-  }) : super(key: key);
-
-  final bool isSelected;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: () {
-          if(title.contains('Invoice')) Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceList(),));
-        },
-        child: Container(
-          constraints: const BoxConstraints.expand(),
-          color: !isSelected ? Colors.deepPurple : Colors.deepPurple.shade50,
-          child: Center(
-              child: Text(title, style: TextStyle(color: !isSelected ? Colors.white : Colors.deepPurple.shade900, fontWeight: !isSelected ? FontWeight.normal : FontWeight.w500),)),),
       ),
     );
   }

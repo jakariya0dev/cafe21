@@ -1,12 +1,10 @@
-import 'dart:developer';
 
-import 'package:cafe21/pages/invoice_entry.dart';
-import 'package:cafe21/pages/invoice_details.dart';
+import 'package:cafe21/app_color.dart';
+import 'package:cafe21/views/invoice_entry.dart';
+import 'package:cafe21/views/invoice_details.dart';
 import 'package:flutter/material.dart';
-import '../network/services.dart';
-import '../widget/drawer.dart';
-import '../widget/list_item.dart';
-import '../widget/title_card.dart';
+import 'package:cafe21/network/services.dart';
+import 'package:cafe21/widget/list_item.dart';
 
 class InvoiceList extends StatefulWidget {
   const InvoiceList({Key? key}) : super(key: key);
@@ -37,8 +35,10 @@ class _InvoiceListState extends State<InvoiceList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.scaffoldColor,
       // drawer: const MyDrawer(),
       appBar: AppBar(
+        titleTextStyle: const TextStyle(fontWeight: FontWeight.normal),
         title: const Text('Chef de cuisine'),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),

@@ -1,5 +1,5 @@
 import 'package:cafe21/model/invoice_model.dart';
-import 'package:cafe21/pages/invoice_print.dart';
+import 'package:cafe21/views/invoice_print.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../const.dart';

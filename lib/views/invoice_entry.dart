@@ -1,3 +1,4 @@
+import 'package:cafe21/app_color.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:flutter/material.dart';
 import '../network/services.dart';
@@ -33,44 +34,48 @@ class _CartPageState extends State<CartPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           titleTextStyle: const TextStyle(
-              fontWeight: FontWeight.normal, color: Colors.black),
+              fontWeight: FontWeight.normal, color: Colors.white),
           title: const Text('invoice id: 12122020'),
           actions: [
-            TextButton(
-                onPressed: () async {
-                  var id = DateTime.now().year.toString()+DateTime.now().month.toString()+DateTime.now().day.toString()+DateTime.now().hour.toString()+DateTime.now().minute.toString()+DateTime.now().second.toString();
-                  if(customerController.text.isNotEmpty && phoneController.text.isNotEmpty && discountController.text.isNotEmpty && taxController.text.isNotEmpty && waiterController.text.isNotEmpty && tableController.text.isNotEmpty && orderedItem.isNotEmpty){
-                    InvoiceModel invoice = InvoiceModel(invoiceId: id,customer: customerController.text, phone: phoneController.text, discount: discountController.text, tax: taxController.text, waiter: waiterController.text, table: tableController.text, dateTime: DateTime.now(), orders: orderedItem);
-                    await Services().saveInvoiceToServer(invoice);
-                    await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Invoice(invoiceData: invoice, isServerData: false),
-                        ));
-                  }else{
-                    
-                    SnackBar snackBar = SnackBar(content: const Text('Fill all field and add some product'), action: SnackBarAction(label: 'ok', onPressed: (){
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    }),);
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: MaterialButton(
+                color: const Color(AppColor.box5),
+                  onPressed: () async {
+                    var id = DateTime.now().year.toString()+DateTime.now().month.toString()+DateTime.now().day.toString()+DateTime.now().hour.toString()+DateTime.now().minute.toString()+DateTime.now().second.toString();
+                    if(customerController.text.isNotEmpty && phoneController.text.isNotEmpty && discountController.text.isNotEmpty && taxController.text.isNotEmpty && waiterController.text.isNotEmpty && tableController.text.isNotEmpty && orderedItem.isNotEmpty){
+                      InvoiceModel invoice = InvoiceModel(invoiceId: id,customer: customerController.text, phone: phoneController.text, discount: discountController.text, tax: taxController.text, waiter: waiterController.text, table: tableController.text, dateTime: DateTime.now(), orders: orderedItem);
+                      await Services().saveInvoiceToServer(invoice);
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Invoice(invoiceData: invoice, isServerData: false),
+                          ));
+                    }else{
 
-                  }
+                      SnackBar snackBar = SnackBar(content: const Text('Fill all field and add some product'), action: SnackBarAction(label: 'ok', onPressed: (){
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      }),);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                },
-                child: const Text(
-                  'Save',
-                  style: TextStyle(color: Colors.black),
-                )),
+                    }
+
+                  },
+                  child:  Text(
+                    'Save',
+                    style: TextStyle(color: Colors.grey.shade100),
+                  )),
+            ),
           ],
         ),
         body: Container(

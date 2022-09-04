@@ -1,4 +1,4 @@
-import 'package:cafe21/pages/dashboard_page.dart';
+import 'package:cafe21/views/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {

@@ -19,7 +19,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   List pages = [];
 
   int bottomNavIndex = 0;
-  int selectedButtonForFoodItem = 0;
+
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         titleTextStyle: const TextStyle(fontWeight: FontWeight.w500),
         actions: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10.0),
             child: MaterialButton(onPressed: () {
 
               if(bottomNavIndex == 0){
@@ -90,6 +90,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
   //  Build 3 pages
 
   Container foodItemPage(){
+
+    int selectedButtonCategory = 0;
     return Container(
       constraints: const BoxConstraints(),
       margin: const EdgeInsets.all(16),
@@ -104,20 +106,24 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   return Container(
-                    decoration: index == selectedButtonForFoodItem ? const BoxDecoration(
-                        border: Border(
+                    decoration: BoxDecoration(
+                      // color: index == selectedButtonCategory ? Colors.purple : Colors.amber,
+                        border: index == selectedButtonCategory ? const Border(
                             bottom: BorderSide(
                                 color: Colors.deepPurple,
-                                width: 4
+                                width: 2
                             )
-                        )
-                    ) : null,
+                        ) : null
+                    ) ,
                     child: TextButton(
-                      onPressed: () async {
-                        selectedButtonForFoodItem = index;
-                        setState(() {});
+                      onPressed: () {
+                        selectedButtonCategory = index;
+                        foodList.clear();
+                        getData();
+                        print(selectedButtonCategory);
+                        // setState(() {});
                       },
-                      child: Text(categoryList[index], style: TextStyle(fontWeight: index == selectedButtonForFoodItem ? FontWeight.bold : FontWeight.normal),),
+                      child: Text(categoryList[index], style: TextStyle(fontWeight: index == selectedButtonCategory ? FontWeight.bold : FontWeight.normal),),
                     ),
                   );
                 },
@@ -220,7 +226,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 Text('Total foods'.toUpperCase(), style: const TextStyle(fontSize: 10),)
               ],
             ),
-            title: Text('${index+1}. ${categoryList[index]}'),
+            title: Text('${index+1}. ${categoryList[index]}', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),),
           );
         },
         separatorBuilder: (context, index) {
@@ -230,7 +236,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  //  Foods Products
+  //  Foods Data Manipulation
 
   addFoodItem(){
     TextEditingController nameController = TextEditingController();
@@ -962,7 +968,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     },);
   }
 
-  // Category Mansion
+  // Category Data Manipulation
 
   addCategory(){
     TextEditingController nameController = TextEditingController();
@@ -1131,7 +1137,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
       );
     },);
   }
-
 
 }
 

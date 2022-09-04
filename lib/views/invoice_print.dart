@@ -1,7 +1,6 @@
 
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:cafe21/model/invoice_model.dart';
-import 'package:cafe21/pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widget/title_text.dart';
