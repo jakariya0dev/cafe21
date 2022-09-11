@@ -3,7 +3,7 @@ import 'package:cafe21/app_color.dart';
 import 'package:cafe21/views/invoice_entry.dart';
 import 'package:cafe21/views/invoice_details.dart';
 import 'package:flutter/material.dart';
-import 'package:cafe21/network/services.dart';
+import 'package:cafe21/controller/invoice_list_controller.dart';
 import 'package:cafe21/widget/list_item.dart';
 
 class InvoiceList extends StatefulWidget {
@@ -24,7 +24,7 @@ class _InvoiceListState extends State<InvoiceList> {
   }
 
   getTodaysSellsData() async {
-    sellsData = await Services().getTodaysSells();
+    sellsData = await InvoiceListController().getTodaysSells();
     invoiceData = sellsData.reversed.toList();
 
     setState(() {});

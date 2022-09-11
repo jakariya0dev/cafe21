@@ -6,17 +6,17 @@ import 'package:intl/intl.dart';
 import '../widget/title_text.dart';
 
 
-class Invoice extends StatefulWidget {
-  const Invoice({Key? key, required this.invoiceData, required this.isServerData}) : super(key: key);
+class InvoicePrint extends StatefulWidget {
+  const InvoicePrint({Key? key, required this.invoiceData, required this.isServerData}) : super(key: key);
 
   final InvoiceModel invoiceData;
   final bool isServerData;
 
   @override
-  State<Invoice> createState() => _InvoiceState();
+  State<InvoicePrint> createState() => _InvoicePrintState();
 }
 
-class _InvoiceState extends State<Invoice> {
+class _InvoicePrintState extends State<InvoicePrint> {
 
   late double netBill;
   double totalAmount = 0;
@@ -34,10 +34,17 @@ class _InvoiceState extends State<Invoice> {
 
     for(var i = 0; i < widget.invoiceData.orders.length; i++ ){
 
-      totalAmount = totalAmount + (int.parse(widget.invoiceData.orders[i]['price'])*int.parse(widget.invoiceData.orders[i]['quantity']));
+      totalAmount = totalAmount + double.parse(widget.invoiceData.orders[i]['itemTotal']);
     }
-    totalAmountAfterDiscount = totalAmount - (totalAmount*(int.parse(widget.invoiceData.discount)/100));
-    netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
+
+    if(widget.invoiceData.discount.isNotEmpty && widget.invoiceData.discountType == '%'){
+      totalAmountAfterDiscount = totalAmount - (totalAmount*(int.parse(widget.invoiceData.discount)/100));
+      netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
+    }
+    if(widget.invoiceData.discount.isNotEmpty && widget.invoiceData.discountType == '\$'){
+      totalAmountAfterDiscount = totalAmount - int.parse(widget.invoiceData.discount);
+      netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
+    }
     initPrinter();
 
   }
@@ -54,28 +61,23 @@ class _InvoiceState extends State<Invoice> {
   Widget build(BuildContext context) {
 
     String date = widget.isServerData ? DateFormat.yMMMd().add_jm().format(widget.invoiceData.dateTime.toDate()).toString() : DateFormat.yMMMd().add_jm().format(widget.invoiceData.dateTime).toString();
+    var width = MediaQuery.of(context).size.width;
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(onPressed: (){
             Navigator.pop(context);
           }, icon: const Icon(Icons.clear)),
-          // actions: [
-            // TextButton(
-            //     onPressed: () {
-            //       // Navigator.push(context, MaterialPageRoute(builder: (context) => BluePrintThermal()));
-            //     },
-            //     child: const Text(
-            //       'Print',
-            //       style: TextStyle(color: Colors.black),
-            //     )),
-            // TextButton(
-            //     onPressed: () {},
-            //     child: const Text(
-            //       'Edit',
-            //       style: TextStyle(color: Colors.black),
-            //     )),
-          // ],
+          actions: [
+
+            TextButton(
+                onPressed: () {},
+                child: const Text(
+                  'Edit',
+                  style: TextStyle(color: Colors.black),
+                )),
+          ],
         ),
         body: Container(
           padding: const EdgeInsets.all(16),
@@ -111,7 +113,7 @@ class _InvoiceState extends State<Invoice> {
                           ),),
                           TableCell(child: Padding(
                             padding: const EdgeInsets.all(5.0),
-                            child: Text('${widget.invoiceData.orders[i]['quantity']}×${widget.invoiceData.orders[i]['price']}', textAlign: TextAlign.end, ),
+                            child: Text('${widget.invoiceData.orders[i]['quantity']}×${double.parse(widget.invoiceData.orders[i]['itemTotal'])/int.parse(widget.invoiceData.orders[i]['quantity'])}', textAlign: TextAlign.end, ),
                           ),)
                         ]
                     ),
@@ -120,7 +122,7 @@ class _InvoiceState extends State<Invoice> {
                 ),
                 const SizedBox(height: 20),
                 BuildInvoiceRow('Total amount:', totalAmount.toString()),
-                BuildInvoiceRow('After discount: (${widget.invoiceData.discount}%):', totalAmountAfterDiscount.toString()),
+                BuildInvoiceRow('After discount: (${widget.invoiceData.discount}${widget.invoiceData.discountType}):', totalAmountAfterDiscount.toString()),
                 BuildInvoiceRow('With Tax (${widget.invoiceData.tax}%):', netBill.toString()),
                 BuildInvoiceRowLast(title: 'Net Bill:', value: '\$$netBill',)
               ],
@@ -128,9 +130,11 @@ class _InvoiceState extends State<Invoice> {
           ),
         ),
         bottomNavigationBar: Container(
-          // color: Colors.amber,
+          color: Colors.purple,
           padding: const EdgeInsets.all(16),
+          height: width*0.15,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               DropdownButton(
                 items: devices.map((e) => DropdownMenuItem(value: e,child: Text(e.name.toString()),)).toList(),

@@ -120,7 +120,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         selectedButtonCategory = index;
                         foodList.clear();
                         getData();
-                        print(selectedButtonCategory);
+                        // print(selectedButtonCategory);
                         // setState(() {});
                       },
                       child: Text(categoryList[index], style: TextStyle(fontWeight: index == selectedButtonCategory ? FontWeight.bold : FontWeight.normal),),
@@ -140,6 +140,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
               itemCount: foodList.length-1,
               itemBuilder: (context, index) {
                 return  ListTile(
+                  isThreeLine: false,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50)
+                  ),
                   dense: true,
                   onTap: (){
                     editFoodItem(index);
@@ -149,7 +153,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   },
                   tileColor: index%2==0 ? Colors.blue.shade50 : Colors.blue.shade100,
                   leading: CircleAvatar(
-
                     child: Text((index+1).toString(), style: const TextStyle(color: Colors.white),),),
                   title: Text(foodList[index]['name']),
                   subtitle: Text(foodList[index]['type']),
@@ -174,6 +177,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
         itemCount: waiterList.length,
         itemBuilder: (context, index) {
           return  ListTile(
+            isThreeLine: false,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50)
+            ),
             dense: true,
             onTap: (){
               editWaiter(index);
@@ -211,6 +218,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
         itemCount: categoryList.length,
         itemBuilder: (context, index) {
           return  ListTile(
+            isThreeLine: false,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50)
+            ),
+            dense: true,
             onTap: (){
               editCategory(index);
             },

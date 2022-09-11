@@ -78,12 +78,12 @@ class BuildListItem extends StatelessWidget {
                           color: Colors.black87),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+                      padding: const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 1),
                         decoration: BoxDecoration(
-                          color: AppColor.scaffoldColor,
+                          color: Colors.blue,
                           borderRadius: BorderRadius.circular(16)
                         ),
-                        child: Text('paid'.toUpperCase(), style: const TextStyle(fontSize: 9),))
+                        child: Text('paid'.toUpperCase(), style: const TextStyle(fontSize: 9, color: Colors.white),))
                   ],
                 ),
               ),

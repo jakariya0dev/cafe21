@@ -1,6 +1,8 @@
 import 'package:cafe21/const.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../cons/app_config.dart';
+
 
 class AdminDashboardController{
 
@@ -9,7 +11,7 @@ class AdminDashboardController{
   // Food Data Manipulation
   getProductData() async {
     List data = [];
-    await db.collection(Const.dbName).doc('foods').collection('products').get().then((value) {
+    await db.collection(AppConfig.dbName).doc('foods').collection('products').get().then((value) {
 
       for(var doc in value.docs){
         data.add({
@@ -25,20 +27,20 @@ class AdminDashboardController{
   }
   addNewFoodData(productData) async {
     
-    await db.collection(Const.dbName).doc('foods').collection('products').doc().set(productData).then((value) => (value) {
+    await db.collection(AppConfig.dbName).doc('foods').collection('products').doc().set(productData).then((value) => (value) {
 
     });
   }
   updateFoodData(productData, docId) async {
 
-    await db.collection(Const.dbName).doc('foods').collection('products').doc(docId).set(productData).then((value) => (value) {
+    await db.collection(AppConfig.dbName).doc('foods').collection('products').doc(docId).set(productData).then((value) => (value) {
 
     });
   }
   deleteFoodData(docName, context) async {
 
     late String msg;
-    await db.collection(Const.dbName).doc('foods').collection('products').doc(docName).delete().then(
+    await db.collection(AppConfig.dbName).doc('foods').collection('products').doc(docName).delete().then(
           (doc){
         msg = 'Successfully Deleted!';
       },
@@ -54,7 +56,7 @@ class AdminDashboardController{
 
     List waiterList = [];
 
-    await db.collection(Const.dbName).doc('users').collection('waiters').get().then((value) {
+    await db.collection(AppConfig.dbName).doc('users').collection('waiters').get().then((value) {
 
       for(var item in value.docs){
         waiterList.add({
@@ -75,11 +77,11 @@ class AdminDashboardController{
   }
   addNewWaiterData(waiterData) async {
 
-    await db.collection(Const.dbName).doc('users').collection('waiters').doc(waiterData['phone']).set(waiterData);
+    await db.collection(AppConfig.dbName).doc('users').collection('waiters').doc(waiterData['phone']).set(waiterData);
   }
   updateWaiterData(waiterList) async {
     late String msg;
-    await db.collection(Const.dbName).doc('users').collection('waiters').doc(waiterList['docId']).update({
+    await db.collection(AppConfig.dbName).doc('users').collection('waiters').doc(waiterList['docId']).update({
       'id' : waiterList['id'],
       'name' : waiterList['name'],
       'phone' : waiterList['phone'],
@@ -94,7 +96,7 @@ class AdminDashboardController{
   deleteWaiterData(docName) async {
 
     late String msg;
-    await db.collection(Const.dbName).doc('users').collection('waiters').doc(docName).delete().then(
+    await db.collection(AppConfig.dbName).doc('users').collection('waiters').doc(docName).delete().then(
           (doc){
         msg = 'Successfully Delete!';
       },
@@ -108,12 +110,12 @@ class AdminDashboardController{
   // Category Data Manipulation
   getCategoryList() async {
 
-    var categoryList = await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').get();
+    var categoryList = await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').get();
     return categoryList['names'];
   }
   addNewCategoryName({name, context}) async {
 
-    await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').update({
+    await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').update({
       'names' : FieldValue.arrayUnion([name]),
     }).then((value) => (value) {
 
@@ -121,7 +123,7 @@ class AdminDashboardController{
   }
   updateCategoryName(categoryList) async {
     late String msg;
-    await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').set({
+    await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').set({
       'names' : categoryList
     }).then((value) => msg = 'Successfully Updated!', onError: (e) => msg = 'Cant Update: $e');
 
@@ -129,7 +131,7 @@ class AdminDashboardController{
   }
   deleteCategory(name) async {
     late String msg;
-    await db.collection(Const.dbName).doc('foods').collection('food-category').doc('category').update({
+    await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').update({
         'names' : FieldValue.arrayRemove([name])
     }).then((value) => msg = 'Successfully Deleted!', onError: (e) => msg = 'Cant delete: $e');
 

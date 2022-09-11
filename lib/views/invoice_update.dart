@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../model/invoice_model.dart';
-import '../network/services.dart';
 import 'invoice_print.dart';
 
 class InvoiceUpdate extends StatefulWidget {
@@ -192,7 +191,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         floatingActionButton: FloatingActionButton(
           mini: false,
           onPressed: () async {
-            foodData = await Services().getFoodData('sandwich ');
+            // foodData = await Services().getFoodData('sandwich ');
             invoice.addAll({
               'name' : customerController.text,
               'phone' : phoneController.text,
@@ -239,7 +238,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                             selectedButton = index;
                             // print(selectedButton);
                             foodData.clear();
-                            foodData = await Services().getFoodData(category[index]);
+                            // foodData = await Services().getFoodData(category[index]);
                             print(orderedItem);
                             setState(() {});
                           },

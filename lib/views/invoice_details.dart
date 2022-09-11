@@ -10,7 +10,6 @@ class InvoiceDetails extends StatefulWidget {
 
   final InvoiceModel invoiceData;
 
-
   @override
   State<InvoiceDetails> createState() => _InvoiceDetailsState();
 }
@@ -51,7 +50,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
             }, icon: const Icon(Icons.edit, color: Colors.white,)),
             IconButton(onPressed: (){}, icon: const Icon(Icons.delete_forever, color: Colors.white,)),
             IconButton(onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Invoice(invoiceData: widget.invoiceData, isServerData: true,)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => InvoicePrint(invoiceData: widget.invoiceData, isServerData: true,)));
             }, icon: const Icon(Icons.print, color: Colors.white,)),
 
           ],

@@ -9,7 +9,7 @@ class PrinterController{
 
   Future<List<BluetoothDevice>> getDevice() async {
     devices = await printer.getBondedDevices();
-    print(devices);
+    // print(devices);
     return devices;
     // setState(() {
     //
