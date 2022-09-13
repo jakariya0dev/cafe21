@@ -3,6 +3,7 @@ import 'package:cafe21/views/invoice_print.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../const.dart';
+import '../widget/discount_container.dart';
 import 'invoice_update.dart';
 
 class InvoiceDetails extends StatefulWidget {
@@ -16,19 +17,15 @@ class InvoiceDetails extends StatefulWidget {
 
 class _InvoiceDetailsState extends State<InvoiceDetails> {
 
-  late double netBill;
-  double totalAmount = 0;
-  late double totalAmountAfterDiscount;
+  late double netBill, totalAmountAfterDiscount, totalAmount = 0;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // print(widget.invoiceData.customer);
 
     for(var i = 0; i < widget.invoiceData.orders.length; i++ ){
 
-      totalAmount = totalAmount + (int.parse(widget.invoiceData.orders[i]['price'])*int.parse(widget.invoiceData.orders[i]['quantity']));
+      totalAmount = totalAmount + (double.parse(widget.invoiceData.orders[i]['itemTotal']));
     }
     totalAmountAfterDiscount = totalAmount - (totalAmount*(int.parse(widget.invoiceData.discount)/100));
     netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
@@ -64,7 +61,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _BuildNameContainer(id: widget.invoiceData.invoiceId, name: widget.invoiceData.customer, phone: widget.invoiceData.phone, waiter: widget.invoiceData.waiter, paymentMethod: "Online Payment", date: DateFormat.yMMMd().add_jm().format(widget.invoiceData.dateTime.toDate()).toString(), totalAmount: totalAmount, totalAmountAfterDiscount: totalAmountAfterDiscount, netAmount: netBill,),
+                _BuildNameContainer(id: widget.invoiceData.invoiceId, name: widget.invoiceData.customer, phone: widget.invoiceData.phone, waiter: widget.invoiceData.waiter, paymentMethod: "Online Payment", date: DateFormat.yMMMd().add_jm().format(widget.invoiceData.dateTime.toDate()).toString(), totalAmount: totalAmount, totalAmountAfterDiscount: totalAmountAfterDiscount, netAmount: netBill, address: widget.invoiceData.address),
                 const SizedBox(height: 16),
                 _BuildBoxRow(discount: widget.invoiceData.discount, tax: widget.invoiceData.tax, table: widget.invoiceData.table),
                 _BuildOrderItemList(orders: widget.invoiceData.orders,)
@@ -79,10 +76,10 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
 
 class _BuildNameContainer extends StatelessWidget {
   const _BuildNameContainer({
-    Key? key,required this.id,required this.name,required this.phone,required this.waiter,required this.paymentMethod,required this.date, required this.totalAmount, required this.totalAmountAfterDiscount, required this.netAmount,
+    Key? key,required this.id,required this.name,required this.phone,required this.waiter,required this.paymentMethod,required this.date, required this.totalAmount, required this.totalAmountAfterDiscount, required this.netAmount, required this.address,
   }) : super(key: key);
 
-  final String id, name, phone, waiter, paymentMethod, date;
+  final String id, name, phone, waiter, paymentMethod, date, address;
   final double totalAmount, totalAmountAfterDiscount, netAmount;
 
   @override
@@ -132,8 +129,8 @@ class _BuildNameContainer extends StatelessWidget {
                     Text(date, style: Const.italicStyleSubHeading,)
                   ],
                 ),
-                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0,),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 2),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -143,6 +140,15 @@ class _BuildNameContainer extends StatelessWidget {
                     ],
                   ),
                 ),
+                Row(
+                  children: [
+                    const Text('Address: ', style: Const.italicStyleSubHeading,),
+                    const SizedBox(width: 2,),
+                    Text(address, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+
+                  ],
+                ),
+                const SizedBox(height: 3,),
                 Row(
                   children: [
                     const Text('Cell: ', style: Const.italicStyleSubHeading,),
@@ -204,7 +210,7 @@ class _BuildPriceCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '\$$totalAmount',
+                      '\$${totalAmount.toStringAsFixed(1)}',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.grey.shade700),
@@ -216,7 +222,7 @@ class _BuildPriceCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '\$$totalAmountAfterDiscount',
+                      '\$${totalAmountAfterDiscount.toStringAsFixed(1)}',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.grey.shade700),
@@ -239,7 +245,7 @@ class _BuildPriceCard extends StatelessWidget {
                 Text('Net bill'.toUpperCase(), style: const TextStyle(fontSize: 12, color: Colors.grey),),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Text('\$$netAmount', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.grey.shade700),),
+                  child: Text('\$${netAmount.toStringAsFixed(1)}', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.grey.shade700),),
                 ),
                 Text('\$${(netAmount-totalAmountAfterDiscount).toStringAsFixed(1)} Service tax added', style: const TextStyle(fontSize: 10, color: Colors.grey, fontStyle: FontStyle.italic),),
               ],
@@ -362,6 +368,8 @@ class _BuildListTile extends StatelessWidget {
               Text(orders[index]["price"].toString(), style: Const.invDetailsListTitle,),
               const Icon(Icons.close, color: Colors.grey, size: 16,),
               Text(orders[index]["quantity"].toString(), style: Const.invDetailsListTitle,),
+              const SizedBox(width: 5),
+              DiscountContainer(discount: orders[index]["discount"], type: orders[index]["discountType"],),
               const Expanded(child: SizedBox()),
               Text('\$${(int.parse(orders[index]["price"])*int.parse(orders[index]["quantity"]))}', style: Const.invDetailsListPrice,),
             ],

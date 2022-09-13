@@ -50,14 +50,8 @@ class InvoiceEntryController{
       second = pSecond.toString();
     }
 
-    // print('month: $month');
-    // print('day: $day');
-    // print('hour $hour');
-    // print('min: $minute');
-    // print('sec: $second');
 
     id = year+month+day+hour+minute+second;
-    // print(id);
     return id;
   }
 
@@ -89,8 +83,10 @@ class InvoiceEntryController{
     var foodData = [];
 
     await db
-        .collection('foods')
-        .where('type', isEqualTo: type)
+        .collection(AppConfig.dbName)
+        .doc('foods')
+        .collection('products')
+        .where('category', isEqualTo: type)
         .get()
         .then((value) {
       for (var element in value.docs) {
@@ -104,6 +100,12 @@ class InvoiceEntryController{
 
     return foodData;
 
+  }
+
+  getCategoryList() async {
+
+    var categoryList = await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').get();
+    return categoryList['names'];
   }
 
 }

@@ -3,7 +3,9 @@ import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../const.dart';
 import '../model/order_item_model.dart';
+import '../widget/discount_container.dart';
 import 'invoice_print.dart';
 
 class CartPage extends StatefulWidget {
@@ -14,24 +16,8 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  List<String> category = [
-    'burger ',
-    'sandwich ',
-    'Pizza',
-    'Rice',
-    'Beverage',
-    'Bangle',
-    'Thai Food',
-    'Others'
-  ];
 
-  List<String> paymentMethod = [
-    'Cash payment',
-    'Online Payment',
-    'Mobile Banking',
-    'Payment Due'
-  ];
-
+  List categoryList = [];
   List foodData = [];
   List<OrderItemModel> orderedItemList = [];
   List<int> itemQuantityList = [];
@@ -41,6 +27,7 @@ class _CartPageState extends State<CartPage> {
 
   var height, width;
   double total = 0;
+  int selectedButton = 0;
   String selectedPaymentMethod = 'Select';
   bool isPaymentMethodSelected = false;
   String totalDiscountType = '%';
@@ -60,15 +47,24 @@ class _CartPageState extends State<CartPage> {
   void initState() {
     super.initState();
     invoiceId = InvoiceEntryController().generateInvoiceId();
-    generateDataForDialog();
+    getData();
+
+
+  }
+
+  getData() async {
+    categoryList = await InvoiceEntryController().getCategoryList();
+    await generateDataForDialog();
+    print(categoryList);
+    print(foodData);
   }
 
   void changeState() {
     setState(() {});
   }
 
-  Future<void> generateDataForDialog() async {
-    foodData = await InvoiceEntryController().getFoodData('burger ');
+   generateDataForDialog() async {
+    foodData = await InvoiceEntryController().getFoodData(categoryList[0]);
 
     for (var i = 0; i <= foodData.length; i++) {
 
@@ -453,7 +449,7 @@ class _CartPageState extends State<CartPage> {
                           hint: Text(selectedPaymentMethod),
                           // value: paymentMethod,
                           onTap: () {},
-                          items: paymentMethod
+                          items: paymentMethodList
                               .map((e) => DropdownMenuItem(
                                   value: e, child: Text(e.toString())))
                               .toList(),
@@ -518,7 +514,7 @@ class _CartPageState extends State<CartPage> {
                                   color: Colors.grey.shade900),
                             ),
                             const SizedBox(width: 10),
-                            discountContainer(index)
+                            DiscountContainer(discount: itemDiscountController[index].text, type: itemDiscountType[index],)
                           ],
                         ),
                         const SizedBox(
@@ -551,29 +547,13 @@ class _CartPageState extends State<CartPage> {
               ));
   }
 
-  Widget discountContainer(index) {
-    if (orderedItemList[index].discount.compareTo('0') == -1) {
-      return const SizedBox();
-    } else {
-      return Container(
-        padding: const EdgeInsets.only(top: 4, bottom: 2, left: 8, right: 8),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(50)),
-        child: Text(
-          'DISC ${orderedItemList[index].discount}${orderedItemList[index].discountType}',
-          style: TextStyle(fontSize: 10, color: Colors.grey.shade800),
-        ),
-      );
-    }
-  }
 
   openFoodCartDialog(BuildContext context) async {
 
     return showDialog(
       context: context,
       builder: (context) {
-        int selectedButton = 0;
+
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
             // contentPadding: EdgeInsets.all(0),
@@ -598,10 +578,8 @@ class _CartPageState extends State<CartPage> {
                                 return MaterialButton(
                                   onPressed: () async {
                                     selectedButton = index;
-                                    // print(selectedButton);
                                     foodData.clear();
-                                    foodData = await InvoiceEntryController().getFoodData(category[index]);
-                                    // print(orderedItem);
+                                    foodData = await InvoiceEntryController().getFoodData(categoryList[index]);
                                     setState(() {});
                                   },
                                   elevation: selectedButton == index ? 10 : 0,
@@ -611,7 +589,7 @@ class _CartPageState extends State<CartPage> {
                                   color: selectedButton == index
                                       ? Colors.amberAccent
                                       : Colors.white,
-                                  child: Text(category[index]),
+                                  child: Text(categoryList[index]),
                                 );
                               },
                               separatorBuilder: (context, index) {
@@ -619,7 +597,7 @@ class _CartPageState extends State<CartPage> {
                                   width: 10,
                                 );
                               },
-                              itemCount: category.length),
+                              itemCount: categoryList.length),
                         ),
                         const SizedBox(height: 16),
                         Expanded(
@@ -630,7 +608,10 @@ class _CartPageState extends State<CartPage> {
                               : ListView.separated(
                                   itemCount: foodData.length,
                                   itemBuilder: (context, index) {
-                                    return Column(children: [
+                                    return Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
                                       Text('${index+1}. ${foodData[index]['name']} - \$${foodData[index]['price']}',
                                         style: TextStyle(
                                           color: Colors.grey.shade700,
@@ -667,7 +648,7 @@ class _CartPageState extends State<CartPage> {
                                                         }
                                                         setState(() {});
                                                       },
-                                                      child: Text(itemDiscountType[index]))),
+                                                      child: Text(itemDiscountType[index], style: const TextStyle(fontSize: 20),))),
                                             ),
                                           ),
                                         ],

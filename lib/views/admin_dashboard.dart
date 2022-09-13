@@ -197,7 +197,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               children: [
                 const Text('100', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
                 const SizedBox(height: 4,),
-                Text('Total Orders'.toUpperCase(), style: const TextStyle(fontSize: 10),)
+                Text('Orders'.toUpperCase(), style: const TextStyle(fontSize: 9),)
               ],
             ),
           );
@@ -235,7 +235,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text('25', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
-                Text('Total foods'.toUpperCase(), style: const TextStyle(fontSize: 10),)
+                Text('Foods'.toUpperCase(), style: const TextStyle(fontSize: 9),)
               ],
             ),
             title: Text('${index+1}. ${categoryList[index]}', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),),

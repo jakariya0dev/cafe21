@@ -1,6 +1,14 @@
 
 import 'package:flutter/material.dart';
 
+
+List<String> paymentMethodList = [
+  'Cash payment',
+  'Online Payment',
+  'Mobile Banking',
+  'Payment Due'
+];
+
 class Const {
 
 

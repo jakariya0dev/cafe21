@@ -53,7 +53,6 @@ class _InvoiceListState extends State<InvoiceList> {
         )
             : Column(
           children: [
-            // const BuildTitleCard(),
             Expanded(
                 child: ListView.builder(
                   reverse: false,
@@ -68,7 +67,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                     invoiceData: invoiceData[index],
                                   )));
                         },
-                        child: BuildListItem(
+                        child: BuildInvoiceListItem(
                           index: index,
                           invoiceData: invoiceData[index],
                         ));

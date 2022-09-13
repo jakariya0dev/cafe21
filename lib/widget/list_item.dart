@@ -3,29 +3,39 @@ import 'package:cafe21/model/invoice_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class BuildListItem extends StatelessWidget {
-  const BuildListItem(
+import '../const.dart';
+
+class BuildInvoiceListItem extends StatelessWidget {
+  const BuildInvoiceListItem(
       {Key? key, required this.index, required this.invoiceData})
       : super(key: key);
   final int index;
   final InvoiceModel invoiceData;
 
+
+
   @override
   Widget build(BuildContext context) {
+    bool isPaid;
+    if(invoiceData.paymentMethod== paymentMethodList[3]){
+      isPaid = false;
+    }else{
+      isPaid = true;
+    }
+
     int totalAmount = 0;
+
     for (var i = 0; i < invoiceData.orders.length; i++) {
       totalAmount = totalAmount +
           (int.parse(invoiceData.orders[i]['price']) *
               int.parse(invoiceData.orders[i]['quantity']));
     }
-    // print(totalAmount.toString());
     return Stack(
       children: [
         Container(
           height: 55,
           margin: const EdgeInsets.only(left: 16, bottom: 4, top: 4),
           padding: const EdgeInsets.only(left: 24,),
-// color: index % 2 == 0 ? Colors.blue.shade50 : Colors.blue.shade100,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(32),
             color: Colors.white,
@@ -83,7 +93,7 @@ class BuildListItem extends StatelessWidget {
                           color: Colors.blue,
                           borderRadius: BorderRadius.circular(16)
                         ),
-                        child: Text('paid'.toUpperCase(), style: const TextStyle(fontSize: 9, color: Colors.white),))
+                        child: Text(isPaid ? 'PAID' : 'UNPAID', style: const TextStyle(fontSize: 8, color: Colors.white),))
                   ],
                 ),
               ),
