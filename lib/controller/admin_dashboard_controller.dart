@@ -9,9 +9,9 @@ class AdminDashboardController{
   var db = FirebaseFirestore.instance;
 
   // Food Data Manipulation
-  getProductData() async {
+  getProductData(category) async {
     List data = [];
-    await db.collection(AppConfig.dbName).doc('foods').collection('products').get().then((value) {
+    await db.collection(AppConfig.dbName).doc('foods').collection('products').where('category', isEqualTo: category,).get().then((value) {
 
       for(var doc in value.docs){
         data.add({
@@ -137,7 +137,5 @@ class AdminDashboardController{
 
     return msg;
   }
-
-
 
 }

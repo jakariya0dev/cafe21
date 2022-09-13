@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColor {
 
-  static Color scaffoldColor = Colors.purple.shade50;
+  static Color scaffoldColor = Colors.blue.shade50;
   static const boxOne = 0xfffbb35f;
   static const boxTwo = 0xff09af80;
   static const boxThree = 0xff656565;
