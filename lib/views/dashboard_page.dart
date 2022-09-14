@@ -2,6 +2,8 @@ import 'package:cafe21/app_color.dart';
 import 'package:cafe21/views//invoice_list.dart';
 import 'package:cafe21/widget/drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:cafe21/cons/const_string.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -14,7 +16,20 @@ class _DashBoardState extends State<DashBoard> {
 
   bool isSelectedBottomButtonOne = true;
   bool isSelectedBottomButtonTwo = false;
+  late SharedPreferences prefs;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    init();
+  }
+
+  init() async {
+    prefs = await SharedPreferences.getInstance();
+    print(prefs.getBool(ConstString.isLogged));
+    print(prefs.getString(ConstString.userRole));
+  }
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;

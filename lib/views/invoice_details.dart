@@ -2,7 +2,10 @@ import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice_print.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../const.dart';
+import '../controller/common_function.dart';
+import '../cons/const_string.dart';
 import '../widget/discount_container.dart';
 import 'invoice_update.dart';
 
@@ -18,10 +21,15 @@ class InvoiceDetails extends StatefulWidget {
 class _InvoiceDetailsState extends State<InvoiceDetails> {
 
   late double netBill, totalAmountAfterDiscount, totalAmount = 0;
+  SharedPreferences? pref;
 
   @override
-  void initState() {
+  initState() {
     super.initState();
+    init();
+  }
+
+  init() async {
 
     for(var i = 0; i < widget.invoiceData.orders.length; i++ ){
 
@@ -29,6 +37,9 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
     }
     totalAmountAfterDiscount = totalAmount - (totalAmount*(int.parse(widget.invoiceData.discount)/100));
     netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
+
+    pref = await SharedPreferences.getInstance();
+
   }
 
   @override
@@ -42,10 +53,20 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
           }, icon: const Icon(Icons.close, color: Colors.white,)),
           actions: [
             IconButton(onPressed: (){
+              if(pref?.getString('userRole') == 'admin'){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceUpdate()));
+              }else{
+                CommonFunction().showWarningDialog('Only admin can edit invoice', context);
+              }
 
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceUpdate()));
-            }, icon: const Icon(Icons.edit, color: Colors.white,)),
-            IconButton(onPressed: (){}, icon: const Icon(Icons.delete_forever, color: Colors.white,)),
+            },icon: const Icon(Icons.edit, color: Colors.white,)),
+            IconButton(onPressed: (){
+              if(pref?.getString(ConstString.userRole) == ConstString.userRoleAdmin){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceUpdate()));
+              }else{
+                CommonFunction().showWarningDialog('Only admin can edit invoice', context);
+              }
+            }, icon: const Icon(Icons.delete_forever, color: Colors.white,)),
             IconButton(onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => InvoicePrint(invoiceData: widget.invoiceData, isServerData: true,)));
             }, icon: const Icon(Icons.print, color: Colors.white,)),

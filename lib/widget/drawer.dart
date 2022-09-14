@@ -1,6 +1,8 @@
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/views/admin_dashboard.dart';
 import 'package:flutter/material.dart';
+import '../controller/drawer_controller.dart';
+
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({
@@ -76,10 +78,8 @@ class MyDrawer extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(),));
-
+                  onTap: () async {
+                    await MyDrawerController().userLogOut(context);
                   },
                   child: const DrawerListTile(
                     icon: Icons.logout,
