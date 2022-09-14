@@ -1,6 +1,7 @@
 
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:cafe21/model/invoice_model.dart';
+import 'package:cafe21/views/invoice_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widget/title_text.dart';
@@ -67,8 +68,13 @@ class _InvoicePrintState extends State<InvoicePrint> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(onPressed: (){
-            Navigator.pop(context);
-          }, icon: const Icon(Icons.clear)),
+
+            if(widget.isServerData==false){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
+            }else{
+              Navigator.pop(context);
+            }
+          }, icon: const Icon(Icons.arrow_back_outlined)),
           actions: [
 
             TextButton(

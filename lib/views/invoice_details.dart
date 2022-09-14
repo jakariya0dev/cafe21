@@ -1,5 +1,8 @@
+import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/model/invoice_model.dart';
+import 'package:cafe21/views/invoice_list.dart';
 import 'package:cafe21/views/invoice_print.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +22,8 @@ class InvoiceDetails extends StatefulWidget {
 }
 
 class _InvoiceDetailsState extends State<InvoiceDetails> {
+
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   late double netBill, totalAmountAfterDiscount, totalAmount = 0;
   SharedPreferences? pref;
@@ -60,13 +65,14 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
               }
 
             },icon: const Icon(Icons.edit, color: Colors.white,)),
-            IconButton(onPressed: (){
+            IconButton(onPressed: () async {
               if(pref?.getString(ConstString.userRole) == ConstString.userRoleAdmin){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceUpdate()));
+                await firestore.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').doc(widget.invoiceData.invoiceId).delete();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
               }else{
-                CommonFunction().showWarningDialog('Only admin can edit invoice', context);
+                CommonFunction().showWarningDialog('Only admin can delete invoice', context);
               }
-            }, icon: const Icon(Icons.delete_forever, color: Colors.white,)),
+            },icon: const Icon(Icons.delete_forever, color: Colors.white,)),
             IconButton(onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => InvoicePrint(invoiceData: widget.invoiceData, isServerData: true,)));
             }, icon: const Icon(Icons.print, color: Colors.white,)),
