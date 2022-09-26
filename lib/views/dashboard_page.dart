@@ -1,4 +1,5 @@
 import 'package:cafe21/app_color.dart';
+import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/views//invoice_list.dart';
 import 'package:cafe21/widget/drawer.dart';
 import 'package:flutter/material.dart';
@@ -18,17 +19,26 @@ class _DashBoardState extends State<DashBoard> {
   bool isSelectedBottomButtonTwo = false;
   late SharedPreferences prefs;
 
+  List waiterList = [], foodList = [], categoryList = [];
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     init();
   }
 
   init() async {
+
+    foodList = await DashboardController().getAllFood();
+    categoryList = await DashboardController().getAllFoodCategory();
+    waiterList = await DashboardController().getAllWaiter();
+
+
+    // print(totalFood);
     prefs = await SharedPreferences.getInstance();
-    print(prefs.getBool(ConstString.isLogged));
-    print(prefs.getString(ConstString.userRole));
+    // print(prefs.getBool(ConstString.isLogged));
+    // print(prefs.getString(ConstString.userRole));
+    setState(() {});
   }
   @override
   Widget build(BuildContext context) {
@@ -115,20 +125,20 @@ class _DashBoardState extends State<DashBoard> {
                     ],
                   ),
                 ),
-                const _BuildMostSellerList(),
-                const _BuildMostSellerList(),
+                const _BuildMostSellerList(title: 'Most Selling Food Item', name: 'Chicken Curry Masala', value: '100',),
+                const _BuildMostSellerList(title: 'Most Dishes Serve By', name: 'Zakaria Hossain', value: '100'),
                 SizedBox(
                   height: 120,
                   child: Row(
-                    children: const [
+                    children: [
                       BuildBoxContent(
-                        title: 'Without Tax',
-                        value: '100',
+                        title: 'total Food',
+                        value: '${foodList.length}',
                         color: AppColor.box4,
                       ),
                       BuildBoxContent(
-                        title: 'Tax Collection',
-                        value: '100',
+                        title: 'total Category',
+                        value: '${categoryList.length}',
                         color: AppColor.box5,
                       ),
                       // BuildBoxContent(title: 'Tax Collection', value: '100', color: AppColor.boxThree,),
@@ -138,15 +148,15 @@ class _DashBoardState extends State<DashBoard> {
                 SizedBox(
                   height: 120,
                   child: Row(
-                    children: const [
+                    children:  [
                       BuildBoxContent(
-                        title: 'Without Tax',
-                        value: '100',
+                        title: 'Total Waiter',
+                        value: '${waiterList.length}',
                         color: AppColor.box6,
                       ),
-                      BuildBoxContent(
-                        title: 'Tax Collection',
-                        value: '100',
+                      const BuildBoxContent(
+                        title: 'App User',
+                        value: '02',
                         color: AppColor.box7,
                       ),
                       // BuildBoxContent(title: 'Tax Collection', value: '100', color: AppColor.boxThree,),
@@ -242,8 +252,10 @@ class BuildBottomNavbar extends StatelessWidget {
 
 class _BuildMostSellerList extends StatelessWidget {
   const _BuildMostSellerList({
-    Key? key,
+    Key? key, required this.title, required this.name, required this.value,
   }) : super(key: key);
+
+  final String title, name, value;
 
   @override
   Widget build(BuildContext context) {
@@ -268,22 +280,24 @@ class _BuildMostSellerList extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Most server person',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500, color: Colors.white),
+              children: [
+                Text(title, style: const TextStyle(
+                  overflow: TextOverflow.ellipsis,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  fontSize: 15,
                 ),
-                Text(
-                  'Abdul Zabbar',
-                  style: TextStyle(color: Colors.white),
+                ),
+                Text(name,
+                  style: const TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      color: Colors.white),
                 ),
               ],
             ),
           ),
-          const Text(
-            '100s',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+           Text(value,
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ],
       ),
@@ -303,8 +317,6 @@ class BuildBoxContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        //   width: 100,
-        //   height: 85,
         margin: const EdgeInsets.all(8),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -312,7 +324,7 @@ class BuildBoxContent extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            value.isEmpty ? const Center(child: CircularProgressIndicator(color: Colors.white,)) : Text(
               value,
               style: const TextStyle(
                   fontSize: 28,

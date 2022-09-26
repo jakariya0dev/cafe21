@@ -1,4 +1,3 @@
-import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice_list.dart';
 import 'package:cafe21/views/invoice_print.dart';
@@ -6,11 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../const.dart';
-import '../controller/common_function.dart';
-import '../cons/const_string.dart';
-import '../widget/discount_container.dart';
-import 'invoice_update.dart';
+import 'package:cafe21/const.dart';
+import 'package:cafe21/controller/common_function.dart';
+import 'package:cafe21/cons/const_string.dart';
+import 'package:cafe21/widget/discount_container.dart';
+import 'package:cafe21/views/invoice_update.dart';
 
 class InvoiceDetails extends StatefulWidget {
   const InvoiceDetails({Key? key, required this.invoiceData}) : super(key: key);
@@ -22,7 +21,6 @@ class InvoiceDetails extends StatefulWidget {
 }
 
 class _InvoiceDetailsState extends State<InvoiceDetails> {
-
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   late double netBill, totalAmountAfterDiscount, totalAmount = 0;
@@ -35,63 +33,116 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
   }
 
   init() async {
-
-    for(var i = 0; i < widget.invoiceData.orders.length; i++ ){
-
-      totalAmount = totalAmount + (double.parse(widget.invoiceData.orders[i]['itemTotal']));
+    for (var i = 0; i < widget.invoiceData.orders.length; i++) {
+      totalAmount = totalAmount +
+          (double.parse(widget.invoiceData.orders[i]['itemTotal']));
     }
-    totalAmountAfterDiscount = totalAmount - (totalAmount*(int.parse(widget.invoiceData.discount)/100));
-    netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
+    totalAmountAfterDiscount = totalAmount -
+        (totalAmount * (int.parse(widget.invoiceData.discount) / 100));
+    netBill = totalAmountAfterDiscount +
+        (totalAmountAfterDiscount * (int.parse(widget.invoiceData.tax) / 100));
 
     pref = await SharedPreferences.getInstance();
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.blue.shade800,
-          leading: IconButton(onPressed: (){
-            Navigator.pop(context);
-          }, icon: const Icon(Icons.close, color: Colors.white,)),
-          actions: [
-            IconButton(onPressed: (){
-              if(pref?.getString('userRole') == 'admin'){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceUpdate()));
-              }else{
-                CommonFunction().showWarningDialog('Only admin can edit invoice', context);
-              }
-
-            },icon: const Icon(Icons.edit, color: Colors.white,)),
-            IconButton(onPressed: () async {
-              if(pref?.getString(ConstString.userRole) == ConstString.userRoleAdmin){
-                await firestore.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').doc(widget.invoiceData.invoiceId).delete();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
-              }else{
-                CommonFunction().showWarningDialog('Only admin can delete invoice', context);
-              }
-            },icon: const Icon(Icons.delete_forever, color: Colors.white,)),
-            IconButton(onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => InvoicePrint(invoiceData: widget.invoiceData, isServerData: true,)));
-            }, icon: const Icon(Icons.print, color: Colors.white,)),
-
-          ],
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.blue.shade800,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.close,
+              color: Colors.white,
+            )),
+        actions: [
+          IconButton(
+              onPressed: () {
+                if (pref?.getString('userRole') == 'admin') {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InvoiceUpdate(
+                                invoiceData: widget.invoiceData,
+                              )));
+                } else {
+                  CommonFunction().showWarningDialog(
+                      'Only admin can edit invoice', context);
+                }
+              },
+              icon: const Icon(
+                Icons.edit,
+                color: Colors.white,
+              )),
+          IconButton(
+              onPressed: () async {
+                if (pref?.getString(ConstString.userRole) ==
+                    ConstString.userRoleAdmin) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const InvoiceList()));
+                } else {
+                  CommonFunction().showWarningDialog(
+                      'Only admin can delete invoice', context);
+                }
+              },
+              icon: const Icon(
+                Icons.delete_forever,
+                color: Colors.white,
+              )),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => InvoicePrint(
+                              invoiceData: widget.invoiceData,
+                              isServerData: true,
+                            )));
+              },
+              icon: const Icon(
+                Icons.print,
+                color: Colors.white,
+              )),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-
-            height: widget.invoiceData.orders.length*(65+10)+230+16+100,
+            height:
+                widget.invoiceData.orders.length * (65 + 10) + 230 + 100 + 24,
             padding: const EdgeInsets.only(bottom: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _BuildNameContainer(id: widget.invoiceData.invoiceId, name: widget.invoiceData.customer, phone: widget.invoiceData.phone, waiter: widget.invoiceData.waiter, paymentMethod: "Online Payment", date: DateFormat.yMMMd().add_jm().format(widget.invoiceData.dateTime.toDate()).toString(), totalAmount: totalAmount, totalAmountAfterDiscount: totalAmountAfterDiscount, netAmount: netBill, address: widget.invoiceData.address),
+                _BuildNameContainer(
+                    id: widget.invoiceData.invoiceId,
+                    name: widget.invoiceData.customer,
+                    phone: widget.invoiceData.phone,
+                    waiter: widget.invoiceData.waiter,
+                    paymentMethod: "Online Payment",
+                    date: DateFormat.yMMMd()
+                        .add_jm()
+                        .format(widget.invoiceData.dateTime.toDate())
+                        .toString(),
+                    totalAmount: totalAmount,
+                    totalAmountAfterDiscount: totalAmountAfterDiscount,
+                    netAmount: netBill,
+                    address: widget.invoiceData.address),
                 const SizedBox(height: 16),
-                _BuildBoxRow(discount: widget.invoiceData.discount, tax: widget.invoiceData.tax, table: widget.invoiceData.table),
-                _BuildOrderItemList(orders: widget.invoiceData.orders,)
+                _BuildBoxRow(
+                    discount: widget.invoiceData.discount,
+                    discountType: widget.invoiceData.discountType,
+                    tax: widget.invoiceData.tax,
+                    table: widget.invoiceData.table),
+                _BuildOrderItemList(
+                  orders: widget.invoiceData.orders,
+                ),
               ],
             ),
           ),
@@ -103,7 +154,17 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
 
 class _BuildNameContainer extends StatelessWidget {
   const _BuildNameContainer({
-    Key? key,required this.id,required this.name,required this.phone,required this.waiter,required this.paymentMethod,required this.date, required this.totalAmount, required this.totalAmountAfterDiscount, required this.netAmount, required this.address,
+    Key? key,
+    required this.id,
+    required this.name,
+    required this.phone,
+    required this.waiter,
+    required this.paymentMethod,
+    required this.date,
+    required this.totalAmount,
+    required this.totalAmountAfterDiscount,
+    required this.netAmount,
+    required this.address,
   }) : super(key: key);
 
   final String id, name, phone, waiter, paymentMethod, date, address;
@@ -120,15 +181,13 @@ class _BuildNameContainer extends StatelessWidget {
             width: double.maxFinite,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
                   Colors.blue.shade800,
                   Colors.blue.shade500,
-                ]
-              )
-            ),
+                ])),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -137,60 +196,119 @@ class _BuildNameContainer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(32),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(32),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children:  [
+                        children: [
                           const CircleAvatar(
-                               radius: 10,
-                              child: Text('id', style: TextStyle(fontSize: 11),),),
-                          const SizedBox(width: 5,),
-                          Text(id, style: const TextStyle(fontSize: 12, color: Colors.black45, fontWeight: FontWeight.bold))
+                            radius: 10,
+                            child: Text(
+                              'id',
+                              style: TextStyle(fontSize: 11),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(id,
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black45,
+                                  fontWeight: FontWeight.bold))
                         ],
-                      ),),
-                    const SizedBox(width: 10,),
-                    Text(date, style: Const.italicStyleSubHeading,)
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      date,
+                      style: Const.italicStyleSubHeading,
+                    )
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 2),
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 4),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(name, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.white),),
-                      const SizedBox(width: 8,),
-                      const Text('Online Payment', style: Const.italicStyleSubHeading,)
+                      Text(
+                        name,
+                        style: const TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      const Text(
+                        'Online Payment',
+                        style: Const.italicStyleSubHeading,
+                      )
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    const Text('Address: ', style: Const.italicStyleSubHeading,),
-                    const SizedBox(width: 2,),
-                    Text(address, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-
-                  ],
+                // Row(
+                //   children: [
+                //     const Text(
+                //       'Address: ',
+                //       style: Const.italicStyleSubHeading,
+                //     ),
+                //     const SizedBox(
+                //       width: 2,
+                //     ),
+                //     Text(
+                //       address,
+                //       style: const TextStyle(
+                //           color: Colors.white, fontWeight: FontWeight.bold),
+                //     ),
+                //   ],
+                // ),
+                const SizedBox(
+                  height: 3,
                 ),
-                const SizedBox(height: 3,),
                 Row(
                   children: [
-                    const Text('Cell: ', style: Const.italicStyleSubHeading,),
-                    Text(phone, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                    const SizedBox(width: 8,),
-                    const Text('Served by', style: Const.italicStyleSubHeading,),
-                    const SizedBox(width: 4,),
-                    Text(waiter, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-
+                    const Text(
+                      'Cell: ',
+                      style: Const.italicStyleSubHeading,
+                    ),
+                    Text(
+                      phone,
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    const Text(
+                      'Served by',
+                      style: Const.italicStyleSubHeading,
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      waiter,
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 )
               ],
             ),
           ),
-          _BuildPriceCard(totalAmount: totalAmount, totalAmountAfterDiscount: totalAmountAfterDiscount, netAmount: netAmount,)
+          _BuildPriceCard(
+            totalAmount: totalAmount,
+            totalAmountAfterDiscount: totalAmountAfterDiscount,
+            netAmount: netAmount,
+          )
         ],
       ),
     );
@@ -200,7 +318,9 @@ class _BuildNameContainer extends StatelessWidget {
 class _BuildPriceCard extends StatelessWidget {
   const _BuildPriceCard({
     Key? key,
-    required this.totalAmount, required this.totalAmountAfterDiscount, required this.netAmount,
+    required this.totalAmount,
+    required this.totalAmountAfterDiscount,
+    required this.netAmount,
   }) : super(key: key);
 
   final double totalAmount, totalAmountAfterDiscount, netAmount;
@@ -218,10 +338,9 @@ class _BuildPriceCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: const [
               BoxShadow(
-                  color: Colors.grey,
+                color: Colors.grey,
               )
-            ]
-        ),
+            ]),
         child: Row(
           children: [
             Expanded(
@@ -236,50 +355,96 @@ class _BuildPriceCard extends StatelessWidget {
                       style: const TextStyle(fontSize: 11, color: Colors.grey),
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      '\$${totalAmount.toStringAsFixed(1)}',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700),
-                    ),
+                    RichText(
+                      text: TextSpan(
+                          text: '\$',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.grey.shade400),
+                          children: [
+                            TextSpan(
+                              text: totalAmount.toStringAsFixed(1),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade700),
+                            )
+                          ]
+                      ),),
                     const SizedBox(height: 12),
                     Text(
                       'After discount'.toUpperCase(),
                       style: const TextStyle(fontSize: 11, color: Colors.grey),
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      '\$${totalAmountAfterDiscount.toStringAsFixed(1)}',
+                    RichText(
+                      text: TextSpan(
+                      text: '\$',
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700),
-                    ),
+                          fontWeight: FontWeight.normal,
+                          color: Colors.grey.shade400),
+                      children: [
+                        TextSpan(
+                          text: totalAmountAfterDiscount.toStringAsFixed(1),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade700),
+                        )
+                      ]
+                    ),),
                   ],
                 ),
               ),
             ),
-             VerticalDivider(
+            VerticalDivider(
               color: Colors.grey.shade300,
               thickness: 1,
               endIndent: 10,
               indent: 10,
             ),
-            Padding(padding: const EdgeInsets.all(16), child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Net bill'.toUpperCase(),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
 
-                Text('Net bill'.toUpperCase(), style: const TextStyle(fontSize: 12, color: Colors.grey),),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Text('\$${netAmount.toStringAsFixed(1)}', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.grey.shade700),),
-                ),
-                Text('\$${(netAmount-totalAmountAfterDiscount).toStringAsFixed(1)} Service tax added', style: const TextStyle(fontSize: 10, color: Colors.grey, fontStyle: FontStyle.italic),),
-              ],
-            ),)
+                    child: RichText(
+                      text: TextSpan(
+                        text: '\$',
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.grey.shade400),
+                        children: [
+                          TextSpan(
+                            text : netAmount.toStringAsFixed(1),
+                            style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey.shade700),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '\$${(netAmount - totalAmountAfterDiscount).toStringAsFixed(1)} Service tax added',
+                    style: const TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
-
       ),
     );
   }
@@ -287,35 +452,45 @@ class _BuildPriceCard extends StatelessWidget {
 
 class _BuildBoxRow extends StatelessWidget {
   const _BuildBoxRow({
-    Key? key,required this.discount,required this.tax,required this.table,
+    Key? key,
+    required this.discount,
+    required this.tax,
+    required this.table,
+    required this.discountType,
   }) : super(key: key);
 
-  final String discount, tax, table;
+  final String discount, discountType, tax, table;
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _BuildBoxContent(title: 'discount', value: '$discount%', color: 0xfffbb35f),
-        _BuildBoxContent(title: 'service Tax', value: '$tax%', color: 0xff09af80),
-        _BuildBoxContent(title: 'Table no', value: table, color: 0xff656565),
-
+        _BuildBoxContent(
+            title: 'discount',
+            value: discount,
+            type: discountType,
+            color: 0xfffbb35f),
+        _BuildBoxContent(
+            title: 'service Tax', value: tax, type: '%', color: 0xff09af80),
+        _BuildBoxContent(
+            title: 'Table no', value: table, type: '', color: 0xff656565),
       ],
     );
   }
 }
 
 class _BuildBoxContent extends StatelessWidget {
-  const _BuildBoxContent({
-    Key? key,
-    required this.title,
-    required this.value,
-    required this.color
-  }) : super(key: key);
+  const _BuildBoxContent(
+      {Key? key,
+      required this.title,
+      required this.value,
+      required this.type,
+      required this.color})
+      : super(key: key);
 
-  final String title, value;
+  final String title, value, type;
   final int color;
-
 
   @override
   Widget build(BuildContext context) {
@@ -325,39 +500,61 @@ class _BuildBoxContent extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Color(color),
-        borderRadius: BorderRadius.circular(5)
-      ),
+          color: Color(color), borderRadius: BorderRadius.circular(5)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(value,style: const TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.normal),),
-        const SizedBox(height: 5,),
-        Text(title.toUpperCase(), style: const TextStyle(fontSize: 11, color: Colors.white),),
-      ],
-    ),);
+        children: [
+          RichText(
+              text: TextSpan(
+                  text: value,
+                  style: const TextStyle(
+                      fontSize: 28,
+                      color: Colors.white,
+                      fontWeight: FontWeight.normal),
+                  children: [
+                TextSpan(text: type, style: const TextStyle(fontSize: 14, color: Colors.white70))
+              ])),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(
+            title.toUpperCase(),
+            style: const TextStyle(fontSize: 11, color: Colors.white),
+          ),
+        ],
+      ),
+    );
   }
 }
 
 class _BuildOrderItemList extends StatelessWidget {
   const _BuildOrderItemList({
-    Key? key, required this.orders,
+    Key? key,
+    required this.orders,
   }) : super(key: key);
 
   final List orders;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(child: Container(
+    return Expanded(
+        child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-
       child: ListView.separated(
         physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index){
-          return _BuildListTile(index: index, orders: orders,);
-        }, separatorBuilder: (context, index){
-        return const SizedBox(height: 10,);
-      }, itemCount: orders.length,),
+        itemBuilder: (context, index) {
+          return _BuildListTile(
+            index: index,
+            orders: orders,
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(
+            height: 10,
+          );
+        },
+        itemCount: orders.length,
+      ),
     ));
   }
 }
@@ -365,7 +562,8 @@ class _BuildOrderItemList extends StatelessWidget {
 class _BuildListTile extends StatelessWidget {
   const _BuildListTile({
     Key? key,
-    required this.index, required this.orders,
+    required this.index,
+    required this.orders,
   }) : super(key: key);
 
   final int index;
@@ -376,34 +574,56 @@ class _BuildListTile extends StatelessWidget {
     return Container(
       height: 65,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration:  BoxDecoration(
+      decoration: BoxDecoration(
           color: Colors.blue.withOpacity(0.09),
-          border: const Border(
-              left: BorderSide(
-                  color: Colors.blue,
-                  width: 5
-              )
-          )
-      ),
+          border: const Border(left: BorderSide(color: Colors.blue, width: 5))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
-            children:  [
-              Text(orders[index]["price"].toString(), style: Const.invDetailsListTitle,),
-              const Icon(Icons.close, color: Colors.grey, size: 16,),
-              Text(orders[index]["quantity"].toString(), style: Const.invDetailsListTitle,),
+            children: [
+              Text(
+                orders[index]["price"].toString(),
+                style: Const.invDetailsListTitle,
+              ),
+              const Icon(
+                Icons.close,
+                color: Colors.grey,
+                size: 16,
+              ),
+              Text(
+                orders[index]["quantity"].toString(),
+                style: Const.invDetailsListTitle,
+              ),
               const SizedBox(width: 5),
-              DiscountContainer(discount: orders[index]["discount"], type: orders[index]["discountType"],),
+              DiscountContainer(
+                discount: orders[index]["discount"],
+                type: orders[index]["discountType"],
+              ),
               const Expanded(child: SizedBox()),
-              Text('\$${(int.parse(orders[index]["price"])*int.parse(orders[index]["quantity"]))}', style: Const.invDetailsListPrice,),
+              RichText(text: TextSpan(
+                text: '\$',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Colors.blueGrey.shade200),
+                children: [
+                  TextSpan(
+                    text: '${(int.parse(orders[index]["price"]) * int.parse(orders[index]["quantity"]))}',
+                    style: Const.invDetailsListPrice,
+                  )
+                ]
+              ))
             ],
           ),
-          Text('${index+1}. ${orders[index]["name"]}', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.grey.shade700,),
-          )],
-
+          Text(
+            '${index + 1}. ${orders[index]["name"]}',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+              color: Colors.grey.shade700,
+            ),
+          )
+        ],
       ),
     );
   }

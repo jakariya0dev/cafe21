@@ -3,10 +3,10 @@ import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import '../const.dart';
 import '../model/order_item_model.dart';
 import '../widget/discount_container.dart';
-import 'invoice_print.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -17,24 +17,29 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
 
-  List categoryList = [];
-  List foodData = [];
-  List<OrderItemModel> orderedItemList = [];
-  List<int> itemQuantityList = [];
-  List<bool> itemIsAddedList = [];
-  List <TextEditingController>itemDiscountController = [];
-  List <String> itemDiscountType = [];
-
-  var height, width;
-  double total = 0;
-  int selectedButton = 0;
-  String selectedPaymentMethod = 'Select';
-  bool isPaymentMethodSelected = false;
-  String totalDiscountType = '%';
-  String totalDiscount = '';
+  // FOR GENERATING INVO ID
   late String invoiceId;
   DateTime dated = DateTime.now();
 
+  // FOR FETCHED ONLINE DATA
+  List categoryList = [];
+  List foodData = [];
+  List<String> waiterNameList = ['Jack', 'Rose'];
+
+  // FOR DIALOG FIELD MANAGE
+  List<int> itemQuantityList = [];
+  List<String> cartItemList = [];
+  List<TextEditingController> itemDiscountController = [];
+  List<String> itemDiscountType = [];
+
+
+  // for body drop down menu
+  String selectedPaymentMethod = 'Select';
+  String selectedWaiter = 'Select';
+  bool isPaymentMethodSelected = false;
+  bool isWaiterSelected = false;
+
+  // controller for form field
   TextEditingController customerController = TextEditingController(),
       phoneController = TextEditingController(),
       discountController = TextEditingController(),
@@ -43,39 +48,37 @@ class _CartPageState extends State<CartPage> {
       addressController = TextEditingController(),
       tableController = TextEditingController();
 
+  // FOR GENERAL USE
+  var height, width;
+  double total = 0;
+  int selectedButton = 0;
+  List<OrderItemModel> orderedItemList = [];
+  String totalDiscountType = '%';
+  String totalDiscount = '';
+
   @override
   void initState() {
     super.initState();
     invoiceId = InvoiceEntryController().generateInvoiceId();
     getData();
 
-
   }
 
   getData() async {
     categoryList = await InvoiceEntryController().getCategoryList();
-    await generateDataForDialog();
-    print(categoryList);
-    print(foodData);
+    foodData = await InvoiceEntryController().getFoodData(categoryList[0]);
+    for (var i = 0; i <= foodData.length; i++) {
+
+      itemQuantityList.add(1);
+      // cartItemList.add(false);
+      itemDiscountController.add(TextEditingController());
+      itemDiscountType.add('%');
+    }
   }
 
   void changeState() {
     setState(() {});
   }
-
-   generateDataForDialog() async {
-    foodData = await InvoiceEntryController().getFoodData(categoryList[0]);
-
-    for (var i = 0; i <= foodData.length; i++) {
-
-      itemQuantityList.add(1);
-      itemIsAddedList.add(false);
-      itemDiscountController.add(TextEditingController());
-      itemDiscountType.add('%');
-
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -201,6 +204,7 @@ class _CartPageState extends State<CartPage> {
               )),
               MaterialButton(
                 shape: const StadiumBorder(),
+                minWidth: 100,
                 color: Colors.deepOrange,
                 onPressed: () {
                   openFoodCartDialog(context);
@@ -218,74 +222,80 @@ class _CartPageState extends State<CartPage> {
   }
 
   Container buildTitleCard() {
-
     return Container(
-                width: width,
-                height: 100,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  // color: Colors.white,
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.deepPurple.shade400,
-                        Colors.purple.shade300
-                      ]),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children:  [
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      width: width,
+      height: 100,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        // color: Colors.white,
+        gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.deepPurple.shade400, Colors.purple.shade300]),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Inv. id:',
+                style: TextStyle(color: Colors.white),
+              ),
+              Text(
+                invoiceId,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Dated:',
+                style: TextStyle(color: Colors.white),
+              ),
+              Text(
+                DateFormat.yMMMd().add_jm().format(dated).toString(),
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Total',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500),
+              ),
+              RichText(
+                  text: TextSpan(
+                      text: '\$',
+                      style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 17,
+                          fontWeight: FontWeight.normal),
                       children: [
-                        const Text(
-                          'Inv. id:',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(invoiceId,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Dated:',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(DateFormat.yMMMd().add_jm().format(dated).toString(),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Total',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          '\$$total',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
+                    TextSpan(
+                      text: total.toString(),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500),
+                    )
+                  ])),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Container buildCustomerSection() {
@@ -310,7 +320,7 @@ class _CartPageState extends State<CartPage> {
               border: const OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           TextField(
             controller: phoneController,
             keyboardType: TextInputType.phone,
@@ -323,7 +333,7 @@ class _CartPageState extends State<CartPage> {
               border: const OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           TextField(
             controller: addressController,
             decoration: InputDecoration(
@@ -351,125 +361,129 @@ class _CartPageState extends State<CartPage> {
                 ),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: discountController,
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              totalDiscount = value;
-                              // print(totalDiscount);
-
-                              changeState();
-                            },
-                            decoration: InputDecoration(
-                              isDense: true,
-                              labelText: 'Discount',
-                              hintText: 'ex: 5',
-                              hintStyle:
-                                  TextStyle(color: Colors.grey.shade300),
-                              suffix: InkWell(
-                                onTap: () {
-                                  if(totalDiscountType == '%'){
-                                    totalDiscountType = '\$';
-                                  }else{
-                                    totalDiscountType = '%';
-                                  }
-                                  setState(() {});
-                                },
-                                child: Text(totalDiscountType, style: TextStyle(color: Colors.grey.shade800),
-                                ),
-                              ),
-                              border: const OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: taxController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              labelText: 'Tax',
-                              hintText: 'ex: 10',
-                              hintStyle:
-                                  TextStyle(color: Colors.grey.shade300),
-                              suffix: Text('%', style: TextStyle(color: Colors.grey.shade800),
-                              ),
-                              border: const OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: discountController,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    totalDiscount = value;
+                    // print(totalDiscount);
+                    changeState();
+                  },
+                  decoration: InputDecoration(
+                    isDense: true,
+                    labelText: 'Discount',
+                    hintText: 'ex: 5',
+                    hintStyle: TextStyle(color: Colors.grey.shade300),
+                    suffix: InkWell(
+                      onTap: () {
+                        if (totalDiscountType == '%') {
+                          totalDiscountType = '\$';
+                        } else {
+                          totalDiscountType = '%';
+                        }
+                        setState(() {});
+                      },
+                      child: Text(
+                        totalDiscountType,
+                        style: TextStyle(color: Colors.grey.shade800, fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: waiterController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              labelText: 'Waiter Name',
-                              hintText: 'Ex: 5',
-                              hintStyle:
-                              TextStyle(color: Colors.grey.shade300),
-                              suffix: Text('\$', style: TextStyle(color: Colors.grey.shade800),
-                              ),
-                              border: const OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: tableController,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                              isDense: true,
-                              labelText: 'Table no',
-                              hintText: 'ex: 5',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text('Payment Method: '),
-                        ),
-                        const SizedBox(width: 8),
-                        DropdownButton(
-                          hint: Text(selectedPaymentMethod),
-                          // value: paymentMethod,
-                          onTap: () {},
-                          items: paymentMethodList
-                              .map((e) => DropdownMenuItem(
-                                  value: e, child: Text(e.toString())))
-                              .toList(),
-                          onChanged: (value) {
-                            selectedPaymentMethod = value.toString();
-                            isPaymentMethodSelected = true;
-                            setState(() {});
-                          },
-                        )
-                      ],
-                    ),
-                  ],
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: TextField(
+                  controller: taxController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    labelText: 'Tax',
+                    hintText: 'ex: 10',
+                    hintStyle: TextStyle(color: Colors.grey.shade300),
+                    suffix: Text(
+                      '%',
+                      style: TextStyle(color: Colors.grey.shade800),
+                    ),
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                    child: TextField(
+                      controller: tableController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'Table no',
+                        hintText: 'ex: 5',
+                        hintStyle: TextStyle(color: Colors.grey.shade300),
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              const Expanded(
+                child: Text('Waiter name: '),
+              ),
+              const SizedBox(width: 8),
+              DropdownButton(
+                hint: Text(selectedWaiter),
+                // value: paymentMethod,
+                onTap: () {},
+                items: waiterNameList
+                    .map((e) =>
+                        DropdownMenuItem(value: e, child: Text(e.toString())))
+                    .toList(),
+                onChanged: (value) {
+                  selectedWaiter = value.toString();
+                  isWaiterSelected = true;
+                  setState(() {});
+                },
+              )
+            ],
+          ),
+          Row(
+            children: [
+              const Expanded(
+                child: Text('Payment Method: '),
+              ),
+              const SizedBox(width: 8),
+              DropdownButton(
+                hint: Text(selectedPaymentMethod),
+                // value: paymentMethod,
+                onTap: () {},
+                items: paymentMethodList
+                    .map((e) =>
+                        DropdownMenuItem(value: e, child: Text(e.toString())))
+                    .toList(),
+                onChanged: (value) {
+                  selectedPaymentMethod = value.toString();
+                  isPaymentMethodSelected = true;
+                  setState(() {});
+                },
+              )
+            ],
+          ),
+        ],
+      ),
               );
   }
 
   SizedBox buildOrderedListItem() {
 
     return SizedBox(
-        height: (height * 0.15 + 8) * orderedItemList.length,
+        height: (width * 0.26 + 8) * orderedItemList.length,
         child: orderedItemList.isEmpty
             ? const Center(
                 child: Text('No item in list'),
@@ -478,7 +492,6 @@ class _CartPageState extends State<CartPage> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: orderedItemList.length,
                 itemBuilder: (context, index) {
-
                   return Container(
                     height: height * 0.15,
                     padding: const EdgeInsets.only(
@@ -546,7 +559,6 @@ class _CartPageState extends State<CartPage> {
                 },
               ));
   }
-
 
   openFoodCartDialog(BuildContext context) async {
 
@@ -688,14 +700,14 @@ class _CartPageState extends State<CartPage> {
                                           ),
                                           const Expanded(child: SizedBox()),
                                           TextButton(
-                                            onPressed: itemIsAddedList[index] ? null : () {
+                                            onPressed: cartItemList.contains(foodData[index]['id']) ? null : () {
                                                     addItemInOrderList(index);
                                                     setState(() {});
                                                   },
                                             child: Text(
-                                              itemIsAddedList[index] ? 'Added' : 'Add',
+                                              cartItemList.contains(foodData[index]['id']) ? 'Added' : 'Add',
                                               style: TextStyle(
-                                                  color: itemIsAddedList[index] ? Colors.grey : Colors.deepPurple),
+                                                  color: cartItemList.contains(foodData[index]['id']) ? Colors.grey : Colors.deepPurple),
                                             ),
                                           )
                                         ],
@@ -743,9 +755,7 @@ class _CartPageState extends State<CartPage> {
     }
 
     total += itemTotal;
-
-    orderedItemList.add(
-        OrderItemModel(
+    orderedItemList.add(OrderItemModel(
         id: foodData[index]['id'],
         name: foodData[index]['name'],
         price: foodData[index]['price'],
@@ -755,25 +765,25 @@ class _CartPageState extends State<CartPage> {
         itemTotal: itemTotal.toStringAsFixed(2),
         isAddedIndex: index
         ));
-
-
-
-    itemIsAddedList[index] = true;
+    cartItemList.add(foodData[index]['id']);
     // itemDiscountController[index].clear();
     // quantityList[index] = 1;
     // discountType[index] = '%';
     // print(orderedItemList[index].itemTotal);
     // print(itemDiscountType);
-
     changeState();
   }
 
   void removeItemFromOrderList(index) {
 
-    itemIsAddedList[orderedItemList[index].isAddedIndex] = false;
+    cartItemList.remove(foodData[index]['id']);
+    itemQuantityList[index] = 1;
+    itemDiscountController[index].clear();
+    itemDiscountType[index] = '%';
     total-=double.parse(orderedItemList[index].itemTotal);
     orderedItemList.removeAt(index);
     changeState();
+
   }
 
   showSnackBar(msg){

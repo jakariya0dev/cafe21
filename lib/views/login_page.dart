@@ -212,6 +212,8 @@ class _LoginPageState extends State<LoginPage> {
       );
     });
   }
+
+  // login with firebase auth
   userLogin() async {
 
     bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(emailController.text);
@@ -256,7 +258,7 @@ class _LoginPageState extends State<LoginPage> {
 
         }
       }
-      
+
 
   }
 }

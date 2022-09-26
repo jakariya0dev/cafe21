@@ -4,9 +4,9 @@ import '../model/invoice_model.dart';
 
 class InvoiceListController{
 
-  Future<List> getTodaysSells() async {
+  var db = FirebaseFirestore.instance;
 
-    var db = FirebaseFirestore.instance;
+  Future<List> getTodaysSells() async {
 
     List <InvoiceModel> invoice = [];
 
@@ -32,5 +32,11 @@ class InvoiceListController{
     });
 
     return invoice;
+  }
+
+  deleteInvoice(invoiceId) async {
+    late String msg;
+    msg = await db.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').doc(invoiceId).delete().then((value) => msg = 'Successfully Deleted!', onError: (e) => msg = 'Cant delete: $e');
+    return msg;
   }
 }
