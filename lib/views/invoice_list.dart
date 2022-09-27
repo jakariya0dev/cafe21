@@ -100,6 +100,7 @@ class _InvoiceListState extends State<InvoiceList> {
                               MaterialPageRoute(
                                   builder: (context) => InvoiceDetails(
                                     invoiceData: invoiceData[index],
+                                    isServerData: true,
                                   )));
                         },
                         child: BuildInvoiceListItem(

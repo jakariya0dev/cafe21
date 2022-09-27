@@ -12,9 +12,10 @@ import 'package:cafe21/widget/discount_container.dart';
 import 'package:cafe21/views/invoice_update.dart';
 
 class InvoiceDetails extends StatefulWidget {
-  const InvoiceDetails({Key? key, required this.invoiceData}) : super(key: key);
+  const InvoiceDetails({Key? key, required this.invoiceData, required this.isServerData}) : super(key: key);
 
   final InvoiceModel invoiceData;
+  final bool isServerData;
 
   @override
   State<InvoiceDetails> createState() => _InvoiceDetailsState();
@@ -126,7 +127,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                     phone: widget.invoiceData.phone,
                     waiterName: widget.invoiceData.waiterName,
                     waiterId: widget.invoiceData.waiterId,
-                    paymentMethod: "Online Payment",
+                    paymentMethod: widget.invoiceData.paymentMethod,
                     date: DateFormat.yMMMd()
                         .add_jm()
                         .format(widget.invoiceData.dateTime.toDate())
@@ -251,8 +252,8 @@ class _BuildNameContainer extends StatelessWidget {
                       const SizedBox(
                         width: 8,
                       ),
-                      const Text(
-                        'Online Payment',
+                      Text(
+                        paymentMethod,
                         style: Const.italicStyleSubHeading,
                       )
                     ],

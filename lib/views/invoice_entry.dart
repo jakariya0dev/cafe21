@@ -3,10 +3,9 @@ import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../const.dart';
-import '../model/order_item_model.dart';
-import '../widget/discount_container.dart';
+import 'package:cafe21/const.dart';
+import 'package:cafe21/model/order_item_model.dart';
+import 'package:cafe21/widget/discount_container.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);

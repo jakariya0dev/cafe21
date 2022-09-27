@@ -1,11 +1,13 @@
+import 'package:cafe21/app_color.dart';
+import 'package:cafe21/controller/invoice_entry_controller.dart';
+import 'package:cafe21/model/invoice_model.dart';
+import 'package:cafe21/views/invoice_details.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../app_color.dart';
-import '../const.dart';
-import '../controller/invoice_entry_controller.dart';
-import '../model/invoice_model.dart';
-import '../model/order_item_model.dart';
-import '../widget/discount_container.dart';
+import 'package:cafe21/const.dart';
+import 'package:cafe21/cons/app_config.dart';
+import 'package:cafe21/widget/discount_container.dart';
 
 class InvoiceUpdate extends StatefulWidget {
   const InvoiceUpdate({Key? key, required this.invoiceData}) : super(key: key);
@@ -18,109 +20,86 @@ class InvoiceUpdate extends StatefulWidget {
 
 class _InvoiceUpdate extends State<InvoiceUpdate> {
 
+  // FOR FETCHED ONLINE DATA
   List categoryList = [];
   List foodData = [];
-  List orderedItemList = [];
+  List waiterNameList = [];
+
+  // FOR DIALOG FIELD MANAGE
   List<int> itemQuantityList = [];
-  List<bool> itemIsAddedList = [];
-  List <TextEditingController>itemDiscountController = [];
-  List <String> itemDiscountType = [];
+  List<String> itemAddedInCartIdList = [];  // for button enable/disable
+  List<TextEditingController> itemDiscountController = [];
+  List<String> itemDiscountType = [];
 
-  var height, width;
-  double total = 0;
-  double subTotal = 0;
-  double netBill = 0;
+
+  // for body drop down menu
+  late String selectedWaiterName, selectedWaiterId, selectedPaymentMethod;
+
+  // FOR GENERAL USE
+  dynamic height, width;
+
+
   int selectedButton = 0;
-  String? selectedPaymentMethod;
-  bool isPaymentMethodSelected = false;
-  String totalDiscountType = '';
-  String totalDiscount = '';
-  late String invoiceId;
-  DateTime dated = DateTime.now();
+  List<dynamic> orderedItemList = [];
+  late String totalDiscount, totalDiscountType;
 
-  TextEditingController customerController = TextEditingController(),
-      phoneController = TextEditingController(),
-      discountController = TextEditingController(),
-      taxController = TextEditingController(),
-      waiterController = TextEditingController(),
-      addressController = TextEditingController(),
-      tableController = TextEditingController();
+  // invoice data
+  double subTotal = 0;   // only food total
+  double total = 0;      // food total after discount
+  double netBill = 0;   // total after tax added
 
-  @override
-  void initState() {
-    super.initState();
-    initData();
-    getData();
-    calculateTotal();
-
-  }
-
-  initData(){
-    invoiceId = widget.invoiceData.invoiceId;
-    orderedItemList = widget.invoiceData.orders;
-    selectedPaymentMethod = widget.invoiceData.paymentMethod;
-    totalDiscount = widget.invoiceData.discount;
-    totalDiscountType = widget.invoiceData.discountType;
-    customerController.text = widget.invoiceData.customer;
-    phoneController.text = widget.invoiceData.phone;
-    discountController.text = widget.invoiceData.discount;
-    taxController.text = widget.invoiceData.tax;
-    addressController.text = widget.invoiceData.address;
-    tableController.text = widget.invoiceData.table;
-    for(var item in orderedItemList){
-      itemDiscountController.add(TextEditingController(text: item['discount']));
-      itemDiscountType.add(item['discountType']);
-    }
-  }
+  // controller for form field
+  late TextEditingController customerController, phoneController, addressController;
+  late TextEditingController discountController, taxController, tableController;
 
   getData() async {
+    waiterNameList = await InvoiceEntryController().getWaiterData();
     categoryList = await InvoiceEntryController().getCategoryList();
-    await generateDataForDialog();
-    // print(categoryList);
-    // print(foodData);
+    foodData = await InvoiceEntryController().getFoodData(categoryList[0]);
+    for (var i = 0; i <= foodData.length; i++) {
+
+      itemQuantityList.add(1);
+      itemDiscountController.add(TextEditingController());
+      itemDiscountType.add('%');
+    }
+
   }
 
   void changeState() {
     setState(() {});
   }
 
-  generateDataForDialog() async {
-    foodData = await InvoiceEntryController().getFoodData(categoryList[0]);
+  @override
+  void initState() {
 
-    for (var i = 0; i <= foodData.length; i++) {
+        customerController = TextEditingController(text: widget.invoiceData.customer);
+        phoneController = TextEditingController(text: widget.invoiceData.phone);
+        addressController = TextEditingController(text: widget.invoiceData.address);
+        discountController = TextEditingController(text: widget.invoiceData.discount);
+        taxController = TextEditingController(text: widget.invoiceData.tax);
+        tableController = TextEditingController(text: widget.invoiceData.table);
 
-      itemQuantityList.add(1);
-      itemIsAddedList.add(false);
-      itemDiscountController.add(TextEditingController());
-      itemDiscountType.add('%');
+        selectedWaiterName = widget.invoiceData.waiterName;
+        selectedWaiterId = widget.invoiceData.waiterId;
+        selectedPaymentMethod = widget.invoiceData.paymentMethod;
+        orderedItemList = widget.invoiceData.orders;
 
-    }
-  }
-  
-  calculateTotal(){
-    double itemTotal = 0;
+        for(int i = 0; i < orderedItemList.length; i++){
+          itemAddedInCartIdList.add(orderedItemList[i]['id']);
+        }
 
-    if(totalDiscount.isNotEmpty &&  totalDiscountType == '%'){
-      for(var item in orderedItemList){
-        itemTotal = itemTotal + double.parse(item['itemTotal']);
-      }
-      double discount = double.parse(discountController.text)/100;
-       total = itemTotal * discount;
-      
-    }
-    else if(totalDiscount.isNotEmpty &&  totalDiscountType == '\$'){
-      for(var item in orderedItemList){
-        itemTotal = itemTotal + double.parse(item['itemTotal']);
-      }
-      
-      total = itemTotal - double.parse(totalDiscount);
+        totalDiscountType = widget.invoiceData.discountType;
+        totalDiscount =  widget.invoiceData.discount;
 
-    }
-    else{
-      for(var item in orderedItemList){
-        total = total + double.parse(item['itemTotal']);
-      }
-    }
+        // print(itemAddedInCartIdList);
+        subTotal = double.parse(widget.invoiceData.subTotal);   // only food total
+        total = double.parse(widget.invoiceData.total);      // food total after discount
+        netBill = double.parse(widget.invoiceData.netBill);
+
+        getData();
+
+        super.initState();
+
   }
 
   @override
@@ -128,87 +107,21 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.blue.shade50,
         appBar: AppBar(
           titleTextStyle: const TextStyle(
               fontWeight: FontWeight.normal, color: Colors.white),
-          title: const Text('Update invoice'),
+          title: const Text('Update customer invoice'),
           actions: [
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: MaterialButton(
                   color: const Color(AppColor.box5),
-                  onPressed: () async {
-
-                    if (customerController.text.isEmpty ||
-                        phoneController.text.isEmpty ||
-                        discountController.text.isEmpty ||
-                        taxController.text.isEmpty ||
-                        waiterController.text.isEmpty ||
-                        tableController.text.isEmpty) {
-
-                      showSnackBar('Fill all the field!');
-
-                    }else if(isPaymentMethodSelected == false){
-                      showSnackBar('Select payment method!');
-                    }
-                    else if(orderedItemList.isEmpty){
-                      showSnackBar('Add ordered item in list!');
-                    }
-                    else {
-                      showDialog(context: context, builder: (context) {
-                        return AlertDialog(
-
-                          content: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: const [
-                              CircularProgressIndicator(),
-                              Text('Please wait...')
-                            ],
-                          ),
-                        );
-                      });
-
-                      List<Map<String, String>> orderListWithMap = [];
-                      for(var item in orderedItemList){
-                        orderListWithMap.add({
-                          'id' : item.id,
-                          'name' : item.name,
-                          'quantity' : item.quantity,
-                          'price' : item.price,
-                          'discount' : item.discount,
-                          'discountType' : item.discountType,
-                          'itemTotal' : item.itemTotal,
-                        });
-                      }
-
-                      InvoiceModel invoice = InvoiceModel(
-                          invoiceId: invoiceId,
-                          customer: customerController.text,
-                          phone: phoneController.text,
-                          address: addressController.text,
-                          discount: discountController.text,
-                          discountType: totalDiscountType,
-                          tax: taxController.text,
-                          waiterName: waiterController.text,
-                          waiterId: waiterController.text,
-                          table: tableController.text,
-                          dateTime: dated,
-                          paymentMethod: selectedPaymentMethod!,
-                          orders: orderListWithMap,
-                        subTotal: subTotal.toStringAsFixed(2),
-                          total: total.toStringAsFixed(2),
-                          netBill: netBill.toStringAsFixed(2)
-                      );
-                      await InvoiceEntryController().saveInvoiceToServer(invoice, context);
-                    }
-                  },
+                  onPressed: updateInvoice,
                   child: Text(
-                    'Save',
+                    'Update',
                     style: TextStyle(color: Colors.grey.shade100),
                   )),
             ),
@@ -246,14 +159,49 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                   topLeft: Radius.circular(32), topRight: Radius.circular(32))),
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                  child: Text(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Total:',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(width: 8,),
+                      RichText(
+                          text: TextSpan(
+                              text: '\$',
+                              style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.normal),
+                              children: [
+                                TextSpan(
+                                  text: subTotal.toString(),
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500),
+                                )
+                              ])),
+                    ],
+                  ),
+                  Text(
                     'Total ${orderedItemList.length} item(s) in order list',
                     style: const TextStyle(color: Colors.white),
-                  )),
+                  ),
+                ],
+              ),
               MaterialButton(
                 shape: const StadiumBorder(),
+                minWidth: 100,
                 color: Colors.deepOrange,
                 onPressed: () {
                   openFoodCartDialog(context);
@@ -271,27 +219,22 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
   }
 
   Container buildTitleCard() {
-
     return Container(
       width: width,
-      height: 100,
+      height: 85,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         // color: Colors.white,
         gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.deepPurple.shade400,
-              Colors.purple.shade300
-            ]),
+            colors: [Colors.deepPurple.shade400, Colors.purple.shade300]),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
-        children:  [
-
+        children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -299,7 +242,8 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                 'Inv. id:',
                 style: TextStyle(color: Colors.white),
               ),
-              Text(invoiceId,
+              Text(
+                widget.invoiceData.invoiceId,
                 style: const TextStyle(color: Colors.white),
               ),
             ],
@@ -311,31 +255,13 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                 'Dated:',
                 style: TextStyle(color: Colors.white),
               ),
-              Text(DateFormat.yMMMd().add_jm().format(dated).toString(),
+              Text(
+                DateFormat.yMMMd().add_jm().format(widget.invoiceData.dateTime.toDate()),
                 style: const TextStyle(color: Colors.white),
               ),
             ],
           ),
           const SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Total',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500),
-              ),
-              Text(
-                '\$$total',
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -363,7 +289,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
               border: const OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           TextField(
             controller: phoneController,
             keyboardType: TextInputType.phone,
@@ -376,7 +302,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
               border: const OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           TextField(
             controller: addressController,
             decoration: InputDecoration(
@@ -413,32 +339,32 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                   onChanged: (value) {
                     totalDiscount = value;
                     // print(totalDiscount);
-
                     changeState();
                   },
                   decoration: InputDecoration(
                     isDense: true,
                     labelText: 'Discount',
                     hintText: 'ex: 5',
-                    hintStyle:
-                    TextStyle(color: Colors.grey.shade300),
+                    hintStyle: TextStyle(color: Colors.grey.shade300),
                     suffix: InkWell(
                       onTap: () {
-                        if(totalDiscountType == '%'){
+                        if (totalDiscountType == '%') {
                           totalDiscountType = '\$';
-                        }else{
+                        } else {
                           totalDiscountType = '%';
                         }
                         setState(() {});
                       },
-                      child: Text(totalDiscountType, style: TextStyle(color: Colors.grey.shade800),
+                      child: Text(
+                        totalDiscountType,
+                        style: TextStyle(color: Colors.grey.shade800, fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                     border: const OutlineInputBorder(),
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
               Expanded(
                 child: TextField(
                   controller: taxController,
@@ -447,10 +373,25 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                     isDense: true,
                     labelText: 'Tax',
                     hintText: 'ex: 10',
-                    hintStyle:
-                    TextStyle(color: Colors.grey.shade300),
-                    suffix: Text('%', style: TextStyle(color: Colors.grey.shade800),
+                    hintStyle: TextStyle(color: Colors.grey.shade300),
+                    suffix: Text(
+                      '%',
+                      style: TextStyle(color: Colors.grey.shade800),
                     ),
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: TextField(
+                  controller: tableController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    labelText: 'Table no',
+                    hintText: 'ex: 5',
+                    hintStyle: TextStyle(color: Colors.grey.shade300),
                     border: const OutlineInputBorder(),
                   ),
                 ),
@@ -458,40 +399,28 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
             ],
           ),
           const SizedBox(height: 8),
+          const SizedBox(height: 5),
           Row(
             children: [
-              Expanded(
-                child: TextField(
-                  controller: waiterController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    labelText: 'Waiter Name',
-                    hintText: 'Ex: 5',
-                    hintStyle:
-                    TextStyle(color: Colors.grey.shade300),
-                    suffix: Text('\$', style: TextStyle(color: Colors.grey.shade800),
-                    ),
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
+              const Expanded(
+                child: Text('Waiter name: '),
               ),
               const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: tableController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    labelText: 'Table no',
-                    hintText: 'ex: 5',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
+              DropdownButton(
+                hint: Text(selectedWaiterName),
+                onTap: () {},
+                items: waiterNameList
+                    .map((e) =>
+                    DropdownMenuItem(value: e['id']+'. '+e['name'], child: Text(e['id']+'. '+e['name'].toString())))
+                    .toList(),
+                onChanged: (value) {
+                  selectedWaiterId = value.toString().substring(0, 3);
+                  selectedWaiterName = value.toString().substring(5);
+                  setState(() {});
+                },
+              )
             ],
           ),
-          const SizedBox(height: 5),
           Row(
             children: [
               const Expanded(
@@ -499,16 +428,15 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
               ),
               const SizedBox(width: 8),
               DropdownButton(
-                hint: Text(selectedPaymentMethod!),
+                hint: Text(selectedPaymentMethod),
                 // value: paymentMethod,
                 onTap: () {},
                 items: paymentMethodList
-                    .map((e) => DropdownMenuItem(
-                    value: e, child: Text(e.toString())))
+                    .map((e) =>
+                    DropdownMenuItem(value: e, child: Text(e.toString())))
                     .toList(),
                 onChanged: (value) {
                   selectedPaymentMethod = value.toString();
-                  isPaymentMethodSelected = true;
                   setState(() {});
                 },
               )
@@ -522,7 +450,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
   SizedBox buildOrderedListItem() {
 
     return SizedBox(
-        height: (height * 0.15 + 8) * orderedItemList.length,
+        height: (width * 0.26 + 8) * orderedItemList.length,
         child: orderedItemList.isEmpty
             ? const Center(
           child: Text('No item in list'),
@@ -531,7 +459,6 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: orderedItemList.length,
           itemBuilder: (context, index) {
-
             return Container(
               height: height * 0.15,
               padding: const EdgeInsets.only(
@@ -567,7 +494,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                             color: Colors.grey.shade900),
                       ),
                       const SizedBox(width: 10),
-                      DiscountContainer(discount: itemDiscountController[index].text, type: itemDiscountType[index],)
+                      DiscountContainer(discount: orderedItemList[index]['discount'], type: orderedItemList[index]['discountType'],)
                     ],
                   ),
                   const SizedBox(
@@ -740,14 +667,14 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                                   ),
                                   const Expanded(child: SizedBox()),
                                   TextButton(
-                                    onPressed: itemIsAddedList[index] ? null : () {
+                                    onPressed: itemAddedInCartIdList.contains(foodData[index]['id']) ? null : () {
                                       addItemInOrderList(index);
                                       setState(() {});
                                     },
                                     child: Text(
-                                      itemIsAddedList[index] ? 'Added' : 'Add',
+                                      itemAddedInCartIdList.contains(foodData[index]['id']) ? 'Added' : 'Add',
                                       style: TextStyle(
-                                          color: itemIsAddedList[index] ? Colors.grey : Colors.deepPurple),
+                                          color: itemAddedInCartIdList.contains(foodData[index]['id']) ? Colors.grey : Colors.deepPurple),
                                     ),
                                   )
                                 ],
@@ -794,38 +721,33 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
       itemTotal = int.parse(foodData[index]['price'])*itemQuantityList[index];
     }
 
-    total += itemTotal;
-
-    orderedItemList.add(
-        OrderItemModel(
-            id: foodData[index]['id'],
-            name: foodData[index]['name'],
-            price: foodData[index]['price'],
-            discount: itemDiscountController[index].text,
-            discountType : itemDiscountType[index],
-            quantity: itemQuantityList[index].toString(),
-            itemTotal: itemTotal.toStringAsFixed(2),
-            isAddedIndex: index
-        ));
-
-
-
-    itemIsAddedList[index] = true;
-    // itemDiscountController[index].clear();
-    // quantityList[index] = 1;
-    // discountType[index] = '%';
-    // print(orderedItemList[index].itemTotal);
-    // print(itemDiscountType);
-
+    subTotal += itemTotal;
+    orderedItemList.add({
+        'id': foodData[index]['id'],
+        'name': foodData[index]['name'],
+        'price': foodData[index]['price'],
+        'discount': itemDiscountController[index].text,
+        'discountType' : itemDiscountType[index],
+        'quantity': itemQuantityList[index].toString(),
+        'itemTotal': itemTotal.toStringAsFixed(2),
+        'isAddedIndex': index
+    });
+    itemAddedInCartIdList.add(foodData[index]['id']);
+    itemQuantityList[index] = 1;
+    itemDiscountController[index].clear();
+    itemDiscountType[index] = '%';
     changeState();
+    print(itemAddedInCartIdList);
   }
 
   void removeItemFromOrderList(index) {
 
-    itemIsAddedList[orderedItemList[index].isAddedIndex] = false;
-    total-=double.parse(orderedItemList[index].itemTotal);
+    itemAddedInCartIdList.remove(orderedItemList[index]);
+    subTotal-=double.parse(orderedItemList[index]['itemTotal']);
     orderedItemList.removeAt(index);
     changeState();
+    print(itemAddedInCartIdList);
+
   }
 
   showSnackBar(msg){
@@ -841,5 +763,105 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-}
+  updateInvoice() async {
+    if (customerController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        discountController.text.isEmpty ||
+        taxController.text.isEmpty ||
+        addressController.text.isEmpty ||
+        tableController.text.isEmpty) {
+      showSnackBar('Fill all the field!');
 
+    } else if(orderedItemList.isEmpty){
+      showSnackBar('Add item in ordered list!');
+    }
+    else {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: const [
+              CircularProgressIndicator(),
+              Text('Please wait...')
+            ],
+          ),
+        );
+      });
+
+      // for generating order list
+      List<Map<String, String>> orderListWithMap = [];
+      for(var item in orderedItemList){
+        orderListWithMap.add({
+          'id' : item['id'],
+          'name' : item['name'],
+          'quantity' : item['quantity'],
+          'price' : item['price'],
+          'discount' : item['discount'],
+          'discountType' : item['discountType'],
+          'itemTotal' : item['itemTotal'],
+        });
+      }
+
+      if(totalDiscountType =='%'){
+        print(totalDiscount);
+        double discount = subTotal * (double.parse(totalDiscount) / 100);
+        total = subTotal - discount;
+        double tax = total * (double.parse(taxController.text.toString())/100);
+        netBill = total + tax;
+      }else{
+        total = subTotal - double.parse(totalDiscount);
+        double tax = total * (double.parse(taxController.text.toString())/100);
+        netBill = total + tax;
+      }
+
+      var db = FirebaseFirestore.instance;
+
+      InvoiceModel invoice = InvoiceModel(
+          invoiceId: widget.invoiceData.invoiceId,
+          customer: customerController.text,
+          phone: phoneController.text,
+          address: addressController.text,
+          discount: discountController.text,
+          discountType: totalDiscountType,
+          tax: taxController.text,
+          waiterName: selectedWaiterName,
+          waiterId: selectedWaiterId,
+          table: tableController.text,
+          dateTime: widget.invoiceData.dateTime,
+          paymentMethod: selectedPaymentMethod,
+          orders: orderListWithMap,
+          subTotal: subTotal.toStringAsFixed(2),
+          total: total.toStringAsFixed(2),
+          netBill: netBill.toStringAsFixed(2)
+      );
+
+      db.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').doc(widget.invoiceData.invoiceId).update({
+        'invoiceId': widget.invoiceData.invoiceId,
+        'customer': customerController.text,
+        'phone': phoneController.text,
+        'address': addressController.text,
+        'discount': discountController.text,
+        'discountType': totalDiscountType,
+        'tax': taxController.text,
+        'waiterName': selectedWaiterName,
+        'waiterId': selectedWaiterId,
+        'table': tableController.text,
+        'dateTime': widget.invoiceData.dateTime,
+        'paymentMethod': selectedPaymentMethod,
+        'orders': orderListWithMap,
+        'subTotal': subTotal.toStringAsFixed(2),
+        'total': total.toStringAsFixed(2),
+        'netBill': netBill.toStringAsFixed(2)
+      }).whenComplete((){
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InvoiceDetails(
+                  invoiceData: invoice, isServerData: false),
+            ));
+      });
+    }
+  }
+
+}
