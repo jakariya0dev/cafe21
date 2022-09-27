@@ -124,15 +124,16 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                     id: widget.invoiceData.invoiceId,
                     name: widget.invoiceData.customer,
                     phone: widget.invoiceData.phone,
-                    waiter: widget.invoiceData.waiter,
+                    waiterName: widget.invoiceData.waiterName,
+                    waiterId: widget.invoiceData.waiterId,
                     paymentMethod: "Online Payment",
                     date: DateFormat.yMMMd()
                         .add_jm()
                         .format(widget.invoiceData.dateTime.toDate())
                         .toString(),
-                    totalAmount: totalAmount,
-                    totalAmountAfterDiscount: totalAmountAfterDiscount,
-                    netAmount: netBill,
+                    totalAmount: widget.invoiceData.subTotal,
+                    totalAmountAfterDiscount: widget.invoiceData.total,
+                    netAmount: widget.invoiceData.netBill,
                     address: widget.invoiceData.address),
                 const SizedBox(height: 16),
                 _BuildBoxRow(
@@ -153,22 +154,25 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
 }
 
 class _BuildNameContainer extends StatelessWidget {
+
+
   const _BuildNameContainer({
     Key? key,
     required this.id,
     required this.name,
     required this.phone,
-    required this.waiter,
     required this.paymentMethod,
     required this.date,
     required this.totalAmount,
     required this.totalAmountAfterDiscount,
     required this.netAmount,
     required this.address,
+    required this.waiterName,
+    required this.waiterId,
   }) : super(key: key);
 
-  final String id, name, phone, waiter, paymentMethod, date, address;
-  final double totalAmount, totalAmountAfterDiscount, netAmount;
+  final String id, name, phone, paymentMethod, date, address, waiterName, waiterId;
+  final String totalAmount, totalAmountAfterDiscount, netAmount;
 
   @override
   Widget build(BuildContext context) {
@@ -254,22 +258,6 @@ class _BuildNameContainer extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Row(
-                //   children: [
-                //     const Text(
-                //       'Address: ',
-                //       style: Const.italicStyleSubHeading,
-                //     ),
-                //     const SizedBox(
-                //       width: 2,
-                //     ),
-                //     Text(
-                //       address,
-                //       style: const TextStyle(
-                //           color: Colors.white, fontWeight: FontWeight.bold),
-                //     ),
-                //   ],
-                // ),
                 const SizedBox(
                   height: 3,
                 ),
@@ -295,7 +283,7 @@ class _BuildNameContainer extends StatelessWidget {
                       width: 4,
                     ),
                     Text(
-                      waiter,
+                      waiterName,
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
@@ -323,7 +311,7 @@ class _BuildPriceCard extends StatelessWidget {
     required this.netAmount,
   }) : super(key: key);
 
-  final double totalAmount, totalAmountAfterDiscount, netAmount;
+  final String totalAmount, totalAmountAfterDiscount, netAmount;
 
   @override
   Widget build(BuildContext context) {
@@ -363,7 +351,7 @@ class _BuildPriceCard extends StatelessWidget {
                               color: Colors.grey.shade400),
                           children: [
                             TextSpan(
-                              text: totalAmount.toStringAsFixed(1),
+                              text: totalAmount,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey.shade700),
@@ -384,7 +372,7 @@ class _BuildPriceCard extends StatelessWidget {
                           color: Colors.grey.shade400),
                       children: [
                         TextSpan(
-                          text: totalAmountAfterDiscount.toStringAsFixed(1),
+                          text: totalAmountAfterDiscount,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.grey.shade700),
@@ -423,7 +411,7 @@ class _BuildPriceCard extends StatelessWidget {
                             color: Colors.grey.shade400),
                         children: [
                           TextSpan(
-                            text : netAmount.toStringAsFixed(1),
+                            text : netAmount,
                             style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
@@ -434,7 +422,7 @@ class _BuildPriceCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '\$${(netAmount - totalAmountAfterDiscount).toStringAsFixed(1)} Service tax added',
+                    '\$${(double.parse(netAmount) - double.parse(totalAmountAfterDiscount)).toStringAsFixed(1)} Service tax added',
                     style: const TextStyle(
                         fontSize: 10,
                         color: Colors.grey,
@@ -608,7 +596,7 @@ class _BuildListTile extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Colors.blueGrey.shade200),
                 children: [
                   TextSpan(
-                    text: '${(int.parse(orders[index]["price"]) * int.parse(orders[index]["quantity"]))}',
+                    text: orders[index]['itemTotal'],
                     style: Const.invDetailsListPrice,
                   )
                 ]

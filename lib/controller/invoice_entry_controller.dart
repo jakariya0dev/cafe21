@@ -63,11 +63,15 @@ class InvoiceEntryController{
       'discount' : invoice.discount,
       'discountType' : invoice.discountType,
       'tax' : invoice.tax,
-      'waiter' : invoice.waiter,
+      'waiterName' : invoice.waiterName,
+      'waiterId' : invoice.waiterId,
       'table' : invoice.table,
       'dateTime' : invoice.dateTime,
       'paymentMethod' : invoice.paymentMethod,
-      'orders' : invoice.orders
+      'orders' : invoice.orders,
+      'subTotal': invoice.subTotal,
+      'total' : invoice.total,
+      'netBill' : invoice.netBill
     }).whenComplete((){
       Navigator.push(
           context,
@@ -106,6 +110,24 @@ class InvoiceEntryController{
 
     var categoryList = await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').get();
     return categoryList['names'];
+  }
+
+  getWaiterData() async {
+
+    List waiterList = [];
+
+    await db.collection(AppConfig.dbName).doc('users').collection('waiters').get().then((value) {
+
+      for(var item in value.docs){
+        waiterList.add({
+          'id' : item['id'],
+          'name' : item['name'],
+        });
+      }
+
+    });
+
+    return waiterList;
   }
 
 }

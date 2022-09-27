@@ -19,9 +19,9 @@ class InvoicePrint extends StatefulWidget {
 
 class _InvoicePrintState extends State<InvoicePrint> {
 
-  late double netBill;
-  double totalAmount = 0;
-  late double totalAmountAfterDiscount;
+  // late double netBill;
+  // double totalAmount = 0;
+  // late double totalAmountAfterDiscount;
 
   // printing services
   BlueThermalPrinter printer = BlueThermalPrinter.instance;
@@ -33,19 +33,19 @@ class _InvoicePrintState extends State<InvoicePrint> {
     // TODO: implement initState
     super.initState();
 
-    for(var i = 0; i < widget.invoiceData.orders.length; i++ ){
-
-      totalAmount = totalAmount + double.parse(widget.invoiceData.orders[i]['itemTotal']);
-    }
-
-    if(widget.invoiceData.discount.isNotEmpty && widget.invoiceData.discountType == '%'){
-      totalAmountAfterDiscount = totalAmount - (totalAmount*(int.parse(widget.invoiceData.discount)/100));
-      netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
-    }
-    if(widget.invoiceData.discount.isNotEmpty && widget.invoiceData.discountType == '\$'){
-      totalAmountAfterDiscount = totalAmount - int.parse(widget.invoiceData.discount);
-      netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
-    }
+    // for(var i = 0; i < widget.invoiceData.orders.length; i++ ){
+    //
+    //   totalAmount = totalAmount + double.parse(widget.invoiceData.orders[i]['itemTotal']);
+    // }
+    //
+    // if(widget.invoiceData.discount.isNotEmpty && widget.invoiceData.discountType == '%'){
+    //   totalAmountAfterDiscount = totalAmount - (totalAmount*(int.parse(widget.invoiceData.discount)/100));
+    //   netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
+    // }
+    // if(widget.invoiceData.discount.isNotEmpty && widget.invoiceData.discountType == '\$'){
+    //   totalAmountAfterDiscount = totalAmount - int.parse(widget.invoiceData.discount);
+    //   netBill = totalAmountAfterDiscount + (totalAmountAfterDiscount*(int.parse(widget.invoiceData.tax)/100));
+    // }
     initPrinter();
 
   }
@@ -68,7 +68,6 @@ class _InvoicePrintState extends State<InvoicePrint> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(onPressed: (){
-
             if(widget.isServerData==false){
               Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
             }else{
@@ -76,7 +75,6 @@ class _InvoicePrintState extends State<InvoicePrint> {
             }
           }, icon: const Icon(Icons.arrow_back_outlined)),
           actions: [
-
             TextButton(
                 onPressed: () {},
                 child: const Text(
@@ -127,10 +125,10 @@ class _InvoicePrintState extends State<InvoicePrint> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                BuildInvoiceRow('Total amount:', totalAmount.toString()),
-                BuildInvoiceRow('After discount: (${widget.invoiceData.discount}${widget.invoiceData.discountType}):', totalAmountAfterDiscount.toString()),
-                BuildInvoiceRow('With Tax (${widget.invoiceData.tax}%):', netBill.toString()),
-                BuildInvoiceRowLast(title: 'Net Bill:', value: '\$$netBill',)
+                BuildInvoiceRow('Total amount:', widget.invoiceData.subTotal),
+                BuildInvoiceRow('After ${widget.invoiceData.discount}${widget.invoiceData.discountType} Discount (-${(double.parse(widget.invoiceData.subTotal)-double.parse(widget.invoiceData.total)).toStringAsFixed(2)}):', widget.invoiceData.total),
+                BuildInvoiceRow('With ${widget.invoiceData.tax}% Tax (+${(double.parse(widget.invoiceData.netBill)-double.parse(widget.invoiceData.total)).toStringAsFixed(2)}):', widget.invoiceData.netBill),
+                BuildInvoiceRowLast(title: 'Net Bill:', value: '\$${widget.invoiceData.netBill}',)
               ],
             ),
           ),

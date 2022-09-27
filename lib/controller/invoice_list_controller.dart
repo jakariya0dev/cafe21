@@ -18,13 +18,17 @@ class InvoiceListController{
           phone: element['phone'],
           discount: element['discount'],
           tax: element['tax'],
-          waiter: element['waiter'],
+          waiterName: element['waiterName'],
+          waiterId: element['waiterId'],
           table: element['table'],
           dateTime: element['dateTime'],
           orders: element['orders'],
           address: element['address'],
           discountType: element['discountType'],
-          paymentMethod : element['paymentMethod']
+          paymentMethod : element['paymentMethod'],
+          subTotal: element['subTotal'],
+          total: element['total'],
+          netBill: element['netBill']
         );
         invoice.add(invoiceModel);
       }

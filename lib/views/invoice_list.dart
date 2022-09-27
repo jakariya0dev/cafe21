@@ -158,6 +158,7 @@ class _InvoiceListState extends State<InvoiceList> {
 }
 
 class BuildInvoiceListItem extends StatelessWidget {
+
   const BuildInvoiceListItem(
       {Key? key, required this.index, required this.invoiceData})
       : super(key: key);
@@ -168,20 +169,16 @@ class BuildInvoiceListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     bool isPaid;
+    double netBill = double.parse(invoiceData.netBill);
+    
     if(invoiceData.paymentMethod== paymentMethodList[3]){
       isPaid = false;
     }else{
       isPaid = true;
     }
 
-    int totalAmount = 0;
-
-    for (var i = 0; i < invoiceData.orders.length; i++) {
-      totalAmount = totalAmount +
-          (int.parse(invoiceData.orders[i]['price']) *
-              int.parse(invoiceData.orders[i]['quantity']));
-    }
     return Stack(
       children: [
         Container(
@@ -248,7 +245,7 @@ class BuildInvoiceListItem extends StatelessWidget {
                           color: Colors.grey.shade400),
                       children: [
                         TextSpan(
-                          text: totalAmount.toString(),
+                          text: netBill.toStringAsFixed(1),
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,

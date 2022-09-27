@@ -1,9 +1,8 @@
-import 'package:cafe21/model/order_item_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class InvoiceModel{
 
-   final String invoiceId, customer, phone, address, discount, tax, waiter, table, discountType, paymentMethod;
+   final String invoiceId, customer, phone, address, discount, tax, waiterName, waiterId, table;
+   final String discountType, paymentMethod, subTotal, total, netBill;
    final dateTime;
    final List orders;
 
@@ -15,11 +14,16 @@ class InvoiceModel{
     required this.discount,
     required this.discountType,
     required this.tax,
-    required this.waiter,
+    required this.waiterName,
+    required this.waiterId,
     required this.table,
     required this.dateTime,
     required this.paymentMethod,
-    required this.orders});
+    required this.orders,
+    required this.subTotal,
+    required this.total,
+    required this.netBill
+  });
 
    // factory InvoiceModel.fromFirestore(
    //     DocumentSnapshot<Map<String, dynamic>> snapshot,

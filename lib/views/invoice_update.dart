@@ -28,6 +28,8 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
   var height, width;
   double total = 0;
+  double subTotal = 0;
+  double netBill = 0;
   int selectedButton = 0;
   String? selectedPaymentMethod;
   bool isPaymentMethodSelected = false;
@@ -63,7 +65,6 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
     phoneController.text = widget.invoiceData.phone;
     discountController.text = widget.invoiceData.discount;
     taxController.text = widget.invoiceData.tax;
-    waiterController.text = widget.invoiceData.waiter;
     addressController.text = widget.invoiceData.address;
     tableController.text = widget.invoiceData.table;
     for(var item in orderedItemList){
@@ -193,11 +194,16 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                           discount: discountController.text,
                           discountType: totalDiscountType,
                           tax: taxController.text,
-                          waiter: waiterController.text,
+                          waiterName: waiterController.text,
+                          waiterId: waiterController.text,
                           table: tableController.text,
                           dateTime: dated,
                           paymentMethod: selectedPaymentMethod!,
-                          orders: orderListWithMap);
+                          orders: orderListWithMap,
+                        subTotal: subTotal.toStringAsFixed(2),
+                          total: total.toStringAsFixed(2),
+                          netBill: netBill.toStringAsFixed(2)
+                      );
                       await InvoiceEntryController().saveInvoiceToServer(invoice, context);
                     }
                   },
