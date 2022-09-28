@@ -17,8 +17,10 @@ class InvoiceList extends StatefulWidget {
 }
 
 class _InvoiceListState extends State<InvoiceList> {
-  List sellsData = [];
-  List invoiceData = [];
+
+  List sellsData = [];    // all invoice data here
+  List invoiceData = [];  // all data for ui rendering
+  List invoiceDataFilteredByDate = [];  // all filtered data
   String selectedButton = 'All';
   List<String> buttonList = ['All', 'Paid', 'Unpaid'];
 
@@ -26,23 +28,23 @@ class _InvoiceListState extends State<InvoiceList> {
   @override
   void initState() {
     super.initState();
-    getTodaysSellsData();
+    getSellsData();
   }
 
-  getTodaysSellsData() async {
-    sellsData = await InvoiceListController().getTodaysSells();
-    invoiceData = sellsData.reversed.toList();
+  getSellsData() async {
 
+    selectedButton = 'All';
+    sellsData = await InvoiceListController().getTodaysSells(); // getting all invoice data
+    invoiceDataFilteredByDate = sellsData;  // so, first no filter assign all data here
+    invoiceData = invoiceDataFilteredByDate;  // data assign for ui rendering
     setState(() {});
 
-    // print(invoiceData);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
-      // drawer: const MyDrawer(),
       appBar: AppBar(
         titleTextStyle: const TextStyle(fontWeight: FontWeight.normal),
         title: const Text('Chef de cuisine'),
@@ -53,11 +55,7 @@ class _InvoiceListState extends State<InvoiceList> {
       ),
       body: Container(
         margin: const EdgeInsets.all(15),
-        child: sellsData.isEmpty
-            ? const Center(
-          child: CircularProgressIndicator(),
-        )
-            : Column(
+        child: Column(
           children: [
             SizedBox(
               height: 50,
@@ -72,21 +70,23 @@ class _InvoiceListState extends State<InvoiceList> {
                       value: e,
                       child: Text(e))).toList(),
                   onChanged: (value) {
-                    selectedButton = value.toString();
-                    setState(() {});
+                    filterDataByPayment(value);
                   },
                 ),
-                IconButton(onPressed: (){
-                  showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime.now());
-                }, icon: const Icon(Icons.calendar_month_outlined),),
-                IconButton(onPressed: (){
-                  showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime.now());
-                }, icon: const Icon(Icons.refresh),),
+                IconButton(
+                  onPressed: filterDataByDate,
+                  icon: const Icon(Icons.calendar_month_outlined),
+                ),
+                IconButton(onPressed: getSellsData, icon: const Icon(Icons.refresh),),
               ],
             ),
             ),
             Expanded(
-                child: ListView.builder(
+                child: sellsData.isEmpty
+                    ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+                    : ListView.builder(
                   reverse: false,
                   itemCount: invoiceData.length,
                   itemBuilder: (context, index) {
@@ -106,6 +106,7 @@ class _InvoiceListState extends State<InvoiceList> {
                         child: BuildInvoiceListItem(
                           index: index,
                           invoiceData: invoiceData[index],
+                          length: invoiceData.length,
                         ));
                   },
                 )),
@@ -134,11 +135,12 @@ class _InvoiceListState extends State<InvoiceList> {
         actionsAlignment: MainAxisAlignment.center,
         actions: [
           MaterialButton(onPressed: () async {
+
             String msg = await InvoiceListController().deleteInvoice(invoiceData[index].invoiceId);
             Navigator.pop(context);
             invoiceData.clear();
             sellsData.clear();
-            getTodaysSellsData();
+            getSellsData();
             SnackBar snackBar = SnackBar(backgroundColor: Colors.purple, content: Text(msg), action: SnackBarAction(label: 'OK', textColor: Colors.white, onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
@@ -156,17 +158,75 @@ class _InvoiceListState extends State<InvoiceList> {
       );
     },);
   }
+
+  filterDataByDate() async {
+
+    String idForCompare, year, month, day;
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime.now(),
+    );
+
+    if(date != null){
+      year = date.year.toString();
+      int pMonth = date.month;
+      int pDay = date.day;
+
+
+      if(pMonth<10) {
+        month = pMonth.toString().padLeft(2, '0');
+      }else {
+        month = pMonth.toString();
+      }
+      if(pDay<10) {
+        day = pDay.toString().padLeft(2, '0');
+      }else {
+        day = pDay.toString();
+      }
+
+      idForCompare = year+month+day;
+
+      invoiceDataFilteredByDate = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+      invoiceData = invoiceDataFilteredByDate;
+      // print(idForCompare);
+      setState(() {});
+
+    }
+
+  }
+
+  filterDataByPayment(value) {
+
+    selectedButton = value.toString();
+
+    if(value =='Unpaid'){
+
+      invoiceData = invoiceDataFilteredByDate.where((element) => element.paymentMethod == 'Payment Due').toList();
+
+    }
+    else if(value =='All'){
+      invoiceData = invoiceDataFilteredByDate;
+
+    }
+    else{
+      invoiceData = invoiceDataFilteredByDate.where((element) => element.paymentMethod != 'Payment Due').toList();
+
+    }
+
+    setState(() {});
+  }
 }
 
 class BuildInvoiceListItem extends StatelessWidget {
 
   const BuildInvoiceListItem(
-      {Key? key, required this.index, required this.invoiceData})
+      {Key? key, required this.index, required this.invoiceData, required this.length})
       : super(key: key);
-  final int index;
+  final int index, length;
   final InvoiceModel invoiceData;
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -265,7 +325,7 @@ class BuildInvoiceListItem extends StatelessWidget {
           bottom: 0,
           child: CircleAvatar(
             child: Text(
-              '${index + 1}',
+              '${length-index}',
               textAlign: TextAlign.center,
               style: const TextStyle(
                   fontWeight: FontWeight.w500,

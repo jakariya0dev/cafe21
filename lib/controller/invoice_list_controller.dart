@@ -8,7 +8,8 @@ class InvoiceListController{
 
   Future<List> getTodaysSells() async {
 
-    List <InvoiceModel> invoice = [];
+    List <InvoiceModel> invoices = [];
+    List <InvoiceModel> reversedInvoices = [];
 
     await db.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').get().then((value){
       for(var element in value.docs){
@@ -30,12 +31,12 @@ class InvoiceListController{
           total: element['total'],
           netBill: element['netBill']
         );
-        invoice.add(invoiceModel);
+        invoices.add(invoiceModel);
       }
 
     });
-
-    return invoice;
+    reversedInvoices = invoices.reversed.toList();
+    return reversedInvoices;
   }
 
   deleteInvoice(invoiceId) async {

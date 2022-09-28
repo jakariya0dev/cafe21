@@ -180,7 +180,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                               text: '\$',
                               style: const TextStyle(
                                   color: Colors.white70,
-                                  fontSize: 17,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.normal),
                               children: [
                                 TextSpan(
@@ -450,7 +450,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
   SizedBox buildOrderedListItem() {
 
     return SizedBox(
-        height: (width * 0.26 + 8) * orderedItemList.length,
+        height: (100.0 + 8) * orderedItemList.length,
         child: orderedItemList.isEmpty
             ? const Center(
           child: Text('No item in list'),
@@ -460,7 +460,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
           itemCount: orderedItemList.length,
           itemBuilder: (context, index) {
             return Container(
-              height: height * 0.15,
+              height: 100,
               padding: const EdgeInsets.only(
                   top: 8, bottom: 16, left: 10, right: 10),
               margin: const EdgeInsets.only(bottom: 8),
