@@ -3,8 +3,6 @@ import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/views//invoice_list.dart';
 import 'package:cafe21/widget/drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:cafe21/cons/const_string.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -17,9 +15,15 @@ class _DashBoardState extends State<DashBoard> {
 
   bool isSelectedBottomButtonOne = true;
   bool isSelectedBottomButtonTwo = false;
-  late SharedPreferences prefs;
 
   List waiterList = [], foodList = [], categoryList = [];
+  List sellsData = [];
+  List sellsDataFiltered = [];
+  double totalTax = 0;
+  double totalWithTax = 0;
+  double totalWithoutTax = 0;
+  String title = 'Today\'s sells data';
+
 
   @override
   void initState() {
@@ -29,17 +33,17 @@ class _DashBoardState extends State<DashBoard> {
 
   init() async {
 
+    sellsData = await DashboardController().getSellsData();
     foodList = await DashboardController().getAllFood();
     categoryList = await DashboardController().getAllFoodCategory();
     waiterList = await DashboardController().getAllWaiter();
 
-
-    // print(totalFood);
-    prefs = await SharedPreferences.getInstance();
-    // print(prefs.getBool(ConstString.isLogged));
-    // print(prefs.getString(ConstString.userRole));
+    getDailyData();
+    calculationInvoiceData();
     setState(() {});
+
   }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -48,7 +52,6 @@ class _DashBoardState extends State<DashBoard> {
     return Scaffold(
       backgroundColor: Colors.deepPurple.shade50,
       appBar: AppBar(
-
         title: const Text('Sells Dashboard'),
         titleTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
       ),
@@ -60,65 +63,19 @@ class _DashBoardState extends State<DashBoard> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(16),
-                  height: width * 0.4,
-                  width: width,
-                  decoration: const BoxDecoration(color: Color(0xff7c79ea)
-                      // color: Colors.white
-                      ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Todays Sells Data',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            margin: const EdgeInsets.only(
-                                right: 10, top: 10, bottom: 10),
-                            decoration: BoxDecoration(
-                                // color:  Color(0xff6a67dc),
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4)),
-                            child: const Text('Sells'),
-                          ),
-                          const Text(
-                            '\$10,000',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
-                          )
-                        ],
-                      ),
-                      const Text(
-                        'Total No. invoice 10 6',
-                        style: TextStyle(color: Colors.white),
-                      )
-                    ],
-                  ),
-                ),
+                buildTitleContainer(width, totalWithTax,),
                 SizedBox(
                   height: 120,
                   child: Row(
-                    children: const [
+                    children: [
                       BuildBoxContent(
                         title: 'Without Tax',
-                        value: '100',
+                        value: totalWithoutTax.toStringAsFixed(1),
                         color: AppColor.boxOne,
                       ),
                       BuildBoxContent(
                         title: 'Tax Collection',
-                        value: '100',
+                        value: (totalWithTax-totalWithoutTax).toStringAsFixed(2),
                         color: AppColor.boxTwo,
                       ),
                       // BuildBoxContent(title: 'Tax Collection', value: '100', color: AppColor.boxThree,),
@@ -203,7 +160,6 @@ class _DashBoardState extends State<DashBoard> {
               ],
             ),
           ),
-
         ),
       ),
       bottomNavigationBar: SizedBox(
@@ -211,16 +167,167 @@ class _DashBoardState extends State<DashBoard> {
         child: Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-              color: Colors.white,
-            borderRadius: BorderRadius.circular(32)
-          ),
-
+              color: Colors.white, borderRadius: BorderRadius.circular(32)),
           child: const BuildBottomNavbar(),
         ),
       ),
     );
   }
+
+  Widget buildTitleContainer(width, value) {
+    return Stack(
+      children: [
+        Container(
+          margin: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(16),
+          height: width * 0.4,
+          width: width,
+          decoration: const BoxDecoration(color: Color(0xff7c79ea)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                        color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.only(right: 10, top: 10, bottom: 10),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4)),
+                        child: const Text('Sells'),
+                      ),
+                      Text(
+                        '\$${value.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      )
+                    ],
+                  ),
+                  Text(
+                    'Total No. invoice: ${sellsDataFiltered.length}',
+                    style: const TextStyle(color: Colors.white),
+                  )
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: getDataByDate,
+                    icon: const Icon(Icons.calendar_month, color: Colors.white,),
+                  ),
+                  IconButton(
+                    onPressed: getDailyData,
+                    icon: const Icon(Icons.refresh, color: Colors.white,),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> getDataByDate() async {
+
+    String idForCompare, year, month, day;
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime.now(),
+    );
+
+    if(date != null){
+      year = date.year.toString();
+      int pMonth = date.month;
+      int pDay = date.day;
+
+
+      if(pMonth<10) {
+        month = pMonth.toString().padLeft(2, '0');
+      }else {
+        month = pMonth.toString();
+      }
+      if(pDay<10) {
+        day = pDay.toString().padLeft(2, '0');
+      }else {
+        day = pDay.toString();
+      }
+
+      idForCompare = year+month+day;
+
+      sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+      print(sellsDataFiltered.length);
+    }
+
+    calculationInvoiceData();
+
+  }
+
+  Future<void> getDailyData() async {
+
+    String idForCompare, year, month, day;
+    DateTime date = DateTime.now();
+
+
+      year = date.year.toString();
+      int pMonth = date.month;
+      int pDay = date.day;
+
+      if(pMonth<10) {
+        month = pMonth.toString().padLeft(2, '0');
+      }else {
+        month = pMonth.toString();
+      }
+      if(pDay<10) {
+        day = pDay.toString().padLeft(2, '0');
+      }else {
+        day = pDay.toString();
+      }
+
+      idForCompare = year+month+day;
+
+      sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+      calculationInvoiceData();
+
+
+  }
+
+  calculationInvoiceData(){
+
+    totalWithTax = 0;
+    totalWithoutTax = 0;
+
+    for (var item in sellsDataFiltered) {
+
+      totalWithTax = totalWithTax + double.parse(item.netBill);
+      totalWithoutTax = totalWithoutTax + double.parse(item.total);
+    }
+    setState(() {
+
+    });
+    // print(totalWithTax);
+    // print(totalWithoutTax);
+  }
 }
+
+
+// classes for views
 
 class BuildBottomNavbar extends StatelessWidget {
   const BuildBottomNavbar({

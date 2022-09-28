@@ -20,7 +20,7 @@ class _InvoiceListState extends State<InvoiceList> {
 
   List sellsData = [];    // all invoice data here
   List invoiceData = [];  // all data for ui rendering
-  List invoiceDataFilteredByDate = [];  // all filtered data
+  List filteredInvoiceData = [];  // all filtered data
   String selectedButton = 'All';
   List<String> buttonList = ['All', 'Paid', 'Unpaid'];
 
@@ -34,9 +34,9 @@ class _InvoiceListState extends State<InvoiceList> {
   getSellsData() async {
 
     selectedButton = 'All';
-    sellsData = await InvoiceListController().getTodaysSells(); // getting all invoice data
-    invoiceDataFilteredByDate = sellsData;  // so, first no filter assign all data here
-    invoiceData = invoiceDataFilteredByDate;  // data assign for ui rendering
+    sellsData = await InvoiceListController().getSellsData(); // getting all invoice data
+    filteredInvoiceData = sellsData;  // so, first no filter assign all data here
+    invoiceData = filteredInvoiceData;  // data assign for ui rendering
     setState(() {});
 
   }
@@ -52,6 +52,11 @@ class _InvoiceListState extends State<InvoiceList> {
           onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard(),)),
           icon: const Icon(Icons.home),
         ),
+        actions: [
+          IconButton(onPressed: () {
+
+          }, icon: const Icon(Icons.replay_circle_filled_outlined))
+        ],
       ),
       body: Container(
         margin: const EdgeInsets.all(15),
@@ -189,8 +194,8 @@ class _InvoiceListState extends State<InvoiceList> {
 
       idForCompare = year+month+day;
 
-      invoiceDataFilteredByDate = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
-      invoiceData = invoiceDataFilteredByDate;
+      filteredInvoiceData = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+      invoiceData = filteredInvoiceData;
       // print(idForCompare);
       setState(() {});
 
@@ -203,16 +208,14 @@ class _InvoiceListState extends State<InvoiceList> {
     selectedButton = value.toString();
 
     if(value =='Unpaid'){
-
-      invoiceData = invoiceDataFilteredByDate.where((element) => element.paymentMethod == 'Payment Due').toList();
-
+      invoiceData = filteredInvoiceData.where((element) => element.paymentMethod == 'Payment Due').toList();
     }
     else if(value =='All'){
-      invoiceData = invoiceDataFilteredByDate;
+      invoiceData = filteredInvoiceData;
 
     }
     else{
-      invoiceData = invoiceDataFilteredByDate.where((element) => element.paymentMethod != 'Payment Due').toList();
+      invoiceData = filteredInvoiceData.where((element) => element.paymentMethod != 'Payment Due').toList();
 
     }
 

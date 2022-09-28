@@ -6,7 +6,7 @@ class InvoiceListController{
 
   var db = FirebaseFirestore.instance;
 
-  Future<List> getTodaysSells() async {
+  Future<List> getSellsData() async {
 
     List <InvoiceModel> invoices = [];
     List <InvoiceModel> reversedInvoices = [];
