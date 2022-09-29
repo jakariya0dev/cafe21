@@ -1,8 +1,9 @@
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/views//invoice_list.dart';
-import 'package:cafe21/widget/drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:cafe21/controller/drawer_controller.dart';
+import 'admin_dashboard.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -55,7 +56,7 @@ class _DashBoardState extends State<DashBoard> {
         title: const Text('Sells Dashboard'),
         titleTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
       ),
-      drawer: const MyDrawer(),
+      drawer: myDrawer(),
       body: SafeArea(
         child: Container(
           constraints: const BoxConstraints.expand(),
@@ -241,6 +242,96 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
+  Widget myDrawer(){
+    return Drawer(
+      child: Column(
+        children: [
+          const UserAccountsDrawerHeader(
+            currentAccountPicture: CircleAvatar(child: Text('Logo')),
+            accountName: Text('Manager'),
+            accountEmail: Text('Chef de cuisine'),
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    getAllTotalData();
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.account_balance_wallet_outlined,
+                    text: 'Total summery',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    getDailyData();
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.view_day_outlined,
+                    text: 'Today\'s Data',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    getWeeklyData();
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.weekend_outlined,
+                    text: 'Weekly data',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    getMonthlyData();
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.calendar_month,
+                    text: 'Monthly data',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(),));
+
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.admin_panel_settings_outlined,
+                    text: 'Admin area',
+                  ),
+                ),
+                InkWell(
+                  onTap: () async {
+                    await MyDrawerController().userLogOut(context);
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.logout,
+                    text: 'Logout',
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.devices),
+            title: const Text('Developer info'),
+            onTap: () {
+              Navigator.pop(context);
+              showAboutDialog(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> getDataByDate() async {
 
     String idForCompare, year, month, day;
@@ -270,9 +361,7 @@ class _DashBoardState extends State<DashBoard> {
       }
 
       idForCompare = year+month+day;
-
       sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
-      print(sellsDataFiltered.length);
     }
 
     calculationInvoiceData();
@@ -305,7 +394,25 @@ class _DashBoardState extends State<DashBoard> {
       sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
       calculationInvoiceData();
 
+  }
 
+  getWeeklyData(){
+    var sevenDaysAgoFromNow = DateTime.now().subtract(const Duration(days: 7));
+    sellsDataFiltered = sellsData.where((element) => element.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
+    calculationInvoiceData();
+    setState(() {});
+  }
+
+  getMonthlyData(){
+    var now = DateTime.now();
+    var thirtyDaysAgoFromNow = DateTime(now.year, now.month-1, now.day);
+    sellsDataFiltered = sellsData.where((element) => element.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
+    calculationInvoiceData();
+    setState(() {});
+  }
+  getAllTotalData(){
+    sellsDataFiltered = sellsData;
+    calculationInvoiceData();
   }
 
   calculationInvoiceData(){
@@ -323,6 +430,48 @@ class _DashBoardState extends State<DashBoard> {
     });
     // print(totalWithTax);
     // print(totalWithoutTax);
+  }
+
+  showAboutDialog(context){
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        scrollable: true,
+        backgroundColor: Colors.purple.shade500,
+        elevation: 24,
+        actionsAlignment: MainAxisAlignment.center,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10)
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircleAvatar(
+              radius: 35,
+              backgroundImage: AssetImage('assets/images/logo.png'),
+            ),
+            const SizedBox(height: 16,),
+            const Text('Brain Storm 21', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 25),),
+            Text('Your Complete it partner', style: TextStyle(color: Colors.grey.shade300),),
+            Text('www.brainstorm21.com', style: TextStyle(color: Colors.grey.shade300),),
+            Text('Cell: +8801521466603', style: TextStyle(color: Colors.grey.shade300),),
+            const SizedBox(height: 16,),
+            const Text('Email:\nquery@brainstorm21.com', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+
+          ],
+
+        ),
+        actions: [
+          MaterialButton(
+            shape: const StadiumBorder(),
+            onPressed: () => Navigator.pop(context),
+            textColor: Colors.white,
+            color: const Color(AppColor.box7),
+            child: const Text('OK'),
+          )
+        ],
+      );
+    },);
   }
 }
 
@@ -447,6 +596,29 @@ class BuildBoxContent extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class DrawerListTile extends StatelessWidget {
+  const DrawerListTile({
+    Key? key, required this.icon, required this.text,
+
+  }) : super(key: key);
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 24, top: 4, bottom: 4),
+      child: Row(
+        children:  [
+          Icon(icon, color: Colors.grey.shade700),
+          const SizedBox(width: 16,),
+          Text(text, style: const TextStyle(fontWeight: FontWeight.w500),)],
       ),
     );
   }

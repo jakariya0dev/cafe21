@@ -53,7 +53,8 @@ class _InvoiceListState extends State<InvoiceList> {
           icon: const Icon(Icons.home),
         ),
         actions: [
-          IconButton(onPressed: () {
+          IconButton(
+              onPressed: () {
 
           }, icon: const Icon(Icons.replay_circle_filled_outlined))
         ],
@@ -196,7 +197,6 @@ class _InvoiceListState extends State<InvoiceList> {
 
       filteredInvoiceData = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
       invoiceData = filteredInvoiceData;
-      // print(idForCompare);
       setState(() {});
 
     }

@@ -592,21 +592,18 @@ class _CartPageState extends State<CartPage> {
   }
 
   openFoodCartDialog(BuildContext context) async {
-
     return showDialog(
       context: context,
       builder: (context) {
-
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
-            // contentPadding: EdgeInsets.all(0),
             title: const Text('Add product'),
             content: foodData.isEmpty
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
                 : SizedBox(
-                    height: double.maxFinite,
+                    height: height * 0.5,
                     width: width * 0.8,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -652,6 +649,7 @@ class _CartPageState extends State<CartPage> {
                                   itemCount: foodData.length,
                                   itemBuilder: (context, index) {
                                     return Column(
+                                        mainAxisSize: MainAxisSize.min,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
@@ -757,10 +755,18 @@ class _CartPageState extends State<CartPage> {
                   ),
             actions: [
               TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  openFoodCartDialogForOthers(context);
+                },
+                child: const Text('Other'),
+              ),
+              TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Ok')),
+                  child: const Text('Ok'),
+              ),
             ],
           );
         });
@@ -802,6 +808,51 @@ class _CartPageState extends State<CartPage> {
     itemDiscountType[index] = '%';
     changeState();
     print(itemAddedInCartIdList);
+
+  }
+
+  addOthersItemInOrderList(
+      foodNameControllerForOther,
+      priceControllerForOther,
+      discountControllerForOther,
+      discountTypeForOthers,
+      quantityForOthers){
+
+    num itemTotal;
+
+    if(discountControllerForOther.isNotEmpty &&  discountTypeForOthers == '%'){
+      num discount = int.parse(discountControllerForOther)/100;
+      num subTotal = quantityForOthers * int.parse(priceControllerForOther);
+      itemTotal = subTotal - (subTotal*discount);
+    }
+    else if(discountControllerForOther.isNotEmpty &&  discountTypeForOthers == '\$'){
+      num subTotal = quantityForOthers * int.parse(priceControllerForOther);
+      itemTotal = subTotal - int.parse(discountControllerForOther);
+    }
+    else{
+      itemTotal = int.parse(priceControllerForOther)*quantityForOthers;
+    }
+
+    subTotal += itemTotal;
+    orderedItemList.add(OrderItemModel(
+        id: '#####',
+        name: foodNameControllerForOther,
+        price: priceControllerForOther,
+        discount: discountControllerForOther,
+        discountType : discountTypeForOthers,
+        quantity: quantityForOthers.toString(),
+        itemTotal: itemTotal.toStringAsFixed(2),
+        isAddedIndex: 0
+    ));
+
+
+    // itemQuantityList[index] = 1;
+    // itemDiscountController[index].clear();
+    // itemDiscountType[index] = '%';
+
+    changeState();
+    print(orderedItemList);
+
   }
 
   void removeItemFromOrderList(index) {
@@ -825,6 +876,187 @@ class _CartPageState extends State<CartPage> {
           }),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  openFoodCartDialogForOthers(context) {
+
+    int quantityForOthers = 1;
+    String discountTypeForOthers = '%';
+    String msg = '';
+    TextEditingController foodNameControllerForOther = TextEditingController();
+    TextEditingController discountControllerForOther = TextEditingController();
+    TextEditingController priceControllerForOther = TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Add product'),
+            content:  SizedBox(
+              height: 250,
+              width: width * 0.8,
+              child: SingleChildScrollView(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        child: TextField(
+                          controller: foodNameControllerForOther,
+                          keyboardType: TextInputType.number,
+                          maxLines: 3,
+                          minLines: 1,
+                          decoration: const InputDecoration(
+                              isDense: true,
+                              labelText: 'Food Name',
+                              hintText: 'Food Name',
+                              border: OutlineInputBorder(),
+                              // suffix: Icon(Icons.clear),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const SizedBox(
+                            width: 70,
+                            child: Text(
+                              'Price:',
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 16,
+                          ),
+                          SizedBox(
+                            width: 60,
+                            child: TextField(
+                              controller: priceControllerForOther,
+                              keyboardType: TextInputType.number,
+                              maxLines: 1,
+                              minLines: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const SizedBox(
+                            width: 70,
+                            child: Text(
+                              'Discount:',
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 16,
+                          ),
+                          SizedBox(
+                            width: 60,
+                            child: TextField(
+                              controller: discountControllerForOther,
+                              keyboardType: TextInputType.number,
+                              maxLines: 1,
+                              minLines: 1,
+                              decoration: InputDecoration(
+                                  isDense: true,
+                                  suffix: InkWell(
+                                      onTap: () {
+                                        if(discountTypeForOthers=='%'){
+                                          discountTypeForOthers = '\$';
+                                        }else{
+                                          discountTypeForOthers = '%';
+                                        }
+                                        setState(() {});
+                                      },
+                                      child: Text(discountTypeForOthers, style: const TextStyle(fontSize: 20),))),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          InkWell(
+                              onTap: () {
+                                if (quantityForOthers > 1) {
+                                  quantityForOthers--;
+                                }
+                                setState(() {});
+                              },
+                              child: const Icon(
+                                Icons.remove_circle_outline,
+                                color: Colors.grey,
+                              )),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Text(
+                              quantityForOthers.toString(),
+                              style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              quantityForOthers++;
+                              setState(() {});
+                            },
+                            child: const Icon(
+                              Icons.add_circle_outline,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          const Expanded(child: SizedBox()),
+                          TextButton(
+                            onPressed: () {
+                              if(foodNameControllerForOther.text.isNotEmpty && priceControllerForOther.text.isNotEmpty && discountControllerForOther.text.isNotEmpty){
+                                addOthersItemInOrderList(
+                                  foodNameControllerForOther.text,
+                                  priceControllerForOther.text,
+                                  discountControllerForOther.text,
+                                  discountTypeForOthers,
+                                  quantityForOthers,
+                                );
+                                msg = 'Info: Item Added Successfully';
+                              }else{
+                                msg = 'Error: Fill all the field';
+                              }
+                              setState(() {});
+                            },
+                            child: const Text(
+                              'Add',
+                              style: TextStyle(
+                                  color:Colors.deepPurple),
+                            ),
+                          )
+                        ],
+                      ),
+                      Text(msg)
+                    ],
+                ),
+              )
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'),
+              ),
+            ],
+          );
+        });
+      },
+    );
   }
 
 }

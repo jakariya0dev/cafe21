@@ -16,8 +16,6 @@ class CommonFunction{
     });
   }
 
-
-
   saveDemoInvoice(){
     // DateTime dateTime = DateTime.now();
     // var year = dateTime.year;
