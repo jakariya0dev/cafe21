@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/cons/const_string.dart';
@@ -16,8 +17,10 @@ class MyDrawerController{
   userLogOut(context) async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    await FirebaseAuth.instance.signOut();
     prefs.remove(ConstString.isLogged);
     prefs.remove(ConstString.userRole);
+
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage(),));
 

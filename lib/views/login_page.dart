@@ -1,11 +1,13 @@
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/views/dashboard_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../cons/const_string.dart';
+import '../model/user_model.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -17,10 +19,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  String userRole = 'manager';
   bool isLoginButtonPressed = false;
   SharedPreferences? prefs;
-  bool isManagerSelected = true, isAdminSelected  = false;
+
+  // String userRole = 'manager';
+  // bool isManagerSelected = true, isAdminSelected  = false;
 
   @override
   initState() {
@@ -74,10 +77,10 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                     SizedBox(height: height*0.2),
-                    Container(
+                     SizedBox(height: height*0.25),
+                     Container(
                       padding: const EdgeInsets.all(24),
-                      height: height*0.60,
+                      // height: height*0.60,
                       width: width * 0.8,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24),
@@ -111,6 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                                         color: Colors.deepPurple, width: 1.5))),
                             keyboardType: TextInputType.emailAddress,
                           ),
+                          const SizedBox(height: 16),
                           TextField(
                             controller: passwordController,
                             style: TextStyle(
@@ -127,40 +131,40 @@ class _LoginPageState extends State<LoginPage> {
                                         color: Colors.deepPurple, width: 1.5))),
                             keyboardType: TextInputType.phone,
                           ),
-                          const SizedBox(height: 32),
-                          RadioListTile(
-                              title: const Text('Manager', style: TextStyle(fontWeight: FontWeight.w500),),
-                              dense: true,
-                              isThreeLine: false,
-                              toggleable: true,
-                              selected: isManagerSelected,
-                              value: ConstString.userRoleManager,
-                              groupValue: userRole,
-                              onChanged: (value) {
-                                userRole = ConstString.userRoleManager;
-                                isManagerSelected = true;
-                                isAdminSelected = false;
-                                setState(() {
-
-                                });
-                                // print('Manager');
-                              }),
-                          RadioListTile(
-                              title: const Text('Admin', style: TextStyle(fontWeight: FontWeight.bold),),
-                              dense: true,
-                              selected: isAdminSelected,
-                              value: ConstString.userRoleAdmin,
-                              groupValue: userRole,
-                              onChanged: (value) {
-                                userRole = ConstString.userRoleAdmin;
-                                isAdminSelected = true;
-                                isManagerSelected = false;
-                                setState(() {
-
-                                });
-                                // print("Admin");
-                              }),
-                          const Expanded(child: SizedBox()),
+                          const SizedBox(height: 42),
+                          // RadioListTile(
+                          //     title: const Text('Manager', style: TextStyle(fontWeight: FontWeight.w500),),
+                          //     dense: true,
+                          //     isThreeLine: false,
+                          //     toggleable: true,
+                          //     selected: isManagerSelected,
+                          //     value: ConstString.userRoleManager,
+                          //     groupValue: userRole,
+                          //     onChanged: (value) {
+                          //       userRole = ConstString.userRoleManager;
+                          //       isManagerSelected = true;
+                          //       isAdminSelected = false;
+                          //       setState(() {
+                          //
+                          //       });
+                          //       // print('Manager');
+                          //     }),
+                          // RadioListTile(
+                          //     title: const Text('Admin', style: TextStyle(fontWeight: FontWeight.bold),),
+                          //     dense: true,
+                          //     selected: isAdminSelected,
+                          //     value: ConstString.userRoleAdmin,
+                          //     groupValue: userRole,
+                          //     onChanged: (value) {
+                          //       userRole = ConstString.userRoleAdmin;
+                          //       isAdminSelected = true;
+                          //       isManagerSelected = false;
+                          //       setState(() {
+                          //
+                          //       });
+                          //       // print("Admin");
+                          //     }),
+                          // const Expanded(child: SizedBox()),
                           AnimatedContainer(
                             height: isLoginButtonPressed ? width*0.14 : width*0.11,
                             duration: const Duration(milliseconds: 500),
@@ -240,11 +244,12 @@ class _LoginPageState extends State<LoginPage> {
               password: passwordController.text
           );
           if(credential.user?.uid !=null){
-
-            await prefs?.setString(ConstString.userRole, userRole);
+            UserModel user = await getUserData(emailController.text);
+            await prefs?.setString(ConstString.userRole, user.userRole);
+            await prefs?.setString(ConstString.userMail, user.mail);
             await prefs?.setBool(ConstString.isLogged, true);
-            FirebaseAuth.instance.signOut();
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard()));
+
           }
 
         } on FirebaseAuthException catch (e) {
@@ -260,5 +265,13 @@ class _LoginPageState extends State<LoginPage> {
       }
 
 
+  }
+
+  Future<UserModel> getUserData(String? uid) async {
+
+    var value = await FirebaseFirestore.instance.collection(AppConfig.dbName).doc('users').collection('all-users').doc(uid).get();
+    UserModel user = UserModel(id: value['id'], name: value['name'], mail: value['mail'], phone: value['phone'], userRole: value['user-role']);
+
+    return user;
   }
 }

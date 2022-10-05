@@ -3,6 +3,8 @@ import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/views//invoice_list.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/controller/drawer_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cafe21/cons/const_string.dart';
 import 'admin_dashboard.dart';
 
 class DashBoard extends StatefulWidget {
@@ -24,6 +26,8 @@ class _DashBoardState extends State<DashBoard> {
   double totalWithTax = 0;
   double totalWithoutTax = 0;
   String title = 'Today\'s sells data';
+  SharedPreferences? prefs;
+  String? userRole;
 
 
   @override
@@ -38,7 +42,8 @@ class _DashBoardState extends State<DashBoard> {
     foodList = await DashboardController().getAllFood();
     categoryList = await DashboardController().getAllFoodCategory();
     waiterList = await DashboardController().getAllWaiter();
-
+    prefs = await SharedPreferences.getInstance();
+    userRole = prefs?.getString(ConstString.userRole);
     getDailyData();
     calculationInvoiceData();
     setState(() {});
@@ -246,10 +251,10 @@ class _DashBoardState extends State<DashBoard> {
     return Drawer(
       child: Column(
         children: [
-          const UserAccountsDrawerHeader(
-            currentAccountPicture: CircleAvatar(child: Text('Logo')),
-            accountName: Text('Manager'),
-            accountEmail: Text('Chef de cuisine'),
+          UserAccountsDrawerHeader(
+            currentAccountPicture: const CircleAvatar(child: Text('Logo')),
+            accountName: Text(userRole!),
+            accountEmail: const Text('Chef de cuisine'),
           ),
           Expanded(
             child: ListView(
@@ -317,7 +322,6 @@ class _DashBoardState extends State<DashBoard> {
               ],
             ),
           ),
-
           ListTile(
             dense: true,
             leading: const Icon(Icons.devices),
