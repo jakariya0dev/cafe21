@@ -39,15 +39,20 @@ class DashboardController{
   }
 
   getAllFood()async{
-    List food = [];
-
+    List data = [];
     await db.collection(AppConfig.dbName).doc('foods').collection('products').get().then((value) {
-      for(var item in value.docs){
-        food.add(item);
-      }
-    });
-    // print('dc ${food.length}');
-    return food;
+
+      for(var doc in value.docs){
+        data.add({
+          'docId' : doc.id,
+          'name' : doc['name'],
+          'type' : doc['category'],
+          'description' : doc['description'],
+          'price' : doc['price']
+        });
+      }});
+
+    return data;
   }
 
   getAllFoodCategory()async{
@@ -64,11 +69,22 @@ class DashboardController{
     List waiterList = [];
 
     await db.collection(AppConfig.dbName).doc('users').collection('waiters').get().then((value) {
+
       for(var item in value.docs){
-        waiterList.add(item);
+        waiterList.add({
+          'docId' : item.id,
+          'id' : item['id'],
+          'name' : item['name'],
+          'phone' : item['phone'],
+          'email' : item['email'],
+          'nid' : item['nid'],
+          'address' : item['address'],
+          'image' : item['image']
+        });
       }
+
     });
-    print('dc ${waiterList.length}');
+
     return waiterList;
   }
 }

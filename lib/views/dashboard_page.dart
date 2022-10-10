@@ -22,6 +22,8 @@ class _DashBoardState extends State<DashBoard> {
   List waiterList = [], foodList = [], categoryList = [];
   List sellsData = [];
   List sellsDataFiltered = [];
+  Map <String, int> countMostSellingFood = {};
+  Map <String, int> countMostServingPerson = {};
   double totalTax = 0;
   double totalWithTax = 0;
   double totalWithoutTax = 0;
@@ -42,11 +44,143 @@ class _DashBoardState extends State<DashBoard> {
     foodList = await DashboardController().getAllFood();
     categoryList = await DashboardController().getAllFoodCategory();
     waiterList = await DashboardController().getAllWaiter();
+
+    // user role remember
     prefs = await SharedPreferences.getInstance();
     userRole = prefs?.getString(ConstString.userRole);
     getDailyData();
     calculationInvoiceData();
+    calculateMostSellingItem();
+
     setState(() {});
+
+  }
+
+  getWeeklyData(){
+    var sevenDaysAgoFromNow = DateTime.now().subtract(const Duration(days: 7));
+    sellsDataFiltered = sellsData.where((element) => element.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
+    calculationInvoiceData();
+    setState(() {});
+  }
+
+  getMonthlyData(){
+    var now = DateTime.now();
+    var thirtyDaysAgoFromNow = DateTime(now.year, now.month-1, now.day);
+    sellsDataFiltered = sellsData.where((element) => element.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
+    calculationInvoiceData();
+    setState(() {});
+  }
+
+  getAllTotalData(){
+    sellsDataFiltered = sellsData;
+    calculationInvoiceData();
+  }
+
+  calculationInvoiceData(){
+
+    totalWithTax = 0;
+    totalWithoutTax = 0;
+
+    for (var item in sellsDataFiltered) {
+
+      totalWithTax = totalWithTax + double.parse(item.netBill);
+      totalWithoutTax = totalWithoutTax + double.parse(item.total);
+    }
+    setState(() {
+
+    });
+    // print(totalWithTax);
+    // print(totalWithoutTax);
+  }
+
+  calculateMostSellingItem(){
+
+    List foodIdFromInvoice = [];
+    List waiterNameFromInvoice = [];
+
+    // getting all food id and waiter name from invoices
+    for (var invoice in sellsData) {
+
+      waiterNameFromInvoice.add(invoice.waiterName);
+
+      for(var item in invoice.orders){
+        foodIdFromInvoice.add(item['id']);
+      }
+    }
+
+    // SUM of food orders
+    for (var foodId in foodIdFromInvoice){
+      countMostSellingFood[foodId] = (countMostSellingFood[foodId] ?? 0) + 1;
+    }
+
+    // SUM of waiter orders
+    for (var waiterName in waiterNameFromInvoice){
+      countMostServingPerson[waiterName] = (countMostServingPerson[waiterName] ?? 0) + 1;
+    }
+
+  }
+
+  Future<void> getDataByDate() async {
+
+    String idForCompare, year, month, day;
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime.now(),
+    );
+
+    if(date != null){
+      year = date.year.toString();
+      int pMonth = date.month;
+      int pDay = date.day;
+
+
+      if(pMonth<10) {
+        month = pMonth.toString().padLeft(2, '0');
+      }else {
+        month = pMonth.toString();
+      }
+      if(pDay<10) {
+        day = pDay.toString().padLeft(2, '0');
+      }else {
+        day = pDay.toString();
+      }
+
+      idForCompare = year+month+day;
+      sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+    }
+
+    calculationInvoiceData();
+
+  }
+
+  Future<void> getDailyData() async {
+
+    String idForCompare, year, month, day;
+    DateTime date = DateTime.now();
+
+
+    year = date.year.toString();
+    int pMonth = date.month;
+    int pDay = date.day;
+
+    if(pMonth<10) {
+      month = pMonth.toString().padLeft(2, '0');
+    }else {
+      month = pMonth.toString();
+    }
+    if(pDay<10) {
+      day = pDay.toString().padLeft(2, '0');
+    }else {
+      day = pDay.toString();
+    }
+
+    idForCompare = year+month+day;
+
+    sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+    calculationInvoiceData();
 
   }
 
@@ -88,8 +222,13 @@ class _DashBoardState extends State<DashBoard> {
                     ],
                   ),
                 ),
-                const _BuildMostSellerList(title: 'Most Selling Food Item', name: 'Chicken Curry Masala', value: '100',),
-                const _BuildMostSellerList(title: 'Most Dishes Serve By', name: 'Zakaria Hossain', value: '100'),
+                _BuildMostSellingItem(
+                  width: width,
+                  height: height,
+                  items: countMostSellingFood,
+                  foods: foodList,
+                  title: 'Most Selling Items'
+                ),
                 SizedBox(
                   height: 120,
                   child: Row(
@@ -126,43 +265,13 @@ class _DashBoardState extends State<DashBoard> {
                     ],
                   ),
                 ),
-                // Container(
-                //   margin: const EdgeInsets.all(1),
-                //   child: Column(
-                //     children: [
-                //       Row(
-                //         children: [
-                //           Expanded(
-                //             child: Container(
-                //               height: 100,
-                //               color: Colors.blue,
-                //               child: const Text('Hello World'),
-                //             ),
-                //           ),
-                //           Expanded(
-                //               child: Container(
-                //             color: Colors.purple,
-                //             child: const Text('Hello World'),
-                //           ))
-                //         ],
-                //       ),
-                //       Row(
-                //         children: [
-                //           Expanded(
-                //               child: Container(
-                //             color: Colors.amber,
-                //             child: const Text('Hello World'),
-                //           )),
-                //           Expanded(
-                //               child: Container(
-                //             color: Colors.green,
-                //             child: const Text('Hello World'),
-                //           ))
-                //         ],
-                //       ),
-                //     ],
-                //   ),
-                // )
+                _BuildMostSellerList(
+                  width: width,
+                  height: height,
+                  items: countMostServingPerson,
+                  waiterList: waiterList,
+                  title: 'Most Serving Person'
+                ),
               ],
             ),
           ),
@@ -253,7 +362,7 @@ class _DashBoardState extends State<DashBoard> {
         children: [
           UserAccountsDrawerHeader(
             currentAccountPicture: const CircleAvatar(child: Text('Logo')),
-            accountName: Text(userRole!),
+            accountName: Text(userRole.toString()),
             accountEmail: const Text('Chef de cuisine'),
           ),
           Expanded(
@@ -336,106 +445,6 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
-  Future<void> getDataByDate() async {
-
-    String idForCompare, year, month, day;
-
-    final date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2022),
-      lastDate: DateTime.now(),
-    );
-
-    if(date != null){
-      year = date.year.toString();
-      int pMonth = date.month;
-      int pDay = date.day;
-
-
-      if(pMonth<10) {
-        month = pMonth.toString().padLeft(2, '0');
-      }else {
-        month = pMonth.toString();
-      }
-      if(pDay<10) {
-        day = pDay.toString().padLeft(2, '0');
-      }else {
-        day = pDay.toString();
-      }
-
-      idForCompare = year+month+day;
-      sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
-    }
-
-    calculationInvoiceData();
-
-  }
-
-  Future<void> getDailyData() async {
-
-    String idForCompare, year, month, day;
-    DateTime date = DateTime.now();
-
-
-      year = date.year.toString();
-      int pMonth = date.month;
-      int pDay = date.day;
-
-      if(pMonth<10) {
-        month = pMonth.toString().padLeft(2, '0');
-      }else {
-        month = pMonth.toString();
-      }
-      if(pDay<10) {
-        day = pDay.toString().padLeft(2, '0');
-      }else {
-        day = pDay.toString();
-      }
-
-      idForCompare = year+month+day;
-
-      sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
-      calculationInvoiceData();
-
-  }
-
-  getWeeklyData(){
-    var sevenDaysAgoFromNow = DateTime.now().subtract(const Duration(days: 7));
-    sellsDataFiltered = sellsData.where((element) => element.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
-    calculationInvoiceData();
-    setState(() {});
-  }
-
-  getMonthlyData(){
-    var now = DateTime.now();
-    var thirtyDaysAgoFromNow = DateTime(now.year, now.month-1, now.day);
-    sellsDataFiltered = sellsData.where((element) => element.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
-    calculationInvoiceData();
-    setState(() {});
-  }
-  getAllTotalData(){
-    sellsDataFiltered = sellsData;
-    calculationInvoiceData();
-  }
-
-  calculationInvoiceData(){
-
-    totalWithTax = 0;
-    totalWithoutTax = 0;
-
-    for (var item in sellsDataFiltered) {
-
-      totalWithTax = totalWithTax + double.parse(item.netBill);
-      totalWithoutTax = totalWithoutTax + double.parse(item.total);
-    }
-    setState(() {
-
-    });
-    // print(totalWithTax);
-    // print(totalWithoutTax);
-  }
-
   showAboutDialog(context){
     showDialog(context: context, builder: (context) {
       return AlertDialog(
@@ -510,12 +519,15 @@ class BuildBottomNavbar extends StatelessWidget {
   }
 }
 
-class _BuildMostSellerList extends StatelessWidget {
-  const _BuildMostSellerList({
-    Key? key, required this.title, required this.name, required this.value,
+class _BuildMostSellingItem extends StatelessWidget {
+  const _BuildMostSellingItem({
+    Key? key, required this.items, required this.height, required this.width, required this.foods, required this.title,
   }) : super(key: key);
 
-  final String title, name, value;
+  final Map items;
+  final List foods;
+  final double height, width;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -523,42 +535,86 @@ class _BuildMostSellerList extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(color: Color(0xff40407a)),
-      child: Row(
+      child: items.isEmpty ? const Center(child: CircularProgressIndicator()) : Column(
         children: [
-          const CircleAvatar(
-            backgroundColor: Colors.white,
-            // foregroundColor: Colors.white,
-            child: Icon(
-              Icons.ac_unit,
-              // color: Colors.white,
-            ),
-          ),
-          const SizedBox(
-            width: 16,
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(
-                  overflow: TextOverflow.ellipsis,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  fontSize: 15,
-                ),
-                ),
-                Text(name,
-                  style: const TextStyle(
-                      overflow: TextOverflow.ellipsis,
-                      color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-           Text(value,
+          Text(title,
             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
+          const SizedBox(
+            height: 16
+          ),
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                List food = foods.where((element) => element['docId'] == items.keys.elementAt(index)).toList();
+                return Container(
+                  height: 24,
+                  padding: const EdgeInsets.all(4),
+                  color: index%2==0? Colors.blue.withOpacity(0.99) : Colors.white70,
+                  child: Row(
+                    children: [
+                      Expanded(child: Text('${index+1}. ${food[0]['name']}')),
+                      Text(items.values.elementAt(index).toString())
+                    ],
+                  ),
+                );
+              },),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class _BuildMostSellerList extends StatelessWidget {
+  const _BuildMostSellerList({
+    Key? key, required this.items, required this.height, required this.width, required this.waiterList, required this.title,
+  }) : super(key: key);
+
+  final Map items;
+  final List waiterList;
+  final double height, width;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(color: Color(0xff40407a)),
+      child: items.isEmpty ? const Center(child: CircularProgressIndicator()) : Column(
+        children:  [
+           Text(title,
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+
+                List waiter = waiterList.where((element) => element['name'] == items.keys.elementAt(index)).toList();
+                print(waiter);
+
+              return Container(
+                height: 24,
+                padding: const EdgeInsets.all(4),
+                color: index%2==0? Colors.blue.withOpacity(0.99) : Colors.white70,
+                child: Row(
+                  children: [
+                    Text('${index+1}. '),
+                    Expanded(child: Text(waiter[0]['name'] ?? '')), // ${}
+                    Text(items.values.elementAt(index).toString())
+                  ],
+                ),
+              );
+            },),
+          )
         ],
       ),
     );
