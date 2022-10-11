@@ -114,38 +114,38 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Container(
-            height:
-                widget.invoiceData.orders.length * (65 + 10) + 230 + 100 + 24,
-            padding: const EdgeInsets.only(bottom: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _BuildNameContainer(
-                    id: widget.invoiceData.invoiceId,
-                    name: widget.invoiceData.customer,
-                    phone: widget.invoiceData.phone,
-                    waiterName: widget.invoiceData.waiterName,
-                    waiterId: widget.invoiceData.waiterId,
-                    paymentMethod: widget.invoiceData.paymentMethod,
-                    date: DateFormat.yMMMd()
-                        .add_jm()
-                        .format(widget.invoiceData.dateTime.toDate())
-                        .toString(),
-                    totalAmount: widget.invoiceData.subTotal,
-                    totalAmountAfterDiscount: widget.invoiceData.total,
-                    netAmount: widget.invoiceData.netBill,
-                    address: widget.invoiceData.address),
-                const SizedBox(height: 16),
-                _BuildBoxRow(
-                    discount: widget.invoiceData.discount,
-                    discountType: widget.invoiceData.discountType,
-                    tax: widget.invoiceData.tax,
-                    table: widget.invoiceData.table),
-                _BuildOrderItemList(
-                  orders: widget.invoiceData.orders,
-                ),
-              ],
+          child: Flexible(
+            child: Container(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _BuildNameContainer(
+                      id: widget.invoiceData.invoiceId,
+                      name: widget.invoiceData.customer,
+                      phone: widget.invoiceData.phone,
+                      waiterName: widget.invoiceData.waiterName,
+                      waiterId: widget.invoiceData.waiterId,
+                      paymentMethod: widget.invoiceData.paymentMethod,
+                      date: DateFormat.yMMMd()
+                          .add_jm()
+                          .format(widget.invoiceData.dateTime.toDate())
+                          .toString(),
+                      totalAmount: widget.invoiceData.subTotal,
+                      totalAmountAfterDiscount: widget.invoiceData.total,
+                      netAmount: widget.invoiceData.netBill,
+                      address: widget.invoiceData.address),
+                  const SizedBox(height: 16),
+                  _BuildBoxRow(
+                      discount: widget.invoiceData.discount,
+                      discountType: widget.invoiceData.discountType,
+                      tax: widget.invoiceData.tax,
+                      table: widget.invoiceData.table),
+                  _BuildOrderItemList(
+                    orders: widget.invoiceData.orders,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -526,25 +526,25 @@ class _BuildOrderItemList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Container(
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: ListView.separated(
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return _BuildListTile(
-            index: index,
-            orders: orders,
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            height: 10,
-          );
-        },
-        itemCount: orders.length,
+    physics: const NeverScrollableScrollPhysics(),
+    shrinkWrap: true,
+    itemBuilder: (context, index) {
+      return _BuildListTile(
+        index: index,
+        orders: orders,
+      );
+    },
+    separatorBuilder: (context, index) {
+      return const SizedBox(
+        height: 10,
+      );
+    },
+    itemCount: orders.length,
       ),
-    ));
+    );
   }
 }
 
@@ -561,7 +561,7 @@ class _BuildListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 65,
+      height: 85,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
           color: Colors.blue.withOpacity(0.09),

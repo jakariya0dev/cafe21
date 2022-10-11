@@ -227,7 +227,7 @@ class _DashBoardState extends State<DashBoard> {
                   height: height,
                   items: countMostSellingFood,
                   foods: foodList,
-                  title: 'Most Selling Items'
+                  title: 'Most Selling Foods'
                 ),
                 SizedBox(
                   height: 120,
@@ -270,7 +270,7 @@ class _DashBoardState extends State<DashBoard> {
                   height: height,
                   items: countMostServingPerson,
                   waiterList: waiterList,
-                  title: 'Most Serving Person'
+                  title: 'Most Serving Waiter'
                 ),
               ],
             ),
@@ -550,9 +550,9 @@ class _BuildMostSellingItem extends StatelessWidget {
               itemBuilder: (context, index) {
                 List food = foods.where((element) => element['docId'] == items.keys.elementAt(index)).toList();
                 return Container(
-                  height: 24,
-                  padding: const EdgeInsets.all(4),
-                  color: index%2==0? Colors.blue.withOpacity(0.99) : Colors.white70,
+                  height: 32,
+                  padding: const EdgeInsets.all(8),
+                  color: index%2==0? Colors.blue.shade300 : Colors.blue.shade200,
                   child: Row(
                     children: [
                       Expanded(child: Text('${index+1}. ${food[0]['name']}')),
@@ -599,12 +599,11 @@ class _BuildMostSellerList extends StatelessWidget {
               itemBuilder: (context, index) {
 
                 List waiter = waiterList.where((element) => element['name'] == items.keys.elementAt(index)).toList();
-                print(waiter);
 
               return Container(
-                height: 24,
-                padding: const EdgeInsets.all(4),
-                color: index%2==0? Colors.blue.withOpacity(0.99) : Colors.white70,
+                height: 32,
+                padding: const EdgeInsets.all(8),
+                color: index%2==0? Colors.blue.shade300 : Colors.blue.shade200,
                 child: Row(
                   children: [
                     Text('${index+1}. '),

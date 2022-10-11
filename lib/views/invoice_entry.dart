@@ -471,13 +471,11 @@ class _CartPageState extends State<CartPage> {
                     onTap: () {},
                     items: waiterNameList
                         .map((e) =>
-                            DropdownMenuItem(value: e['id']+'. '+e['name'], child: Text(e['id']+'. '+e['name'].toString())))
+                            DropdownMenuItem(value: e['name'] +' '+ '(${e['id']})', child: Text(e['name'] +' '+ '(${e['id']})')))
                         .toList(),
                     onChanged: (value) {
                       selectedWaiterId = value.toString().substring(0, 3);
                       selectedWaiterName = value.toString().substring(5);
-                      print(selectedWaiterId);
-                      print(selectedWaiterName);
                       isWaiterSelected = true;
                       setState(() {});
                     },
@@ -514,81 +512,82 @@ class _CartPageState extends State<CartPage> {
   SizedBox buildOrderedListItem() {
 
     return SizedBox(
-        height: (width * 0.26 + 8) * orderedItemList.length,
-        child: orderedItemList.isEmpty
-            ? const Center(
-                child: Text('No item in list'),
-              )
-            : ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: orderedItemList.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    height: height * 0.15,
-                    padding: const EdgeInsets.only(
-                        top: 8, bottom: 16, left: 10, right: 10),
-                    margin: const EdgeInsets.only(bottom: 8),
-                    decoration: BoxDecoration(
-                        border: const Border(
-                            left: BorderSide(color: Colors.blue, width: 5)),
-                        color: Colors.purple.shade50),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(child: SizedBox()),
-                            InkWell(
-                                onTap: () {
-                                  removeItemFromOrderList(index);
-                                },
-                                child: const Icon(
-                                  Icons.clear,
-                                  color: Colors.grey,
-                                ))
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '${orderedItemList[index].quantity}×${orderedItemList[index].price}',
-                              style: TextStyle(
-                                  letterSpacing: 1,
-                                  fontSize: 16,
-                                  color: Colors.grey.shade900),
-                            ),
-                            const SizedBox(width: 10),
-                            DiscountContainer(discount: orderedItemList[index].discount, type: orderedItemList[index].discountType,)
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                                child: Text(
-                              '${index + 1}. ${orderedItemList[index].name}',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey.shade700),
-                            )),
-                            Text(
-                              '\$${orderedItemList[index].itemTotal}',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                  color: Colors.grey.shade800),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ));
+      child: orderedItemList.isEmpty
+          ? const Center(
+              child: Text('No item in list'),
+            )
+          : ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: orderedItemList.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  height: 100,
+                  padding: const EdgeInsets.only(
+                      top: 8, bottom: 16, left: 10, right: 10),
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                      border: const Border(
+                          left: BorderSide(color: Colors.blue, width: 5)),
+                      color: Colors.purple.shade50),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Expanded(child: SizedBox()),
+                          InkWell(
+                              onTap: () {
+                                removeItemFromOrderList(index);
+                              },
+                              child: const Icon(
+                                Icons.clear,
+                                color: Colors.grey,
+                              ))
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '${orderedItemList[index].quantity}×${orderedItemList[index].price}',
+                            style: TextStyle(
+                                letterSpacing: 1,
+                                fontSize: 16,
+                                color: Colors.grey.shade900),
+                          ),
+                          const SizedBox(width: 10),
+                          DiscountContainer(discount: orderedItemList[index].discount, type: orderedItemList[index].discountType,)
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: Text(
+                            '${index + 1}. ${orderedItemList[index].name}',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade700),
+                          )),
+                          Text(
+                            '\$${orderedItemList[index].itemTotal}',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                                color: Colors.grey.shade800),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+    );
   }
 
   openFoodCartDialog(BuildContext context) async {

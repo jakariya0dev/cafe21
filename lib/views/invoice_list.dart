@@ -1,11 +1,11 @@
 import 'package:cafe21/app_color.dart';
-import 'package:cafe21/views/invoice_entry.dart';
-import 'package:cafe21/views/invoice_details.dart';
-import 'package:flutter/material.dart';
+import 'package:cafe21/const.dart';
 import 'package:cafe21/controller/invoice_list_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
+import 'package:cafe21/views/invoice_details.dart';
+import 'package:cafe21/views/invoice_entry.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:cafe21/const.dart';
 
 import 'dashboard_page.dart';
 
@@ -246,7 +246,7 @@ class BuildInvoiceListItem extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: 55,
+          height: 65,
           margin: const EdgeInsets.only(left: 16, bottom: 4, top: 4),
           padding: const EdgeInsets.only(left: 24,),
           decoration: BoxDecoration(
