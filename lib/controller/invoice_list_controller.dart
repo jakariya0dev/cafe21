@@ -1,6 +1,6 @@
 import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../model/invoice_model.dart';
+import 'package:cafe21/model/invoice_model.dart';
 
 class InvoiceListController{
 

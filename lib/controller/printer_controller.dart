@@ -28,7 +28,7 @@ class PrinterController{
   }
 
   Widget buildBluetoothDeviceList(){
-    return Container(
+    return SizedBox(
       height: 50,
       width: 200,
       child: DropdownButton(

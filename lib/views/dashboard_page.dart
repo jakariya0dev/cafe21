@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cafe21/controller/drawer_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafe21/cons/const_string.dart';
+import 'package:cafe21/model/data.dart';
 import 'admin_dashboard.dart';
 
 class DashBoard extends StatefulWidget {
@@ -19,11 +20,12 @@ class _DashBoardState extends State<DashBoard> {
   bool isSelectedBottomButtonOne = true;
   bool isSelectedBottomButtonTwo = false;
 
-  List waiterList = [], foodList = [], categoryList = [];
-  List sellsData = [];
   List sellsDataFiltered = [];
+
+  // for calculating most selling things and waiter
   Map <String, int> countMostSellingFood = {};
   Map <String, int> countMostServingPerson = {};
+
   double totalTax = 0;
   double totalWithTax = 0;
   double totalWithoutTax = 0;
@@ -40,10 +42,10 @@ class _DashBoardState extends State<DashBoard> {
 
   init() async {
 
-    sellsData = await DashboardController().getSellsData();
-    foodList = await DashboardController().getAllFood();
-    categoryList = await DashboardController().getAllFoodCategory();
-    waiterList = await DashboardController().getAllWaiter();
+    await DashboardController().getAllSellsData();
+    await DashboardController().getAllFood();
+    await DashboardController().getAllFoodCategory();
+    await DashboardController().getAllWaiter();
 
     // user role remember
     prefs = await SharedPreferences.getInstance();
@@ -51,14 +53,13 @@ class _DashBoardState extends State<DashBoard> {
     getDailyData();
     calculationInvoiceData();
     calculateMostSellingItem();
-
     setState(() {});
 
   }
 
   getWeeklyData(){
     var sevenDaysAgoFromNow = DateTime.now().subtract(const Duration(days: 7));
-    sellsDataFiltered = sellsData.where((element) => element.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
+    sellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
     calculationInvoiceData();
     setState(() {});
   }
@@ -66,13 +67,13 @@ class _DashBoardState extends State<DashBoard> {
   getMonthlyData(){
     var now = DateTime.now();
     var thirtyDaysAgoFromNow = DateTime(now.year, now.month-1, now.day);
-    sellsDataFiltered = sellsData.where((element) => element.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
+    sellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
     calculationInvoiceData();
     setState(() {});
   }
 
   getAllTotalData(){
-    sellsDataFiltered = sellsData;
+    sellsDataFiltered = allSellsData;
     calculationInvoiceData();
   }
 
@@ -98,25 +99,36 @@ class _DashBoardState extends State<DashBoard> {
     List foodIdFromInvoice = [];
     List waiterNameFromInvoice = [];
 
+    Map <String, int> countMostSellingFoodBeforeSort = {};
+    Map <String, int> countMostServingPersonBeforeSort = {};
+
     // getting all food id and waiter name from invoices
-    for (var invoice in sellsData) {
+    for (var invoice in allSellsData) {
 
       waiterNameFromInvoice.add(invoice.waiterName);
 
       for(var item in invoice.orders){
         foodIdFromInvoice.add(item['id']);
       }
+
     }
 
     // SUM of food orders
     for (var foodId in foodIdFromInvoice){
-      countMostSellingFood[foodId] = (countMostSellingFood[foodId] ?? 0) + 1;
+      countMostSellingFoodBeforeSort[foodId] = (countMostSellingFoodBeforeSort[foodId] ?? 0) + 1;
     }
 
     // SUM of waiter orders
     for (var waiterName in waiterNameFromInvoice){
-      countMostServingPerson[waiterName] = (countMostServingPerson[waiterName] ?? 0) + 1;
+      countMostServingPersonBeforeSort[waiterName] = (countMostServingPersonBeforeSort[waiterName] ?? 0) + 1;
     }
+
+    // reversed the map ex:321
+    countMostSellingFood = Map.fromEntries(
+        countMostSellingFoodBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
+    countMostServingPerson = Map.fromEntries(
+        countMostServingPersonBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
+
 
   }
 
@@ -149,7 +161,7 @@ class _DashBoardState extends State<DashBoard> {
       }
 
       idForCompare = year+month+day;
-      sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+      sellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
     }
 
     calculationInvoiceData();
@@ -179,7 +191,7 @@ class _DashBoardState extends State<DashBoard> {
 
     idForCompare = year+month+day;
 
-    sellsDataFiltered = sellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+    sellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
     calculationInvoiceData();
 
   }
@@ -226,7 +238,7 @@ class _DashBoardState extends State<DashBoard> {
                   width: width,
                   height: height,
                   items: countMostSellingFood,
-                  foods: foodList,
+                  foods: allFoodsData,
                   title: 'Most Selling Foods'
                 ),
                 SizedBox(
@@ -235,12 +247,12 @@ class _DashBoardState extends State<DashBoard> {
                     children: [
                       BuildBoxContent(
                         title: 'total Food',
-                        value: '${foodList.length}',
+                        value: '${allFoodsData.length}',
                         color: AppColor.box4,
                       ),
                       BuildBoxContent(
                         title: 'total Category',
-                        value: '${categoryList.length}',
+                        value: '${allCategoryData.length}',
                         color: AppColor.box5,
                       ),
                       // BuildBoxContent(title: 'Tax Collection', value: '100', color: AppColor.boxThree,),
@@ -253,7 +265,7 @@ class _DashBoardState extends State<DashBoard> {
                     children:  [
                       BuildBoxContent(
                         title: 'Total Waiter',
-                        value: '${waiterList.length}',
+                        value: '${allWaiterData.length}',
                         color: AppColor.box6,
                       ),
                       const BuildBoxContent(
@@ -269,7 +281,7 @@ class _DashBoardState extends State<DashBoard> {
                   width: width,
                   height: height,
                   items: countMostServingPerson,
-                  waiterList: waiterList,
+                  waiterList: allWaiterData,
                   title: 'Most Serving Waiter'
                 ),
               ],
@@ -548,7 +560,7 @@ class _BuildMostSellingItem extends StatelessWidget {
             child: ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {
-                List food = foods.where((element) => element['docId'] == items.keys.elementAt(index)).toList();
+                List food = foods.where((element) => element['id'] == items.keys.elementAt(index)).toList();
                 return Container(
                   height: 32,
                   padding: const EdgeInsets.all(8),

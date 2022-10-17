@@ -2,12 +2,14 @@ import 'package:cafe21/app_color.dart';
 import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice_details.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:cafe21/const.dart';
 import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/widget/discount_container.dart';
+import 'package:cafe21/model/data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 
 class InvoiceUpdate extends StatefulWidget {
   const InvoiceUpdate({Key? key, required this.invoiceData}) : super(key: key);
@@ -20,10 +22,8 @@ class InvoiceUpdate extends StatefulWidget {
 
 class _InvoiceUpdate extends State<InvoiceUpdate> {
 
-  // FOR FETCHED ONLINE DATA
-  List categoryList = [];
-  List foodData = [];
-  List waiterNameList = [];
+
+  List initialFoodData = [];
 
   // FOR DIALOG FIELD MANAGE
   List<int> itemQuantityList = [];
@@ -53,11 +53,11 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
   late TextEditingController discountController, taxController, tableController;
 
   getData() async {
-    waiterNameList = await InvoiceEntryController().getWaiterData();
-    categoryList = await InvoiceEntryController().getCategoryList();
-    foodData = await InvoiceEntryController().getFoodData(categoryList[0]);
-    for (var i = 0; i <= foodData.length; i++) {
 
+    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[0]).toList();
+
+    // for managing dialog field
+    for (var i = 0; i <= initialFoodData.length; i++) {
       itemQuantityList.add(1);
       itemDiscountController.add(TextEditingController());
       itemDiscountType.add('%');
@@ -409,7 +409,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
               DropdownButton(
                 hint: Text(selectedWaiterName),
                 onTap: () {},
-                items: waiterNameList
+                items: allWaiterData
                     .map((e) =>
                     DropdownMenuItem(value: e['id']+'. '+e['name'], child: Text(e['id']+'. '+e['name'].toString())))
                     .toList(),
@@ -535,13 +535,8 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
-            // contentPadding: EdgeInsets.all(0),
             title: const Text('Add product'),
-            content: foodData.isEmpty
-                ? const Center(
-              child: CircularProgressIndicator(),
-            )
-                : SizedBox(
+            content: SizedBox(
               height: double.maxFinite,
               width: width * 0.8,
               child: Column(
@@ -550,15 +545,18 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                   Container(
                     padding: const EdgeInsets.only(bottom: 8),
                     height: 35,
-                    child: ListView.separated(
+                    child: allCategoryData.isEmpty
+                        ? const Center(
+                      child: Text('No Category. add some food data', overflow: TextOverflow.ellipsis,),
+                    ) : ListView.separated(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           return MaterialButton(
                             onPressed: () async {
                               selectedButton = index;
-                              foodData.clear();
-                              foodData = await InvoiceEntryController().getFoodData(categoryList[index]);
+                              initialFoodData.clear();
+                              initialFoodData = await InvoiceEntryController().getFoodData(allCategoryData[index]);
                               setState(() {});
                             },
                             elevation: selectedButton == index ? 10 : 0,
@@ -568,7 +566,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                             color: selectedButton == index
                                 ? Colors.amberAccent
                                 : Colors.white,
-                            child: Text(categoryList[index]),
+                            child: Text(allCategoryData[index]),
                           );
                         },
                         separatorBuilder: (context, index) {
@@ -576,22 +574,20 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                             width: 10,
                           );
                         },
-                        itemCount: categoryList.length),
+                        itemCount: allCategoryData.length),
                   ),
                   const SizedBox(height: 16),
                   Expanded(
-                    child: foodData.isEmpty
-                        ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                        : ListView.separated(
-                      itemCount: foodData.length,
+                    child: initialFoodData.isEmpty ? const Center(
+                      child: Text('Ohh! No data.'),
+                    ) : ListView.separated(
+                      itemCount: initialFoodData.length,
                       itemBuilder: (context, index) {
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${index+1}. ${foodData[index]['name']} - \$${foodData[index]['price']}',
+                              Text('${index+1}. ${initialFoodData[index]['name']} - \$${initialFoodData[index]['price']}',
                                 style: TextStyle(
                                   color: Colors.grey.shade700,
                                   fontWeight: FontWeight.w500,
@@ -667,14 +663,14 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                                   ),
                                   const Expanded(child: SizedBox()),
                                   TextButton(
-                                    onPressed: itemAddedInCartIdList.contains(foodData[index]['id']) ? null : () {
+                                    onPressed: itemAddedInCartIdList.contains(initialFoodData[index]['id']) ? null : () {
                                       addItemInOrderList(index);
                                       setState(() {});
                                     },
                                     child: Text(
-                                      itemAddedInCartIdList.contains(foodData[index]['id']) ? 'Added' : 'Add',
+                                      itemAddedInCartIdList.contains(initialFoodData[index]['id']) ? 'Added' : 'Add',
                                       style: TextStyle(
-                                          color: itemAddedInCartIdList.contains(foodData[index]['id']) ? Colors.grey : Colors.deepPurple),
+                                          color: itemAddedInCartIdList.contains(initialFoodData[index]['id']) ? Colors.grey : Colors.deepPurple),
                                     ),
                                   )
                                 ],
@@ -683,7 +679,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                       },
                       separatorBuilder: (context, index) {
                         return const Divider(
-                          thickness: 1,
+                          thickness: 1
                         );
                       },
                     ),
@@ -710,43 +706,42 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
     if(itemDiscountController[index].text.isNotEmpty &&  itemDiscountType[index] == '%'){
       num discount = int.parse(itemDiscountController[index].text)/100;
-      num subTotal = itemQuantityList[index] * int.parse(foodData[index]['price']);
+      num subTotal = itemQuantityList[index] * int.parse(initialFoodData[index]['price']);
       itemTotal = subTotal - (subTotal*discount);
     }
     else if(itemDiscountController[index].text.isNotEmpty && itemDiscountType[index] == '\$'){
-      num subTotal = itemQuantityList[index]* int.parse(foodData[index]['price']);
+      num subTotal = itemQuantityList[index]* int.parse(initialFoodData[index]['price']);
       itemTotal = subTotal - int.parse(itemDiscountController[index].text);
     }
     else{
-      itemTotal = int.parse(foodData[index]['price'])*itemQuantityList[index];
+      itemTotal = int.parse(initialFoodData[index]['price'])*itemQuantityList[index];
     }
 
     subTotal += itemTotal;
     orderedItemList.add({
-        'id': foodData[index]['id'],
-        'name': foodData[index]['name'],
-        'price': foodData[index]['price'],
+        'id': initialFoodData[index]['id'],
+        'name': initialFoodData[index]['name'],
+        'price': initialFoodData[index]['price'],
         'discount': itemDiscountController[index].text,
         'discountType' : itemDiscountType[index],
         'quantity': itemQuantityList[index].toString(),
         'itemTotal': itemTotal.toStringAsFixed(2),
         'isAddedIndex': index
     });
-    itemAddedInCartIdList.add(foodData[index]['id']);
+    itemAddedInCartIdList.add(initialFoodData[index]['id']);
     itemQuantityList[index] = 1;
     itemDiscountController[index].clear();
     itemDiscountType[index] = '%';
     changeState();
-    print(itemAddedInCartIdList);
+
   }
 
   void removeItemFromOrderList(index) {
 
     itemAddedInCartIdList.remove(orderedItemList[index]);
-    subTotal-=double.parse(orderedItemList[index]['itemTotal']);
+    subTotal -= double.parse(orderedItemList[index]['itemTotal']);
     orderedItemList.removeAt(index);
     changeState();
-    print(itemAddedInCartIdList);
 
   }
 
@@ -804,7 +799,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
       }
 
       if(totalDiscountType =='%'){
-        print(totalDiscount);
+
         double discount = subTotal * (double.parse(totalDiscount) / 100);
         total = subTotal - discount;
         double tax = total * (double.parse(taxController.text.toString())/100);

@@ -1,13 +1,15 @@
+import 'dart:async';
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../cons/const_string.dart';
-import '../model/user_model.dart';
+import 'package:cafe21/cons/const_string.dart';
+import 'package:cafe21/model/user_model.dart';
+import '../controller/connection_checker.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -22,31 +24,30 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoginButtonPressed = false;
   SharedPreferences? prefs;
 
+
   // String userRole = 'manager';
-  // bool isManagerSelected = true, isAdminSelected  = false;
+  bool isPasswordVisible = false;
 
   @override
   initState() {
-    super.initState();
     init();
+    super.initState();
   }
 
   init() async {
     prefs = await SharedPreferences.getInstance();
+    ConnectionChecker().checkInternetConnection((){
+      setState(() {
+
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
 
-    var height = MediaQuery
-        .of(context)
-        .size
-        .height;
-    var width = MediaQuery
-        .of(context)
-        .size
-        .width;
-
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
@@ -55,11 +56,9 @@ class _LoginPageState extends State<LoginPage> {
           child: Stack(
             children: [
               SizedBox(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height,
+                height: MediaQuery.of(context).size.height,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       height: height * 0.4,
@@ -77,10 +76,9 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                     SizedBox(height: height*0.25),
-                     Container(
+                    SizedBox(height: height * 0.25),
+                    Container(
                       padding: const EdgeInsets.all(24),
-                      // height: height*0.60,
                       width: width * 0.8,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24),
@@ -103,7 +101,13 @@ class _LoginPageState extends State<LoginPage> {
                             style: const TextStyle(
                                 color: Colors.deepPurple,
                                 fontWeight: FontWeight.w500),
-                                decoration: InputDecoration(
+                            decoration: InputDecoration(
+                              suffix: InkWell(
+                                  onTap: () {
+                                    emailController.clear();
+                                    setState(() {});
+                                  },
+                                  child: const Icon(Icons.clear, color: Colors.purple,)),
                                 hintText: 'User Email',
                                 hintStyle: TextStyle(
                                     color: Colors.deepPurple.shade200,
@@ -117,57 +121,31 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 16),
                           TextField(
                             controller: passwordController,
+                            obscureText: isPasswordVisible,
                             style: TextStyle(
                                 color: Colors.deepPurple.shade100,
                                 fontWeight: FontWeight.w500),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                                 hintText: 'Your Password',
-                                hintStyle: TextStyle(
+                                suffix: InkWell(
+                                    onTap: () {
+                                      isPasswordVisible = !isPasswordVisible;
+                                      setState(() {});
+                                    },
+                                    child: Icon(isPasswordVisible ? Icons.visibility : Icons.visibility_off, color: Colors.purple,)),
+                                hintStyle: const TextStyle(
                                     color: Colors.deepPurple,
                                     fontWeight: FontWeight.w100),
                                 focusColor: Colors.deepPurple,
-                                focusedBorder: UnderlineInputBorder(
+                                focusedBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Colors.deepPurple, width: 1.5))),
                             keyboardType: TextInputType.phone,
                           ),
                           const SizedBox(height: 42),
-                          // RadioListTile(
-                          //     title: const Text('Manager', style: TextStyle(fontWeight: FontWeight.w500),),
-                          //     dense: true,
-                          //     isThreeLine: false,
-                          //     toggleable: true,
-                          //     selected: isManagerSelected,
-                          //     value: ConstString.userRoleManager,
-                          //     groupValue: userRole,
-                          //     onChanged: (value) {
-                          //       userRole = ConstString.userRoleManager;
-                          //       isManagerSelected = true;
-                          //       isAdminSelected = false;
-                          //       setState(() {
-                          //
-                          //       });
-                          //       // print('Manager');
-                          //     }),
-                          // RadioListTile(
-                          //     title: const Text('Admin', style: TextStyle(fontWeight: FontWeight.bold),),
-                          //     dense: true,
-                          //     selected: isAdminSelected,
-                          //     value: ConstString.userRoleAdmin,
-                          //     groupValue: userRole,
-                          //     onChanged: (value) {
-                          //       userRole = ConstString.userRoleAdmin;
-                          //       isAdminSelected = true;
-                          //       isManagerSelected = false;
-                          //       setState(() {
-                          //
-                          //       });
-                          //       // print("Admin");
-                          //     }),
-                          // const Expanded(child: SizedBox()),
                           AnimatedContainer(
-                            height: isLoginButtonPressed ? width*0.14 : width*0.11,
-                            duration: const Duration(milliseconds: 500),
+                            height: 50,
+                            duration: const Duration(milliseconds: 300),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               color: Colors.deepPurple,
@@ -175,15 +153,32 @@ class _LoginPageState extends State<LoginPage> {
                             padding: const EdgeInsets.symmetric(vertical: 3),
                             width: isLoginButtonPressed ? 50 : width,
                             curve: Curves.linear,
-                            child: isLoginButtonPressed ? const Center(child: CircularProgressIndicator(color: Colors.white),) : TextButton(
-                                onPressed: () {
-                                  userLogin();
-                                },
-                            child: const Text('Log in', style: TextStyle(color: Colors.white),)),)
+                            child: isLoginButtonPressed
+                                ? const Center(
+                                    child: CircularProgressIndicator(
+                                        color: Colors.white),
+                                  )
+                                : TextButton(
+                                    onPressed: () {
+                                      if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+                                        userLogin();
+                                      } else{
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                          content: const Text('No internet!\nCheck internet connection'), action: SnackBarAction(
+                                          label: 'close',
+                                          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+                                        ),));
+                                      }
+
+                                    },
+                                    child: const Text(
+                                      'Log in',
+                                      style: TextStyle(color: Colors.white),
+                                    )),
+                          )
                         ],
                       ),
                     ),
-
                   ],
                 ),
               )
@@ -192,85 +187,91 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       bottomNavigationBar: const Padding(
-        padding:
-        EdgeInsets.symmetric(horizontal: 42.0, vertical: 32),
+        padding: EdgeInsets.only(left: 42.0, right: 42, top: 10, bottom: 32),
         child: Text(
           'If you don\'t have an account or forgot it please call our helpline at +8801521466603',
           textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Roboto'
+          ),
         ),
       ),
     );
   }
-  warningDialog(msg){
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        title: const Text('Warning!'),
-        content: Text(msg),
-        actions: [
-          ElevatedButton(onPressed: () {
-            isLoginButtonPressed = false;
-            setState(() {});
-            Navigator.pop(context);
-          }, child: const Text('Ok'))
-        ],
-      );
-    });
+
+  warningDialog(msg) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Warning!'),
+            content: Text(msg),
+            actions: [
+              ElevatedButton(
+                  onPressed: () {
+                    isLoginButtonPressed = false;
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Ok'))
+            ],
+          );
+        });
   }
 
   // login with firebase auth
   userLogin() async {
-
-    bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(emailController.text);
+    bool emailValid = RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(emailController.text);
 
     setState(() {});
 
-      if(emailController.text.isEmpty){
-        warningDialog('Enter email address.');
-      }
-      else if(!emailValid){
-        warningDialog('Not valid email address.');
-      }
-      else if(passwordController.text.isEmpty){
-        warningDialog('Enter user password.');
-      }
-      else{
-        isLoginButtonPressed = !isLoginButtonPressed;
-        setState(() {});
+    if (emailController.text.isEmpty) {
+      warningDialog('Enter email address.');
+    } else if (!emailValid) {
+      warningDialog('Not valid email address.');
+    } else if (passwordController.text.isEmpty) {
+      warningDialog('Enter user password.');
+    } else {
+      isLoginButtonPressed = !isLoginButtonPressed;
+      setState(() {});
 
-        try {
-
-          final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: emailController.text,
-              password: passwordController.text
-          );
-          if(credential.user?.uid !=null){
-            UserModel user = await getUserData(emailController.text);
-            await prefs?.setString(ConstString.userRole, user.userRole);
-            await prefs?.setString(ConstString.userMail, user.mail);
-            await prefs?.setBool(ConstString.isLogged, true);
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard()));
-
-          }
-
-        } on FirebaseAuthException catch (e) {
-
-          if (e.code == 'user-not-found') {
-            warningDialog('No user found for that email.');
-          }
-          else if (e.code == 'wrong-password') {
-            warningDialog('Wrong password provided.');
-          }
-
+      try {
+        final credential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text);
+        if (credential.user?.uid != null) {
+          UserModel user = await getUserData(emailController.text);
+          await prefs?.setString(ConstString.userRole, user.userRole);
+          await prefs?.setString(ConstString.userMail, user.mail);
+          await prefs?.setBool(ConstString.isLogged, true);
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const DashBoard()));
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          warningDialog('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          warningDialog('Wrong password provided.');
         }
       }
-
-
+    }
   }
 
   Future<UserModel> getUserData(String? uid) async {
-
-    var value = await FirebaseFirestore.instance.collection(AppConfig.dbName).doc('users').collection('all-users').doc(uid).get();
-    UserModel user = UserModel(id: value['id'], name: value['name'], mail: value['mail'], phone: value['phone'], userRole: value['user-role']);
+    var value = await FirebaseFirestore.instance
+        .collection(AppConfig.dbName)
+        .doc('users')
+        .collection('all-users')
+        .doc(uid)
+        .get();
+    UserModel user = UserModel(
+        id: value['id'],
+        name: value['name'],
+        mail: value['mail'],
+        phone: value['phone'],
+        userRole: value['user-role']);
 
     return user;
   }

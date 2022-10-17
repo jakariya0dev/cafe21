@@ -1,6 +1,8 @@
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:cafe21/model/data.dart';
+import 'package:cafe21/main.dart';
 
 
 class AdminDashboard extends StatefulWidget {
@@ -13,11 +15,10 @@ class AdminDashboard extends StatefulWidget {
 class _AdminDashboardState extends State<AdminDashboard> {
 
   String appbarTitle = 'Admin Dashboard';
-  List<dynamic> categoryList = [];
   List<dynamic> foodList = [];
-  List<dynamic> waiterList = [];
-  List pages = [];
 
+  // bottom navbar
+  List pages = [];
   int bottomNavIndex = 0;
   int selectedButtonCategory = 0;
 
@@ -28,9 +29,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   getData() async {
-    categoryList = await AdminDashboardController().getCategoryList();
-    foodList = await AdminDashboardController().getProductData(categoryList[selectedButtonCategory]);
-    waiterList = await AdminDashboardController().getWaiterData();
+
+    foodList = allFoodsData.where((e) => e['type'] == allCategoryData[selectedButtonCategory]).toList();
     pages = [foodItemPage(), waiterListPage(), foodCategoryPage()];
     setState(() {});
   }
@@ -65,7 +65,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           )
         ],
       ),
-      body:  categoryList.isNotEmpty ? pages[bottomNavIndex] : const Center(child: CircularProgressIndicator(),),
+      body:  allCategoryData.isNotEmpty ? pages[bottomNavIndex] : const Center(child: CircularProgressIndicator(),),
       bottomNavigationBar: Container(
 
         margin: const EdgeInsets.all(16),
@@ -133,7 +133,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         getData();
 
                       },
-                      child: Text(categoryList[index], style: TextStyle(fontWeight: index == selectedButtonCategory ? FontWeight.bold : FontWeight.normal),),
+                      child: Text(allCategoryData[index], style: TextStyle(fontWeight: index == selectedButtonCategory ? FontWeight.bold : FontWeight.normal),),
                     ),
                   );
                 },
@@ -142,7 +142,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     width: 10,
                   );
                 },
-                itemCount: categoryList.length),
+                itemCount: allCategoryData.length),
           ),
           const SizedBox(height: 10,),
           foodList.isNotEmpty ? Expanded(
@@ -184,7 +184,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
       margin: const EdgeInsets.all(16),
       constraints: const BoxConstraints(),
       child: ListView.separated(
-        itemCount: waiterList.length,
+        itemCount: allWaiterData.length,
         itemBuilder: (context, index) {
           return  ListTile(
             isThreeLine: false,
@@ -200,8 +200,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
             },
             tileColor: index%2==0 ? Colors.blue.shade200 : Colors.blue.shade100,
             leading: CircleAvatar(child: Text((index+1).toString()),),
-            title: Text('Name: ${waiterList[index]['name']}'),
-            subtitle: Text('Phone: ${waiterList[index]['phone']}'),
+            title: Text('Name: ${allWaiterData[index]['name']}'),
+            subtitle: Text('Phone: ${allWaiterData[index]['phone']}'),
             trailing: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -225,7 +225,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
       constraints: const BoxConstraints(),
       margin: const EdgeInsets.all(16),
       child: ListView.separated(
-        itemCount: categoryList.length,
+        itemCount: allCategoryData.length,
         itemBuilder: (context, index) {
           return  ListTile(
             isThreeLine: false,
@@ -237,12 +237,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
               editCategory(index);
             },
             onLongPress: () async {
-              await deleteCategory(categoryList[index]);
+              await deleteCategory(allCategoryData[index]);
               setState(() {});
             },
             tileColor: index%2==0 ? Colors.blue.shade200 : Colors.blue.shade100,
             trailing: const Icon(Icons.edit_calendar),
-            title: Text('${index+1}. ${categoryList[index]}', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),),
+            title: Text('${index+1}. ${allCategoryData[index]}', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),),
           );
         },
         separatorBuilder: (context, index) {
@@ -303,7 +303,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       isDense: true,
                       alignment: Alignment.centerRight,
                       hint: Text(dropDownHeader),
-                      items: categoryList.map((e) => DropdownMenuItem(
+                      items: allCategoryData.map((e) => DropdownMenuItem(
                           value: e,
                           child: Text(e.toString()))).toList(),
                       onChanged: (value) {
@@ -474,7 +474,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       isDense: true,
                       alignment: Alignment.centerRight,
                       hint: Text(dropDownHeader),
-                      items: categoryList.map((e) => DropdownMenuItem(
+                      items: allCategoryData.map((e) => DropdownMenuItem(
                           value: e,
                           child: Text(e.toString()))).toList(),
                       onChanged: (value) {
@@ -555,7 +555,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 foodList.clear();
                 getData();
                 SnackBar snackBar = SnackBar(backgroundColor: Colors.purple, content: Text(msg), action: SnackBarAction(label: 'OK', textColor: Colors.white, onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
               },
               child: const Text('OK', style: TextStyle(
                   color: Colors.white
@@ -607,7 +607,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     TextEditingController addressController = TextEditingController();
 
     String msg = '';
-    bool isCategorySelected = false;
+    // bool isCategorySelected = false;
 
     showDialog(context: context, builder: (context) {
       return StatefulBuilder(builder: (context, setState){
@@ -677,7 +677,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         onTap: () {
                           phoneController.clear();
                           setState(() {});
-                          print('phone');
+
                         },
                         child: Icon(Icons.clear, color: Colors.blue.shade300,),
                       ),
@@ -835,12 +835,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   editWaiter(index){
-    TextEditingController idController = TextEditingController(text: waiterList[index]['id']);
-    TextEditingController nameController = TextEditingController(text: waiterList[index]['name']);
-    TextEditingController phoneController = TextEditingController(text: waiterList[index]['phone']);
-    TextEditingController nidController = TextEditingController(text: waiterList[index]['nid']);
-    TextEditingController emailController = TextEditingController(text: waiterList[index]['email']);
-    TextEditingController addressController = TextEditingController(text: waiterList[index]['address']);
+    TextEditingController idController = TextEditingController(text: allWaiterData[index]['id']);
+    TextEditingController nameController = TextEditingController(text: allWaiterData[index]['name']);
+    TextEditingController phoneController = TextEditingController(text: allWaiterData[index]['phone']);
+    TextEditingController nidController = TextEditingController(text: allWaiterData[index]['nid']);
+    TextEditingController emailController = TextEditingController(text: allWaiterData[index]['email']);
+    TextEditingController addressController = TextEditingController(text: allWaiterData[index]['address']);
 
     showDialog(context: context, builder: (context) {
       return StatefulBuilder(builder: (context, setState){
@@ -910,7 +910,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         onTap: () {
                           phoneController.clear();
                           setState(() {});
-                          print('phone');
+
                         },
                         child: Icon(Icons.clear, color: Colors.blue.shade300,),
                       ),
@@ -1003,7 +1003,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               color: const Color(AppColor.box5),
               onPressed: () async {
                 Navigator.pop(context);
-                await AdminDashboardController().deleteWaiterData(waiterList[index]['docId']);
+                await AdminDashboardController().deleteWaiterData(allWaiterData[index]['docId']);
                 String msg = await AdminDashboardController().updateWaiterData({
                   'id' : idController.text,
                   'name' : nameController.text,
@@ -1013,11 +1013,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   'address' : addressController.text,
                   'image' : '',
                 });
-                waiterList.clear();
+                allWaiterData.clear();
                 getData();
 
                 SnackBar snackBar = SnackBar(content: Text(msg), action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
               },
               child: const Text('OK', style: TextStyle(
                   color: Colors.white
@@ -1038,8 +1038,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
         actions: [
           MaterialButton(onPressed: () async {
             Navigator.pop(context);
-            String msg = await AdminDashboardController().deleteWaiterData(waiterList[index]['docId']);
-            waiterList.clear();
+            String msg = await AdminDashboardController().deleteWaiterData(allWaiterData[index]['docId']);
+            allWaiterData.clear();
             getData();
             SnackBar snackBar = SnackBar(content: Text(msg), action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -1092,7 +1092,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   ),
                 ),
               ),
-              Text(msg, style: TextStyle(color: Colors.red),)
+              Text(msg, style: const TextStyle(color: Colors.red),)
             ],
           ),
           alignment: Alignment.center,
@@ -1117,7 +1117,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 }else{
                   await AdminDashboardController().addNewCategoryName(context: context, name: nameController.text);
                   Navigator.pop(context);
-                  categoryList.clear();
+                  allCategoryData.clear();
                   getData();
                   SnackBar snackBar = SnackBar(backgroundColor: Colors.purple, content: const Text('Data Added Successfully!'), action: SnackBarAction(label: 'OK', textColor: Colors.white, onPressed: () => Navigator.pop(context),),);
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -1135,7 +1135,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   editCategory(index){
 
-    TextEditingController nameController = TextEditingController(text: categoryList[index]);
+    TextEditingController nameController = TextEditingController(text: allCategoryData[index]);
 
     showDialog(context: context, builder: (context) {
       return StatefulBuilder(builder: (context, setState){
@@ -1185,14 +1185,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
               color: const Color(AppColor.box5),
               onPressed: () async {
 
-                categoryList.removeAt(index);
-                categoryList.insert(index, nameController.text);
+                allCategoryData.removeAt(index);
+                allCategoryData.insert(index, nameController.text);
                 Navigator.pop(context);
-                String msg = await AdminDashboardController().updateCategoryName(categoryList);
-                categoryList.clear();
+                String msg = await AdminDashboardController().updateCategoryName(allCategoryData);
+                allCategoryData.clear();
                 getData();
                 SnackBar snackBar = SnackBar(backgroundColor: Colors.purple, content: Text(msg), action: SnackBarAction(label: 'OK', textColor: Colors.white, onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
               },
               child: const Text('OK', style: TextStyle(
                   color: Colors.white
@@ -1214,7 +1214,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           MaterialButton(onPressed: () async {
             String msg = await AdminDashboardController().deleteCategory(name);
             Navigator.pop(context);
-            categoryList.clear();
+            allCategoryData.clear();
             getData();
             SnackBar snackBar = SnackBar(backgroundColor: Colors.purple, content: Text(msg), action: SnackBarAction(label: 'OK', textColor: Colors.white, onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),);
             ScaffoldMessenger.of(context).showSnackBar(snackBar);

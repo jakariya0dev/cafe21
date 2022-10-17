@@ -1,11 +1,15 @@
+
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cafe21/const.dart';
 import 'package:cafe21/model/order_item_model.dart';
 import 'package:cafe21/widget/discount_container.dart';
+import 'package:cafe21/model/data.dart';
+import 'package:cafe21/controller/connection_checker.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -16,14 +20,11 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
 
-  // FOR GENERATING INVO ID
+  // FOR GENERATING INVOICE ID
   late String invoiceId;
   DateTime dated = DateTime.now();
 
-  // FOR FETCHED ONLINE DATA
-  List categoryList = [];
-  List foodData = [];
-  List waiterNameList = [];
+  List initialFoodData = [];
 
   // FOR DIALOG FIELD MANAGE
   List<int> itemQuantityList = [];
@@ -61,23 +62,26 @@ class _CartPageState extends State<CartPage> {
 
   @override
   void initState() {
-    super.initState();
     invoiceId = InvoiceEntryController().generateInvoiceId();
-    getData();
+    ConnectionChecker().checkInternetConnection((){
+      setState(() {
 
+      });
+    });
+    getData();
+    super.initState();
   }
 
   getData() async {
-    waiterNameList = await InvoiceEntryController().getWaiterData();
-    categoryList = await InvoiceEntryController().getCategoryList();
-    foodData = await InvoiceEntryController().getFoodData(categoryList[0]);
-    for (var i = 0; i <= foodData.length; i++) {
 
+    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[0]).toList();
+
+    // for managing dialog field
+    for (var i = 0; i <= initialFoodData.length; i++) {
       itemQuantityList.add(1);
       itemDiscountController.add(TextEditingController());
       itemDiscountType.add('%');
     }
-
   }
 
   void changeState() {
@@ -119,10 +123,17 @@ class _CartPageState extends State<CartPage> {
                     else if(orderedItemList.isEmpty){
                       showSnackBar('Add ordered item in list!');
                     }
+                    else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: const Text('No internet!\nCheck internet connection'), action: SnackBarAction(
+                        label: 'close',
+                        onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+                      ),));
+                    }
                     else {
+                      // for loading indicator
                       showDialog(context: context, builder: (context) {
                         return AlertDialog(
-
                           content: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: const [
@@ -398,7 +409,6 @@ class _CartPageState extends State<CartPage> {
                       keyboardType: TextInputType.number,
                       onChanged: (value) {
                         totalDiscount = value;
-                        // print(totalDiscount);
                         changeState();
                       },
                       decoration: InputDecoration(
@@ -469,9 +479,9 @@ class _CartPageState extends State<CartPage> {
                   DropdownButton(
                     hint: Text(selectedWaiterName),
                     onTap: () {},
-                    items: waiterNameList
+                    items: allWaiterData
                         .map((e) =>
-                            DropdownMenuItem(value: e['name'] +' '+ '(${e['id']})', child: Text(e['name'] +' '+ '(${e['id']})')))
+                        DropdownMenuItem(value: e['id']+'. '+e['name'], child: Text(e['id']+'. '+e['name'].toString())))
                         .toList(),
                     onChanged: (value) {
                       selectedWaiterId = value.toString().substring(0, 3);
@@ -490,7 +500,6 @@ class _CartPageState extends State<CartPage> {
                   const SizedBox(width: 8),
                   DropdownButton(
                     hint: Text(selectedPaymentMethod),
-                    // value: paymentMethod,
                     onTap: () {},
                     items: paymentMethodList
                         .map((e) =>
@@ -597,11 +606,7 @@ class _CartPageState extends State<CartPage> {
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
             title: const Text('Add product'),
-            content: foodData.isEmpty
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : SizedBox(
+            content: SizedBox(
                     height: height * 0.5,
                     width: width * 0.8,
                     child: Column(
@@ -610,15 +615,20 @@ class _CartPageState extends State<CartPage> {
                         Container(
                           padding: const EdgeInsets.only(bottom: 8),
                           height: 35,
-                          child: ListView.separated(
+                          child: allCategoryData.isEmpty
+                              ? const Center(
+                            child: Text('No category. first add some data', overflow: TextOverflow.ellipsis,),
+                          )
+                              : ListView.separated(
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
                                 return MaterialButton(
                                   onPressed: () async {
                                     selectedButton = index;
-                                    foodData.clear();
-                                    foodData = await InvoiceEntryController().getFoodData(categoryList[index]);
+                                    initialFoodData.clear();
+                                    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[index]).toList();
+                                    // initialFoodData = await InvoiceEntryController().getFoodData(allCategoryData[index]);
                                     setState(() {});
                                   },
                                   elevation: selectedButton == index ? 10 : 0,
@@ -628,7 +638,7 @@ class _CartPageState extends State<CartPage> {
                                   color: selectedButton == index
                                       ? Colors.amberAccent
                                       : Colors.white,
-                                  child: Text(categoryList[index]),
+                                  child: Text(allCategoryData[index]),
                                 );
                               },
                               separatorBuilder: (context, index) {
@@ -636,23 +646,22 @@ class _CartPageState extends State<CartPage> {
                                   width: 10,
                                 );
                               },
-                              itemCount: categoryList.length),
+                              itemCount: allCategoryData.length),
                         ),
                         const SizedBox(height: 16),
                         Expanded(
-                          child: foodData.isEmpty
-                              ? const Center(
-                                  child: CircularProgressIndicator(),
-                                )
+                          child: initialFoodData.isEmpty ? const Center(
+                            child: Text('Ohh! No food  data.'),
+                          )
                               : ListView.separated(
-                                  itemCount: foodData.length,
+                                  itemCount: initialFoodData.length,
                                   itemBuilder: (context, index) {
                                     return Column(
                                         mainAxisSize: MainAxisSize.min,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                      Text('${index+1}. ${foodData[index]['name']} - \$${foodData[index]['price']}',
+                                      Text('${index+1}. ${initialFoodData[index]['name']} - \$${initialFoodData[index]['price']}',
                                         style: TextStyle(
                                           color: Colors.grey.shade700,
                                           fontWeight: FontWeight.w500,
@@ -727,15 +736,15 @@ class _CartPageState extends State<CartPage> {
                                             ),
                                           ),
                                           const Expanded(child: SizedBox()),
-                                          TextButton(
-                                            onPressed: itemAddedInCartIdList.contains(foodData[index]['id']) ? null : () {
+                                          OutlinedButton(
+                                            onPressed: itemAddedInCartIdList.contains(initialFoodData[index]['id']) ? null : () {
                                                     addItemInOrderList(index);
                                                     setState(() {});
                                                   },
                                             child: Text(
-                                              itemAddedInCartIdList.contains(foodData[index]['id']) ? 'Added' : 'Add',
+                                              itemAddedInCartIdList.contains(initialFoodData[index]['id']) ? 'Added' : 'Add',
                                               style: TextStyle(
-                                                  color: itemAddedInCartIdList.contains(foodData[index]['id']) ? Colors.grey : Colors.deepPurple),
+                                                  color: itemAddedInCartIdList.contains(initialFoodData[index]['id']) ? Colors.grey : Colors.deepPurple),
                                             ),
                                           )
                                         ],
@@ -779,34 +788,33 @@ class _CartPageState extends State<CartPage> {
 
     if(itemDiscountController[index].text.isNotEmpty &&  itemDiscountType[index] == '%'){
       num discount = int.parse(itemDiscountController[index].text)/100;
-      num subTotal = itemQuantityList[index] * int.parse(foodData[index]['price']);
+      num subTotal = itemQuantityList[index] * int.parse(initialFoodData[index]['price']);
       itemTotal = subTotal - (subTotal*discount);
     }
     else if(itemDiscountController[index].text.isNotEmpty && itemDiscountType[index] == '\$'){
-      num subTotal = itemQuantityList[index]* int.parse(foodData[index]['price']);
+      num subTotal = itemQuantityList[index]* int.parse(initialFoodData[index]['price']);
       itemTotal = subTotal - int.parse(itemDiscountController[index].text);
     }
     else{
-      itemTotal = int.parse(foodData[index]['price'])*itemQuantityList[index];
+      itemTotal = int.parse(initialFoodData[index]['price'])*itemQuantityList[index];
     }
 
     subTotal += itemTotal;
     orderedItemList.add(OrderItemModel(
-        id: foodData[index]['id'],
-        name: foodData[index]['name'],
-        price: foodData[index]['price'],
+        id: initialFoodData[index]['id'],
+        name: initialFoodData[index]['name'],
+        price: initialFoodData[index]['price'],
         discount: itemDiscountController[index].text,
         discountType : itemDiscountType[index],
         quantity: itemQuantityList[index].toString(),
         itemTotal: itemTotal.toStringAsFixed(2),
         isAddedIndex: index
         ));
-    itemAddedInCartIdList.add(foodData[index]['id']);
+    itemAddedInCartIdList.add(initialFoodData[index]['id']);
     itemQuantityList[index] = 1;
     itemDiscountController[index].clear();
     itemDiscountType[index] = '%';
     changeState();
-    print(itemAddedInCartIdList);
 
   }
 
@@ -844,13 +852,8 @@ class _CartPageState extends State<CartPage> {
         isAddedIndex: 0
     ));
 
-
-    // itemQuantityList[index] = 1;
-    // itemDiscountController[index].clear();
-    // itemDiscountType[index] = '%';
-
     changeState();
-    print(orderedItemList);
+
 
   }
 
@@ -860,7 +863,6 @@ class _CartPageState extends State<CartPage> {
     subTotal-=double.parse(orderedItemList[index].itemTotal);
     orderedItemList.removeAt(index);
     changeState();
-    print(itemAddedInCartIdList);
 
   }
 
@@ -1015,7 +1017,7 @@ class _CartPageState extends State<CartPage> {
                             ),
                           ),
                           const Expanded(child: SizedBox()),
-                          TextButton(
+                          OutlinedButton(
                             onPressed: () {
                               if(foodNameControllerForOther.text.isNotEmpty && priceControllerForOther.text.isNotEmpty && discountControllerForOther.text.isNotEmpty){
                                 addOthersItemInOrderList(
@@ -1049,7 +1051,7 @@ class _CartPageState extends State<CartPage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Cancel'),
+                child: const Text('Close'),
               ),
             ],
           );

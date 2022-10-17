@@ -1,14 +1,13 @@
 import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/model/invoice_model.dart';
+import 'package:cafe21/model/data.dart';
 
 class DashboardController{
 
   FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<List> getSellsData() async {
-
-    List <InvoiceModel> invoices = [];
+  getAllSellsData() async {
 
     await db.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').get().then((value){
       for(var element in value.docs){
@@ -30,21 +29,21 @@ class DashboardController{
             total: element['total'],
             netBill: element['netBill']
         );
-        invoices.add(invoiceModel);
+        allSellsData.add(invoiceModel);
       }
-
+      allSellsData = allSellsData.reversed.toList();
     });
 
-    return invoices;
+
   }
 
-  getAllFood()async{
-    List data = [];
+  getAllFood() async {
+
     await db.collection(AppConfig.dbName).doc('foods').collection('products').get().then((value) {
 
       for(var doc in value.docs){
-        data.add({
-          'docId' : doc.id,
+        allFoodsData.add({
+          'id' : doc.id,
           'name' : doc['name'],
           'type' : doc['category'],
           'description' : doc['description'],
@@ -52,26 +51,21 @@ class DashboardController{
         });
       }});
 
-    return data;
   }
 
   getAllFoodCategory()async{
-    List category = [];
 
     await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').get().then((value) {
-    category = value['names'];
+      allCategoryData = value['names'];
     });
-    // print('dc ${food.length}');
-    return category;
   }
 
   getAllWaiter() async {
-    List waiterList = [];
 
     await db.collection(AppConfig.dbName).doc('users').collection('waiters').get().then((value) {
 
       for(var item in value.docs){
-        waiterList.add({
+        allWaiterData.add({
           'docId' : item.id,
           'id' : item['id'],
           'name' : item['name'],
@@ -85,7 +79,6 @@ class DashboardController{
 
     });
 
-    return waiterList;
   }
 
 }
