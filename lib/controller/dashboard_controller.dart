@@ -34,7 +34,6 @@ class DashboardController{
       allSellsData = allSellsData.reversed.toList();
     });
 
-
   }
 
   getAllFood() async {

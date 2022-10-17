@@ -36,8 +36,10 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   void initState() {
-    super.initState();
+    allSellsData.clear();
     init();
+    super.initState();
+
   }
 
   init() async {

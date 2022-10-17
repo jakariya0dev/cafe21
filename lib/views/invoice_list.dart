@@ -26,6 +26,7 @@ class _InvoiceListState extends State<InvoiceList> {
   List invoiceData = []; // all data for ui rendering
   List<String> buttonList = ['All', 'Paid', 'Unpaid'];
   String selectedButton = 'All';
+  Widget bodyPlaceholder = const CircularProgressIndicator();
 
   @override
   void initState() {
@@ -94,32 +95,32 @@ class _InvoiceListState extends State<InvoiceList> {
               ),
             ),
             Expanded(
-                child: invoiceData.isEmpty
-                    ? const Center(child: Text('No data available'))
-                    : ListView.builder(
-                        reverse: false,
-                        itemCount: invoiceData.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                              onLongPress: () {
-                                deleteInvoice(index);
-                              },
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => InvoiceDetails(
-                                              invoiceData: invoiceData[index],
-                                              isServerData: true,
-                                            )));
-                              },
-                              child: BuildInvoiceListItem(
-                                index: index,
-                                invoiceData: invoiceData[index],
-                                length: invoiceData.length,
-                              ));
+                child: invoiceData.isEmpty ? Center(child: bodyPlaceholder) :
+                ListView.builder(
+                  reverse: false,
+                  itemCount: invoiceData.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                        onLongPress: () {
+                          deleteInvoice(index);
                         },
-                      )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => InvoiceDetails(
+                                    invoiceData: invoiceData[index],
+                                    isServerData: true,
+                                  )));
+                        },
+                        child: BuildInvoiceListItem(
+                          index: index,
+                          invoiceData: invoiceData[index],
+                          length: invoiceData.length,
+                        ));
+                  },
+                )
+            ),
           ],
         ),
       ),
@@ -151,14 +152,19 @@ class _InvoiceListState extends State<InvoiceList> {
           actions: [
             MaterialButton(
               onPressed: () async {
+
                 if (connectivityResult == ConnectivityResult.mobile ||
                     connectivityResult == ConnectivityResult.wifi) {
                   String msg = await InvoiceListController()
                       .deleteInvoice(invoiceData[index].invoiceId);
                   Navigator.pop(context);
+                  scaffoldMessengerKey.currentState?.hideCurrentSnackBar(); // if previous snackBar available it will be dismiss
                   allSellsData.clear(); // from data file
                   await DashboardController().getAllSellsData();
                   getReadySellsData();
+                  if(invoiceData.isEmpty){
+                    bodyPlaceholder = const Text('No Sells Data Available');
+                  }
                   SnackBar snackBar = SnackBar(
                     backgroundColor: Colors.purple,
                     content: Text(msg),

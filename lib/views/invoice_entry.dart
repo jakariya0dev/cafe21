@@ -1,5 +1,6 @@
 
 import 'package:cafe21/app_color.dart';
+import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -189,6 +190,8 @@ class _CartPageState extends State<CartPage> {
                           netBill: netBill.toStringAsFixed(2)
                       );
                       await InvoiceEntryController().saveInvoiceToServer(invoice, context);
+                      allSellsData.clear();
+                      DashboardController().getAllSellsData();
                     }
                   },
                   child: Text(
