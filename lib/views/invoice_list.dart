@@ -1,5 +1,7 @@
 import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/const_string.dart';
 import 'package:cafe21/const.dart';
+import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/controller/invoice_list_controller.dart';
@@ -26,7 +28,8 @@ class _InvoiceListState extends State<InvoiceList> {
   List invoiceData = []; // all data for ui rendering
   List<String> buttonList = ['All', 'Paid', 'Unpaid'];
   String selectedButton = 'All';
-  Widget bodyPlaceholder = const CircularProgressIndicator();
+  String appbarTitle = 'all invoice';
+  Widget bodyPlaceholder = const Text('No sells data available!');
 
   @override
   void initState() {
@@ -38,6 +41,7 @@ class _InvoiceListState extends State<InvoiceList> {
   }
 
   getReadySellsData() async {
+    appbarTitle = 'all invoice';
     selectedButton = 'All';
     filteredInvoiceData =
         allSellsData; // so, first no filter assign all data here
@@ -51,7 +55,7 @@ class _InvoiceListState extends State<InvoiceList> {
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         titleTextStyle: const TextStyle(fontWeight: FontWeight.normal),
-        title: const Text('Chef de cuisine'),
+        title: Text(appbarTitle),
         leading: IconButton(
           onPressed: () => Navigator.pushReplacement(
               context,
@@ -95,32 +99,37 @@ class _InvoiceListState extends State<InvoiceList> {
               ),
             ),
             Expanded(
-                child: invoiceData.isEmpty ? Center(child: bodyPlaceholder) :
-                ListView.builder(
-                  reverse: false,
-                  itemCount: invoiceData.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                        onLongPress: () {
-                          deleteInvoice(index);
+                child: invoiceData.isEmpty
+                    ? Center(child: bodyPlaceholder)
+                    : ListView.builder(
+                        reverse: false,
+                        itemCount: invoiceData.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                              onLongPress: (){
+                                if (prefs?.getString(ConstString.userRole) ==
+                                    ConstString.userRoleAdmin) {
+                                  deleteInvoice(index);
+                                } else {
+                                  CommonFunction().showWarningDialog(
+                                      'Only admin can delete invoice', context);
+                                }
+                          },
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => InvoiceDetails(
+                                              invoiceData: invoiceData[index]
+                                            )));
+                              },
+                              child: BuildInvoiceListItem(
+                                index: index,
+                                invoiceData: invoiceData[index],
+                                length: invoiceData.length,
+                              ));
                         },
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => InvoiceDetails(
-                                    invoiceData: invoiceData[index],
-                                    isServerData: true,
-                                  )));
-                        },
-                        child: BuildInvoiceListItem(
-                          index: index,
-                          invoiceData: invoiceData[index],
-                          length: invoiceData.length,
-                        ));
-                  },
-                )
-            ),
+                      )),
           ],
         ),
       ),
@@ -131,7 +140,7 @@ class _InvoiceListState extends State<InvoiceList> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const CartPage(),
+                builder: (context) => const InvoiceEntry(),
               ));
         },
       ),
@@ -139,6 +148,8 @@ class _InvoiceListState extends State<InvoiceList> {
   }
 
   deleteInvoice(index) {
+
+    bodyPlaceholder = const CircularProgressIndicator();
     showDialog(
       context: context,
       builder: (context) {
@@ -152,17 +163,17 @@ class _InvoiceListState extends State<InvoiceList> {
           actions: [
             MaterialButton(
               onPressed: () async {
-
                 if (connectivityResult == ConnectivityResult.mobile ||
                     connectivityResult == ConnectivityResult.wifi) {
                   String msg = await InvoiceListController()
                       .deleteInvoice(invoiceData[index].invoiceId);
                   Navigator.pop(context);
-                  scaffoldMessengerKey.currentState?.hideCurrentSnackBar(); // if previous snackBar available it will be dismiss
+                  scaffoldMessengerKey.currentState
+                      ?.hideCurrentSnackBar(); // if previous snackBar available it will be dismiss
                   allSellsData.clear(); // from data file
                   await DashboardController().getAllSellsData();
                   getReadySellsData();
-                  if(invoiceData.isEmpty){
+                  if (invoiceData.isEmpty) {
                     bodyPlaceholder = const Text('No Sells Data Available');
                   }
                   SnackBar snackBar = SnackBar(
@@ -179,7 +190,7 @@ class _InvoiceListState extends State<InvoiceList> {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content:
-                        const Text('No internet!\nCheck internet connection'),
+                    const Text('No internet!\nCheck internet connection'),
                     action: SnackBarAction(
                       label: 'close',
                       onPressed: () =>
@@ -237,6 +248,7 @@ class _InvoiceListState extends State<InvoiceList> {
       }
 
       idForCompare = year + month + day;
+      appbarTitle = 'all invoice of $day/$month/$year';
 
       filteredInvoiceData = allSellsData
           .where((element) =>

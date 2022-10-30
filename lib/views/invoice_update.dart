@@ -1,14 +1,18 @@
 import 'package:cafe21/app_color.dart';
+import 'package:cafe21/controller/common_function.dart';
+import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
-import 'package:cafe21/views/invoice_details.dart';
 import 'package:cafe21/const.dart';
 import 'package:cafe21/cons/app_config.dart';
+import 'package:cafe21/views/invoice_list.dart';
 import 'package:cafe21/widget/discount_container.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cafe21/controller/connection_checker.dart';
 
 
 class InvoiceUpdate extends StatefulWidget {
@@ -770,19 +774,17 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
     } else if(orderedItemList.isEmpty){
       showSnackBar('Add item in ordered list!');
     }
+    else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('No internet!\nCheck internet connection'), action: SnackBarAction(
+        label: 'close',
+        onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+      ),));
+    }
     else {
-      showDialog(context: context, builder: (context) {
-        return AlertDialog(
 
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: const [
-              CircularProgressIndicator(),
-              Text('Please wait...')
-            ],
-          ),
-        );
-      });
+      // for Waiting UI
+      CommonFunction().showLoadingIndicatorWithTitle(context: context, title: 'Updating...');
 
       // for generating order list
       List<Map<String, String>> orderListWithMap = [];
@@ -798,6 +800,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         });
       }
 
+      // calculating discount
       if(totalDiscountType =='%'){
 
         double discount = subTotal * (double.parse(totalDiscount) / 100);
@@ -811,25 +814,6 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
       }
 
       var db = FirebaseFirestore.instance;
-
-      InvoiceModel invoice = InvoiceModel(
-          invoiceId: widget.invoiceData.invoiceId,
-          customer: customerController.text,
-          phone: phoneController.text,
-          address: addressController.text,
-          discount: discountController.text,
-          discountType: totalDiscountType,
-          tax: taxController.text,
-          waiterName: selectedWaiterName,
-          waiterId: selectedWaiterId,
-          table: tableController.text,
-          dateTime: widget.invoiceData.dateTime,
-          paymentMethod: selectedPaymentMethod,
-          orders: orderListWithMap,
-          subTotal: subTotal.toStringAsFixed(2),
-          total: total.toStringAsFixed(2),
-          netBill: netBill.toStringAsFixed(2)
-      );
 
       db.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').doc(widget.invoiceData.invoiceId).update({
         'invoiceId': widget.invoiceData.invoiceId,
@@ -848,13 +832,11 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         'subTotal': subTotal.toStringAsFixed(2),
         'total': total.toStringAsFixed(2),
         'netBill': netBill.toStringAsFixed(2)
-      }).whenComplete((){
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => InvoiceDetails(
-                  invoiceData: invoice, isServerData: false),
-            ));
+      }).whenComplete(() async {
+        allSellsData.clear();
+        await DashboardController().getAllSellsData();
+        Navigator.pop(context);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
       });
     }
   }

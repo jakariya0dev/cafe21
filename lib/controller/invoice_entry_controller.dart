@@ -73,12 +73,7 @@ class InvoiceEntryController{
       'total' : invoice.total,
       'netBill' : invoice.netBill
     }).whenComplete((){
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => InvoicePrint(
-                invoiceData: invoice, isServerData: false),
-          ));
+
     });
   }
 
@@ -129,5 +124,7 @@ class InvoiceEntryController{
 
     return waiterList;
   }
+
+
 
 }

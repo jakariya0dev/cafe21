@@ -1,4 +1,5 @@
 import 'package:cafe21/app_color.dart';
+import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/views//invoice_list.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafe21/cons/const_string.dart';
 import 'package:cafe21/model/data.dart';
 import 'admin_dashboard.dart';
+import 'invoice_entry.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -208,6 +210,18 @@ class _DashBoardState extends State<DashBoard> {
       appBar: AppBar(
         title: const Text('Sells Dashboard'),
         titleTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: MaterialButton(
+                color: const Color(AppColor.box5),
+                onPressed: CommonFunction().saveDemoInvoice,//() => Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceEntry(),)),
+                child: Text(
+                  'New sell',
+                  style: TextStyle(color: Colors.grey.shade100),
+                )),
+          ),
+        ],
       ),
       drawer: myDrawer(),
       body: SafeArea(

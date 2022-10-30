@@ -1,35 +1,42 @@
+import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/const_string.dart';
+import 'package:cafe21/const.dart';
+import 'package:cafe21/controller/common_function.dart';
+import 'package:cafe21/controller/connection_checker.dart';
+import 'package:cafe21/controller/dashboard_controller.dart';
+import 'package:cafe21/controller/invoice_list_controller.dart';
+import 'package:cafe21/model/data.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice_list.dart';
 import 'package:cafe21/views/invoice_print.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cafe21/views/invoice_update.dart';
+import 'package:cafe21/widget/discount_container.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cafe21/const.dart';
-import 'package:cafe21/controller/common_function.dart';
-import 'package:cafe21/cons/const_string.dart';
-import 'package:cafe21/widget/discount_container.dart';
-import 'package:cafe21/views/invoice_update.dart';
 
 class InvoiceDetails extends StatefulWidget {
-  const InvoiceDetails({Key? key, required this.invoiceData, required this.isServerData}) : super(key: key);
+  const InvoiceDetails(
+      {Key? key, required this.invoiceData})
+      : super(key: key);
 
   final InvoiceModel invoiceData;
-  final bool isServerData;
 
   @override
   State<InvoiceDetails> createState() => _InvoiceDetailsState();
 }
 
 class _InvoiceDetailsState extends State<InvoiceDetails> {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   late double netBill, totalAmountAfterDiscount, totalAmount = 0;
   SharedPreferences? pref;
 
   @override
   initState() {
     super.initState();
+    ConnectionChecker().checkInternetConnection(() {
+      setState(() {});
+    });
     init();
   }
 
@@ -62,36 +69,18 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
             )),
         actions: [
           IconButton(
-              onPressed: () {
-                if (pref?.getString('userRole') == 'admin') {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InvoiceUpdate(
-                                invoiceData: widget.invoiceData,
-                              )));
-                } else {
-                  CommonFunction().showWarningDialog(
-                      'Only admin can edit invoice', context);
-                }
-              },
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        InvoiceUpdate(invoiceData: widget.invoiceData),
+                  )),
               icon: const Icon(
                 Icons.edit,
                 color: Colors.white,
               )),
           IconButton(
-              onPressed: () async {
-                if (pref?.getString(ConstString.userRole) ==
-                    ConstString.userRoleAdmin) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const InvoiceList()));
-                } else {
-                  CommonFunction().showWarningDialog(
-                      'Only admin can delete invoice', context);
-                }
-              },
+              onPressed: deleteInvoice,
               icon: const Icon(
                 Icons.delete_forever,
                 color: Colors.white,
@@ -102,8 +91,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => InvoicePrint(
-                              invoiceData: widget.invoiceData,
-                              isServerData: true,
+                              invoiceData: widget.invoiceData
                             )));
               },
               icon: const Icon(
@@ -114,49 +102,112 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Flexible(
-            child: Container(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _BuildNameContainer(
-                      id: widget.invoiceData.invoiceId,
-                      name: widget.invoiceData.customer,
-                      phone: widget.invoiceData.phone,
-                      waiterName: widget.invoiceData.waiterName,
-                      waiterId: widget.invoiceData.waiterId,
-                      paymentMethod: widget.invoiceData.paymentMethod,
-                      date: DateFormat.yMMMd()
-                          .add_jm()
-                          .format(widget.invoiceData.dateTime.toDate())
-                          .toString(),
-                      totalAmount: widget.invoiceData.subTotal,
-                      totalAmountAfterDiscount: widget.invoiceData.total,
-                      netAmount: widget.invoiceData.netBill,
-                      address: widget.invoiceData.address),
-                  const SizedBox(height: 16),
-                  _BuildBoxRow(
-                      discount: widget.invoiceData.discount,
-                      discountType: widget.invoiceData.discountType,
-                      tax: widget.invoiceData.tax,
-                      table: widget.invoiceData.table),
-                  _BuildOrderItemList(
-                    orders: widget.invoiceData.orders,
-                  ),
-                ],
-              ),
+          child: Container(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _BuildNameContainer(
+                    id: widget.invoiceData.invoiceId,
+                    name: widget.invoiceData.customer,
+                    phone: widget.invoiceData.phone,
+                    waiterName: widget.invoiceData.waiterName,
+                    waiterId: widget.invoiceData.waiterId,
+                    paymentMethod: widget.invoiceData.paymentMethod,
+                    date: DateFormat.yMMMd()
+                        .add_jm()
+                        .format(widget.invoiceData.dateTime.toDate())
+                        .toString(),
+                    totalAmount: widget.invoiceData.subTotal,
+                    totalAmountAfterDiscount: widget.invoiceData.total,
+                    netAmount: widget.invoiceData.netBill,
+                    address: widget.invoiceData.address),
+                const SizedBox(height: 16),
+                _BuildBoxRow(
+                    discount: widget.invoiceData.discount,
+                    discountType: widget.invoiceData.discountType,
+                    tax: widget.invoiceData.tax,
+                    table: widget.invoiceData.table),
+                _BuildOrderItemList(
+                  orders: widget.invoiceData.orders,
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
   }
+
+  showWarningBeforeDeleteInvoice(){
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            'Are you sure!',
+            style: TextStyle(color: Colors.red),
+          ),
+          content: const Text('This invoice will be deleted.'),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            MaterialButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                if (connectivityResult != ConnectivityResult.mobile &&
+                    connectivityResult != ConnectivityResult.wifi) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: const Text('No internet!\nCheck internet connection'),
+                    action: SnackBarAction(
+                      label: 'Ok',
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ));
+                } else if (pref?.getString(ConstString.userRole) !=
+                    ConstString.userRoleAdmin) {
+                  CommonFunction()
+                      .showWarningDialog('Only admin can delete invoice', context);
+                } else {
+                    deleteInvoice();
+
+                }
+              },
+              color: const Color(AppColor.box5),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              color: const Color(AppColor.box4),
+              child: const Text(
+                'CANCEL',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  deleteInvoice() async {
+    CommonFunction().showLoadingIndicatorWithTitle(context: context, title: 'Deleting...');
+    await InvoiceListController()
+        .deleteInvoice(widget.invoiceData.invoiceId);
+    allSellsData.clear(); // from data file
+    await DashboardController().getAllSellsData();
+    Navigator.pop(context);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
+
+  }
+
 }
 
 class _BuildNameContainer extends StatelessWidget {
-
-
   const _BuildNameContainer({
     Key? key,
     required this.id,
@@ -172,7 +223,14 @@ class _BuildNameContainer extends StatelessWidget {
     required this.waiterId,
   }) : super(key: key);
 
-  final String id, name, phone, paymentMethod, date, address, waiterName, waiterId;
+  final String id,
+      name,
+      phone,
+      paymentMethod,
+      date,
+      address,
+      waiterName,
+      waiterId;
   final String totalAmount, totalAmountAfterDiscount, netAmount;
 
   @override
@@ -357,8 +415,8 @@ class _BuildPriceCard extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey.shade700),
                             )
-                          ]
-                      ),),
+                          ]),
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       'After discount'.toUpperCase(),
@@ -367,19 +425,19 @@ class _BuildPriceCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     RichText(
                       text: TextSpan(
-                      text: '\$',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey.shade400),
-                      children: [
-                        TextSpan(
-                          text: totalAmountAfterDiscount,
+                          text: '\$',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey.shade700),
-                        )
-                      ]
-                    ),),
+                              fontWeight: FontWeight.normal,
+                              color: Colors.grey.shade400),
+                          children: [
+                            TextSpan(
+                              text: totalAmountAfterDiscount,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade700),
+                            )
+                          ]),
+                    ),
                   ],
                 ),
               ),
@@ -402,7 +460,6 @@ class _BuildPriceCard extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
-
                     child: RichText(
                       text: TextSpan(
                         text: '\$',
@@ -412,7 +469,7 @@ class _BuildPriceCard extends StatelessWidget {
                             color: Colors.grey.shade400),
                         children: [
                           TextSpan(
-                            text : netAmount,
+                            text: netAmount,
                             style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
@@ -501,7 +558,9 @@ class _BuildBoxContent extends StatelessWidget {
                       color: Colors.white,
                       fontWeight: FontWeight.normal),
                   children: [
-                TextSpan(text: type, style: const TextStyle(fontSize: 14, color: Colors.white70))
+                TextSpan(
+                    text: type,
+                    style: const TextStyle(fontSize: 14, color: Colors.white70))
               ])),
           const SizedBox(
             height: 5,
@@ -529,20 +588,20 @@ class _BuildOrderItemList extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: ListView.separated(
-    physics: const NeverScrollableScrollPhysics(),
-    shrinkWrap: true,
-    itemBuilder: (context, index) {
-      return _BuildListTile(
-        index: index,
-        orders: orders,
-      );
-    },
-    separatorBuilder: (context, index) {
-      return const SizedBox(
-        height: 10,
-      );
-    },
-    itemCount: orders.length,
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return _BuildListTile(
+            index: index,
+            orders: orders,
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(
+            height: 10,
+          );
+        },
+        itemCount: orders.length,
       ),
     );
   }
@@ -592,16 +651,19 @@ class _BuildListTile extends StatelessWidget {
                 type: orders[index]["discountType"],
               ),
               const Expanded(child: SizedBox()),
-              RichText(text: TextSpan(
-                text: '\$',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Colors.blueGrey.shade200),
-                children: [
-                  TextSpan(
-                    text: orders[index]['itemTotal'],
-                    style: Const.invDetailsListPrice,
-                  )
-                ]
-              ))
+              RichText(
+                  text: TextSpan(
+                      text: '\$',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.blueGrey.shade200),
+                      children: [
+                    TextSpan(
+                      text: orders[index]['itemTotal'],
+                      style: Const.invDetailsListPrice,
+                    )
+                  ]))
             ],
           ),
           Text(

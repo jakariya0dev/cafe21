@@ -12,14 +12,16 @@ import 'package:cafe21/widget/discount_container.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 
-class CartPage extends StatefulWidget {
-  const CartPage({Key? key}) : super(key: key);
+import 'invoice_print.dart';
+
+class InvoiceEntry extends StatefulWidget {
+  const InvoiceEntry({Key? key}) : super(key: key);
 
   @override
-  State<CartPage> createState() => _CartPageState();
+  State<InvoiceEntry> createState() => _InvoiceEntryState();
 }
 
-class _CartPageState extends State<CartPage> {
+class _InvoiceEntryState extends State<InvoiceEntry> {
 
   // FOR GENERATING INVOICE ID
   late String invoiceId;
@@ -106,94 +108,7 @@ class _CartPageState extends State<CartPage> {
               padding: const EdgeInsets.all(10.0),
               child: MaterialButton(
                   color: const Color(AppColor.box5),
-                  onPressed: () async {
-
-                    if (customerController.text.isEmpty ||
-                        phoneController.text.isEmpty ||
-                        discountController.text.isEmpty ||
-                        taxController.text.isEmpty ||
-                        addressController.text.isEmpty ||
-                        tableController.text.isEmpty) {
-                        showSnackBar('Fill all the field!');
-
-                    }else if(isWaiterSelected == false){
-                      showSnackBar('Select waiter name!');
-                    }else if(isPaymentMethodSelected == false){
-                      showSnackBar('Select payment method!');
-                    }
-                    else if(orderedItemList.isEmpty){
-                      showSnackBar('Add ordered item in list!');
-                    }
-                    else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: const Text('No internet!\nCheck internet connection'), action: SnackBarAction(
-                        label: 'close',
-                        onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-                      ),));
-                    }
-                    else {
-                      // for loading indicator
-                      showDialog(context: context, builder: (context) {
-                        return AlertDialog(
-                          content: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: const [
-                                 CircularProgressIndicator(),
-                                 Text('Please wait...')
-                              ],
-                          ),
-                        );
-                      });
-
-                      // for generating order list
-                      List<Map<String, String>> orderListWithMap = [];
-                      for(var item in orderedItemList){
-                        orderListWithMap.add({
-                          'id' : item.id,
-                          'name' : item.name,
-                          'quantity' : item.quantity,
-                          'price' : item.price,
-                          'discount' : item.discount,
-                          'discountType' : item.discountType,
-                          'itemTotal' : item.itemTotal,
-                        });
-                      }
-
-                      if(totalDiscountType =='%'){
-
-                        double discount = subTotal * (double.parse(totalDiscount) / 100);
-                        total = subTotal - discount;
-                        double tax = total * (double.parse(taxController.text.toString())/100);
-                        netBill = total + tax;
-                      }else{
-                        total = subTotal - double.parse(totalDiscount);
-                        double tax = total * (double.parse(taxController.text.toString())/100);
-                        netBill = total + tax;
-                      }
-
-                      InvoiceModel invoice = InvoiceModel(
-                          invoiceId: invoiceId,
-                          customer: customerController.text,
-                          phone: phoneController.text,
-                          address: addressController.text,
-                          discount: discountController.text,
-                          discountType: totalDiscountType,
-                          tax: taxController.text,
-                          waiterName: selectedWaiterName,
-                          waiterId: selectedWaiterId,
-                          table: tableController.text,
-                          dateTime: dated,
-                          paymentMethod: selectedPaymentMethod,
-                          orders: orderListWithMap,
-                          subTotal: subTotal.toStringAsFixed(2),
-                          total: total.toStringAsFixed(2),
-                          netBill: netBill.toStringAsFixed(2)
-                      );
-                      await InvoiceEntryController().saveInvoiceToServer(invoice, context);
-                      allSellsData.clear();
-                      DashboardController().getAllSellsData();
-                    }
-                  },
+                  onPressed: saveInvoice,
                   child: Text(
                     'Save',
                     style: TextStyle(color: Colors.grey.shade100),
@@ -290,6 +205,104 @@ class _CartPageState extends State<CartPage> {
         ),
       ),
     );
+  }
+
+  saveInvoice() async {
+
+    if (customerController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        discountController.text.isEmpty ||
+        taxController.text.isEmpty ||
+        addressController.text.isEmpty ||
+        tableController.text.isEmpty) {
+      showSnackBar('Fill all the field!');
+
+    }else if(isWaiterSelected == false){
+      showSnackBar('Select waiter name!');
+    }else if(isPaymentMethodSelected == false){
+      showSnackBar('Select payment method!');
+    }
+    else if(orderedItemList.isEmpty){
+      showSnackBar('Add ordered item in list!');
+    }
+    else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('No internet!\nCheck internet connection'), action: SnackBarAction(
+        label: 'close',
+        onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+      ),));
+    }
+    else {
+      // for loading indicator
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: const [
+              CircularProgressIndicator(),
+              Text('Please wait...')
+            ],
+          ),
+        );
+      });
+
+      // for generating order list
+      List<Map<String, String>> orderListWithMap = [];
+      for(var item in orderedItemList){
+        orderListWithMap.add({
+          'id' : item.id,
+          'name' : item.name,
+          'quantity' : item.quantity,
+          'price' : item.price,
+          'discount' : item.discount,
+          'discountType' : item.discountType,
+          'itemTotal' : item.itemTotal,
+        });
+      }
+
+      if(totalDiscountType =='%'){
+
+        double discount = subTotal * (double.parse(totalDiscount) / 100);
+        total = subTotal - discount;
+        double tax = total * (double.parse(taxController.text.toString())/100);
+        netBill = total + tax;
+      }else{
+        total = subTotal - double.parse(totalDiscount);
+        double tax = total * (double.parse(taxController.text.toString())/100);
+        netBill = total + tax;
+      }
+
+      InvoiceModel invoice = InvoiceModel(
+          invoiceId: invoiceId,
+          customer: customerController.text,
+          phone: phoneController.text,
+          address: addressController.text,
+          discount: discountController.text,
+          discountType: totalDiscountType,
+          tax: taxController.text,
+          waiterName: selectedWaiterName,
+          waiterId: selectedWaiterId,
+          table: tableController.text,
+          dateTime: dated,
+          paymentMethod: selectedPaymentMethod,
+          orders: orderListWithMap,
+          subTotal: subTotal.toStringAsFixed(2),
+          total: total.toStringAsFixed(2),
+          netBill: netBill.toStringAsFixed(2)
+      );
+      await InvoiceEntryController().saveInvoiceToServer(invoice, context);
+      allSellsData.clear();
+      await DashboardController().getAllSellsData();
+      // for getting just added invoice data from server data
+      List iv = allSellsData.where((e) => e.invoiceId== invoiceId).toList();
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InvoicePrint(
+                invoiceData: iv[0]),
+          ));
+    }
   }
 
   Container buildTitleCard() {

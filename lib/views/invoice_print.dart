@@ -5,17 +5,14 @@ import 'package:cafe21/views/invoice_list.dart';
 import 'package:cafe21/views/invoice_update.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../controller/printer_controller.dart';
-import '../widget/title_text.dart';
+import 'package:cafe21/widget/title_text.dart';
 
 class InvoicePrint extends StatefulWidget {
   const InvoicePrint(
-      {Key? key, required this.invoiceData, required this.isServerData})
+      {Key? key, required this.invoiceData})
       : super(key: key);
 
   final InvoiceModel invoiceData;
-  final bool isServerData;
 
   @override
   State<InvoicePrint> createState() => _InvoicePrintState();
@@ -53,18 +50,14 @@ class _InvoicePrintState extends State<InvoicePrint> {
   @override
   Widget build(BuildContext context) {
 
-    String date = widget.isServerData ? DateFormat.yMMMd().add_jm().format(widget.invoiceData.dateTime.toDate()).toString() : DateFormat.yMMMd().add_jm().format(widget.invoiceData.dateTime).toString();
-    var width = MediaQuery.of(context).size.width;
+    String date = DateFormat.yMMMd().add_jm().format(widget.invoiceData.dateTime.toDate()).toString();
+    // var width = MediaQuery.of(context).size.width;
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(onPressed: (){
-            if(widget.isServerData==false){
               Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
-            }else{
-              Navigator.pop(context);
-            }
           }, icon: const Icon(Icons.arrow_back_outlined)),
           actions: [
             Padding(
