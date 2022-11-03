@@ -31,7 +31,7 @@ class _DashBoardState extends State<DashBoard> {
   double totalTax = 0;
   double totalWithTax = 0;
   double totalWithoutTax = 0;
-  String title = 'Today\'s sells data';
+  String title = 'Total Sells Data';
   SharedPreferences? prefs;
   String? userRole;
 
@@ -56,147 +56,8 @@ class _DashBoardState extends State<DashBoard> {
     userRole = prefs?.getString(ConstString.userRole);
     getDailyData();
     calculationInvoiceData();
-    calculateMostSellingItem();
+    calculateMostSells();
     setState(() {});
-
-  }
-
-  getWeeklyData(){
-    var sevenDaysAgoFromNow = DateTime.now().subtract(const Duration(days: 7));
-    sellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
-    calculationInvoiceData();
-    setState(() {});
-  }
-
-  getMonthlyData(){
-    var now = DateTime.now();
-    var thirtyDaysAgoFromNow = DateTime(now.year, now.month-1, now.day);
-    sellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
-    calculationInvoiceData();
-    setState(() {});
-  }
-
-  getAllTotalData(){
-    sellsDataFiltered = allSellsData;
-    calculationInvoiceData();
-  }
-
-  calculationInvoiceData(){
-
-    totalWithTax = 0;
-    totalWithoutTax = 0;
-
-    for (var item in sellsDataFiltered) {
-
-      totalWithTax = totalWithTax + double.parse(item.netBill);
-      totalWithoutTax = totalWithoutTax + double.parse(item.total);
-    }
-    setState(() {
-
-    });
-    // print(totalWithTax);
-    // print(totalWithoutTax);
-  }
-
-  calculateMostSellingItem(){
-
-    List foodIdFromInvoice = [];
-    List waiterNameFromInvoice = [];
-
-    Map <String, int> countMostSellingFoodBeforeSort = {};
-    Map <String, int> countMostServingPersonBeforeSort = {};
-
-    // getting all food id and waiter name from invoices
-    for (var invoice in allSellsData) {
-
-      waiterNameFromInvoice.add(invoice.waiterName);
-
-      for(var item in invoice.orders){
-        foodIdFromInvoice.add(item['id']);
-      }
-
-    }
-
-    // SUM of food orders
-    for (var foodId in foodIdFromInvoice){
-      countMostSellingFoodBeforeSort[foodId] = (countMostSellingFoodBeforeSort[foodId] ?? 0) + 1;
-    }
-
-    // SUM of waiter orders
-    for (var waiterName in waiterNameFromInvoice){
-      countMostServingPersonBeforeSort[waiterName] = (countMostServingPersonBeforeSort[waiterName] ?? 0) + 1;
-    }
-
-    // reversed the map ex:321
-    countMostSellingFood = Map.fromEntries(
-        countMostSellingFoodBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
-    countMostServingPerson = Map.fromEntries(
-        countMostServingPersonBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
-
-
-  }
-
-  Future<void> getDataByDate() async {
-
-    String idForCompare, year, month, day;
-
-    final date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2022),
-      lastDate: DateTime.now(),
-    );
-
-    if(date != null){
-      year = date.year.toString();
-      int pMonth = date.month;
-      int pDay = date.day;
-
-
-      if(pMonth<10) {
-        month = pMonth.toString().padLeft(2, '0');
-      }else {
-        month = pMonth.toString();
-      }
-      if(pDay<10) {
-        day = pDay.toString().padLeft(2, '0');
-      }else {
-        day = pDay.toString();
-      }
-
-      idForCompare = year+month+day;
-      sellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
-    }
-
-    calculationInvoiceData();
-
-  }
-
-  Future<void> getDailyData() async {
-
-    String idForCompare, year, month, day;
-    DateTime date = DateTime.now();
-
-
-    year = date.year.toString();
-    int pMonth = date.month;
-    int pDay = date.day;
-
-    if(pMonth<10) {
-      month = pMonth.toString().padLeft(2, '0');
-    }else {
-      month = pMonth.toString();
-    }
-    if(pDay<10) {
-      day = pDay.toString().padLeft(2, '0');
-    }else {
-      day = pDay.toString();
-    }
-
-    idForCompare = year+month+day;
-
-    sellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
-    calculationInvoiceData();
 
   }
 
@@ -315,6 +176,85 @@ class _DashBoardState extends State<DashBoard> {
         ),
       ),
     );
+  }
+
+  getWeeklyData(){
+    var sevenDaysAgoFromNow = DateTime.now().subtract(const Duration(days: 7));
+    sellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
+    calculationInvoiceData();
+    title = 'Weekly Sells Data';
+    setState(() {});
+  }
+
+  getMonthlyData(){
+    var now = DateTime.now();
+    var thirtyDaysAgoFromNow = DateTime(now.year, now.month-1, now.day);
+    sellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
+    calculationInvoiceData();
+    title = 'Monthly Sells Data';
+    setState(() {});
+  }
+
+  getAllTotalData(){
+    sellsDataFiltered = allSellsData;
+    calculationInvoiceData();
+    title = 'Total Sells Data';
+    calculationInvoiceData();
+  }
+
+  calculationInvoiceData(){
+
+    totalWithTax = 0;
+    totalWithoutTax = 0;
+
+    for (var item in sellsDataFiltered) {
+
+      totalWithTax = totalWithTax + double.parse(item.netBill);
+      totalWithoutTax = totalWithoutTax + double.parse(item.total);
+    }
+    setState(() {
+
+    });
+    // print(totalWithTax);
+    // print(totalWithoutTax);
+  }
+
+  calculateMostSells(){
+
+    List foodIdFromInvoice = [];
+    List waiterNameFromInvoice = [];
+
+    Map <String, int> countMostSellingFoodBeforeSort = {};
+    Map <String, int> countMostServingPersonBeforeSort = {};
+
+    // getting all food id and waiter name from invoices
+    for (var invoice in allSellsData) {
+
+      waiterNameFromInvoice.add(invoice.waiterName);
+
+      for(var item in invoice.orders){
+        foodIdFromInvoice.add(item['id']);
+      }
+
+    }
+
+    // SUM of food orders
+    for (var foodId in foodIdFromInvoice){
+      countMostSellingFoodBeforeSort[foodId] = (countMostSellingFoodBeforeSort[foodId] ?? 0) + 1;
+    }
+
+    // SUM of waiter orders
+    for (var waiterName in waiterNameFromInvoice){
+      countMostServingPersonBeforeSort[waiterName] = (countMostServingPersonBeforeSort[waiterName] ?? 0) + 1;
+    }
+
+    // reversed the map ex:321
+    countMostSellingFood = Map.fromEntries(
+        countMostSellingFoodBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
+    countMostServingPerson = Map.fromEntries(
+        countMostServingPersonBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
+
+
   }
 
   Widget buildTitleContainer(width, value) {
@@ -439,7 +379,7 @@ class _DashBoardState extends State<DashBoard> {
                 InkWell(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(index: 0),));
 
                   },
                   child: const DrawerListTile(
@@ -471,6 +411,70 @@ class _DashBoardState extends State<DashBoard> {
         ],
       ),
     );
+  }
+
+  Future<void> getDataByDate() async {
+
+    String idForCompare, year, month, day;
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime.now(),
+    );
+
+    if(date != null){
+      year = date.year.toString();
+      int pMonth = date.month;
+      int pDay = date.day;
+
+
+      if(pMonth<10) {
+        month = pMonth.toString().padLeft(2, '0');
+      }else {
+        month = pMonth.toString();
+      }
+      if(pDay<10) {
+        day = pDay.toString().padLeft(2, '0');
+      }else {
+        day = pDay.toString();
+      }
+
+      idForCompare = year+month+day;
+      sellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+      calculationInvoiceData();
+      title = 'Sells Data of $month/$day/$year';
+    }
+
+  }
+
+  Future<void> getDailyData() async {
+
+    String idForCompare, year, month, day;
+    DateTime date = DateTime.now();
+
+
+    year = date.year.toString();
+    int pMonth = date.month;
+    int pDay = date.day;
+
+    if(pMonth<10) {
+      month = pMonth.toString().padLeft(2, '0');
+    }else {
+      month = pMonth.toString();
+    }
+    if(pDay<10) {
+      day = pDay.toString().padLeft(2, '0');
+    }else {
+      day = pDay.toString();
+    }
+
+    idForCompare = year+month+day;
+
+    sellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+    calculationInvoiceData();
+    title = 'Daily Sells Data';
   }
 
   showAboutDialog(context){
@@ -514,6 +518,7 @@ class _DashBoardState extends State<DashBoard> {
       );
     },);
   }
+
 }
 
 
@@ -563,7 +568,7 @@ class _BuildMostSellingItem extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(color: Color(0xff40407a)),
-      child: items.isEmpty ? const Center(child: CircularProgressIndicator()) : Column(
+      child: items.isEmpty ? const Center(child: Text('No data available!')) : Column(
         children: [
           Text(title,
             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
@@ -612,7 +617,7 @@ class _BuildMostSellerList extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(color: Color(0xff40407a)),
-      child: items.isEmpty ? const Center(child: CircularProgressIndicator()) : Column(
+      child: items.isEmpty ? const Center(child: Text('No data available!')) : Column(
         children:  [
            Text(title,
             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../cons/app_config.dart';
+import '../main.dart';
 
 class CommonFunction{
 
@@ -60,6 +61,19 @@ class CommonFunction{
         'total' : '130',
         'netBill' : '155'
       });
+  }
+
+  showSnackBar(msg, context){
+    SnackBar snackBar = SnackBar(
+      content: Text(msg),
+      action: SnackBarAction(
+          label: 'ok',
+          onPressed: () {
+            ScaffoldMessenger.of(context)
+                .hideCurrentSnackBar();
+          }),
+    );
+    scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
 
   String generateInvoiceId(){

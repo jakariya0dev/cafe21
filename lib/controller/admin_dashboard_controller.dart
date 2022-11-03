@@ -1,106 +1,157 @@
-import 'package:cafe21/const.dart';
+import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../cons/app_config.dart';
-
-
-class AdminDashboardController{
-
+class AdminDashboardController {
   var db = FirebaseFirestore.instance;
 
   // Food Data Manipulation
   getProductData(category) async {
     List data = [];
-    await db.collection(AppConfig.dbName).doc('foods').collection('products').where('category', isEqualTo: category,).get().then((value) {
-
-      for(var doc in value.docs){
+    await db
+        .collection(AppConfig.dbName)
+        .doc('foods')
+        .collection('products')
+        .where(
+          'category',
+          isEqualTo: category,
+        )
+        .get()
+        .then((value) {
+      for (var doc in value.docs) {
         data.add({
-          'docId' : doc.id,
-          'name' : doc['name'],
-          'type' : doc['category'],
-          'description' : doc['description'],
-          'price' : doc['price']
+          'docId': doc.id,
+          'name': doc['name'],
+          'type': doc['category'],
+          'description': doc['description'],
+          'price': doc['price']
         });
-      }});
+      }
+    });
 
     return data;
   }
+
   addNewFoodData(productData) async {
-    
-    await db.collection(AppConfig.dbName).doc('foods').collection('products').doc().set(productData).then((value) => (value) {
-
-    });
+    late bool isSuccessful;
+    await db
+        .collection(AppConfig.dbName)
+        .doc('foods')
+        .collection('products')
+        .doc()
+        .set(productData)
+        .then((value) => isSuccessful = true,
+            onError: (e){
+              print(e);
+              return isSuccessful = false;
+            });
+    return isSuccessful;
   }
+
   updateFoodData(productData, docId) async {
+    String msg = '';
+    await db
+        .collection(AppConfig.dbName)
+        .doc('foods')
+        .collection('products')
+        .doc(docId)
+        .update(productData)
+        .then((value) => msg = 'Successfully updated!',
+            onError: (e) => msg = "Error updating document $e");
 
-    await db.collection(AppConfig.dbName).doc('foods').collection('products').doc(docId).set(productData).then((value) => (value) {
-
-    });
+    return msg;
   }
-  deleteFoodData(docName, context) async {
 
+  deleteFoodData(docId, context) async {
     late String msg;
-    await db.collection(AppConfig.dbName).doc('foods').collection('products').doc(docName).delete().then(
-          (doc){
-        msg = 'Successfully Deleted!';
-      },
-      onError: (e){
-        msg = 'Cant delete: $e';
-      },
-    );
+    await db
+        .collection(AppConfig.dbName)
+        .doc('foods')
+        .collection('products')
+        .doc(docId)
+        .delete()
+        .then((doc) {
+      msg = 'Successfully Deleted!';
+    }, onError: (e) {
+      return msg = 'Error: $e';
+    });
     return msg;
   }
 
   // Waiter Data Manipulation
   getWaiterData() async {
-
     List waiterList = [];
 
-    await db.collection(AppConfig.dbName).doc('users').collection('waiters').get().then((value) {
-
-      for(var item in value.docs){
+    await db
+        .collection(AppConfig.dbName)
+        .doc('users')
+        .collection('waiters')
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
         waiterList.add({
-          'docId' : item.id,
-          'id' : item['id'],
-          'name' : item['name'],
-          'phone' : item['phone'],
-          'email' : item['email'],
-          'nid' : item['nid'],
-          'address' : item['address'],
-          'image' : item['image']
+          'docId': item.id,
+          'id': item['id'],
+          'name': item['name'],
+          'phone': item['phone'],
+          'email': item['email'],
+          'nid': item['nid'],
+          'address': item['address'],
+          'image': item['image']
         });
       }
-
     });
 
     return waiterList;
   }
-  addNewWaiterData(waiterData) async {
 
-    await db.collection(AppConfig.dbName).doc('users').collection('waiters').doc(waiterData['phone']).set(waiterData);
+  addNewWaiterData(waiterData) async {
+    late bool isSuccessful;
+    await db
+        .collection(AppConfig.dbName)
+        .doc('users')
+        .collection('waiters')
+        .doc(waiterData['phone'])
+        .set(waiterData).then((value) => isSuccessful = true, onError: (e){
+          print(e);
+          return isSuccessful = false;
+    });
+    return isSuccessful;
   }
+
   updateWaiterData(waiterList) async {
     late String msg;
-    await db.collection(AppConfig.dbName).doc('users').collection('waiters').doc(waiterList['docId']).update({
-      'id' : waiterList['id'],
-      'name' : waiterList['name'],
-      'phone' : waiterList['phone'],
-      'email' : waiterList['email'],
-      'nid' : waiterList['nid'],
-      'address' : waiterList['address'],
-      'image' : waiterList['image']
-    }).then((value) => msg = 'Successfully Updated!', onError: (e) => msg = 'Cant Update: $e');
+    await db
+        .collection(AppConfig.dbName)
+        .doc('users')
+        .collection('waiters')
+        .doc(waiterList['docId'])
+        .update({
+      'id': waiterList['id'],
+      'name': waiterList['name'],
+      'phone': waiterList['phone'],
+      'email': waiterList['email'],
+      'nid': waiterList['nid'],
+      'address': waiterList['address'],
+      'image': waiterList['image']
+    }).then((value) => msg = 'Successfully Updated!',
+            onError: (e) => msg = 'Cant Update: $e');
 
     return msg;
   }
-  deleteWaiterData(docName) async {
 
+  deleteWaiterData(docName) async {
     late String msg;
-    await db.collection(AppConfig.dbName).doc('users').collection('waiters').doc(docName).delete().then(
-          (doc){
+    await db
+        .collection(AppConfig.dbName)
+        .doc('users')
+        .collection('waiters')
+        .doc(docName)
+        .delete()
+        .then(
+      (doc) {
         msg = 'Successfully Delete!';
       },
-      onError: (e){
+      onError: (e) {
         msg = 'Cant delete: $e';
       },
     );
@@ -109,33 +160,58 @@ class AdminDashboardController{
 
   // Category Data Manipulation
   getCategoryList() async {
-
-    var categoryList = await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').get();
+    var categoryList = await db
+        .collection(AppConfig.dbName)
+        .doc('foods')
+        .collection('food-category')
+        .doc('category')
+        .get();
     return categoryList['names'];
   }
-  addNewCategoryName({name, context}) async {
 
-    await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').update({
-      'names' : FieldValue.arrayUnion([name]),
-    }).then((value) => (value) {
-
+  addNewCategoryName({required name}) async {
+    late bool isSuccessful;
+    await db
+        .collection(AppConfig.dbName)
+        .doc('foods')
+        .collection('food-category')
+        .doc()
+        .set({'name': name}).then((value) => isSuccessful = true, onError: (e) {
+      isSuccessful = false;
+      print(e);
     });
-  }
-  updateCategoryName(categoryList) async {
-    late String msg;
-    await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').set({
-      'names' : categoryList
-    }).then((value) => msg = 'Successfully Updated!', onError: (e) => msg = 'Cant Update: $e');
 
-    return msg;
-  }
-  deleteCategory(name) async {
-    late String msg;
-    await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').update({
-        'names' : FieldValue.arrayRemove([name])
-    }).then((value) => msg = 'Successfully Deleted!', onError: (e) => msg = 'Cant delete: $e');
-
-    return msg;
+    return isSuccessful;
   }
 
+  updateCategoryName({required id, required name}) async {
+    late bool isSuccessful;
+    await db
+        .collection(AppConfig.dbName)
+        .doc('foods')
+        .collection('food-category')
+        .doc(id)
+        .set({'name': name}).then((value) => isSuccessful = true, onError: (e) {
+      isSuccessful = false;
+      print(e);
+    });
+
+    return isSuccessful;
+  }
+
+  deleteCategory(id) async {
+    late bool isSuccessful;
+    await db
+        .collection(AppConfig.dbName)
+        .doc('foods')
+        .collection('food-category')
+        .doc(id)
+        .delete()
+        .then((value) => isSuccessful = true, onError: (e) {
+      print(e);
+      return isSuccessful = false;
+    });
+
+    return isSuccessful;
+  }
 }

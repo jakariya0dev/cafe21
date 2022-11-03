@@ -3,6 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/model/data.dart';
 
+import '../cons/enums.dart';
+
+
 class DashboardController{
 
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -54,9 +57,16 @@ class DashboardController{
 
   getAllFoodCategory()async{
 
-    await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').get().then((value) {
-      allCategoryData = value['names'];
+    await db.collection(AppConfig.dbName).doc('foods').collection('food-category').get().then((value) {
+      for (var doc in value.docs){
+          allCategoryData.add({
+            CategoryListKey.id.name : doc.id,
+            CategoryListKey.name.name : doc[CategoryListKey.name.name]
+          });
+      }
     });
+    
+
   }
 
   getAllWaiter() async {

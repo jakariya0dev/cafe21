@@ -1,5 +1,6 @@
 
 import 'package:cafe21/app_color.dart';
+import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
@@ -67,9 +68,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
   void initState() {
     invoiceId = InvoiceEntryController().generateInvoiceId();
     ConnectionChecker().checkInternetConnection((){
-      setState(() {
-
-      });
+      setState(() {});
     });
     getData();
     super.initState();
@@ -215,22 +214,18 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
         taxController.text.isEmpty ||
         addressController.text.isEmpty ||
         tableController.text.isEmpty) {
-      showSnackBar('Fill all the field!');
+      CommonFunction().showSnackBar('Fill all the field!', context);
 
     }else if(isWaiterSelected == false){
-      showSnackBar('Select waiter name!');
+      CommonFunction().showSnackBar('Select waiter name!', context);
     }else if(isPaymentMethodSelected == false){
-      showSnackBar('Select payment method!');
+      CommonFunction().showSnackBar('Select payment method!', context);
     }
     else if(orderedItemList.isEmpty){
-      showSnackBar('Add ordered item in list!');
+      CommonFunction().showSnackBar('Add ordered item in list!', context);
     }
     else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('No internet!\nCheck internet connection'), action: SnackBarAction(
-        label: 'close',
-        onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-      ),));
+      CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
     }
     else {
       // for loading indicator
@@ -880,19 +875,6 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
     orderedItemList.removeAt(index);
     changeState();
 
-  }
-
-  showSnackBar(msg){
-    SnackBar snackBar = SnackBar(
-      content: Text(msg),
-      action: SnackBarAction(
-          label: 'ok',
-          onPressed: () {
-            ScaffoldMessenger.of(context)
-                .hideCurrentSnackBar();
-          }),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   openFoodCartDialogForOthers(context) {

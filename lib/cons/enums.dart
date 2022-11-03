@@ -1,0 +1,3 @@
+enum CategoryListKey{
+  id, name
+}
