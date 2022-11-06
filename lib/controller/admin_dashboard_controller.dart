@@ -119,7 +119,7 @@ class AdminDashboardController {
   }
 
   updateWaiterData(waiterList) async {
-    late String msg;
+    late bool isSuccessful;
     await db
         .collection(AppConfig.dbName)
         .doc('users')
@@ -133,14 +133,17 @@ class AdminDashboardController {
       'nid': waiterList['nid'],
       'address': waiterList['address'],
       'image': waiterList['image']
-    }).then((value) => msg = 'Successfully Updated!',
-            onError: (e) => msg = 'Cant Update: $e');
+    }).then((value) => isSuccessful = true,
+            onError: (e){
+      print(e);
+      return isSuccessful = false;
+            });
 
-    return msg;
+    return isSuccessful;
   }
 
   deleteWaiterData(docName) async {
-    late String msg;
+    late bool isSuccessful;
     await db
         .collection(AppConfig.dbName)
         .doc('users')
@@ -149,13 +152,14 @@ class AdminDashboardController {
         .delete()
         .then(
       (doc) {
-        msg = 'Successfully Delete!';
+        isSuccessful = true;
       },
       onError: (e) {
-        msg = 'Cant delete: $e';
-      },
+        print(e);
+        return isSuccessful = false;
+      }
     );
-    return msg;
+    return isSuccessful;
   }
 
   // Category Data Manipulation

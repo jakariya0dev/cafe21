@@ -1,5 +1,6 @@
 
 import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/controller/invoice_entry_controller.dart';
@@ -76,9 +77,9 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
 
   getData() async {
 
-    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[0]).toList();
+    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[0][CategoryListKey.id.name]).toList();
 
-    // for managing dialog field
+    // for managing 'Add data' dialog field
     for (var i = 0; i <= initialFoodData.length; i++) {
       itemQuantityList.add(1);
       itemDiscountController.add(TextEditingController());
@@ -638,7 +639,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                                   onPressed: () async {
                                     selectedButton = index;
                                     initialFoodData.clear();
-                                    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[index]).toList();
+                                    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[index][CategoryListKey.id.name]).toList();
                                     // initialFoodData = await InvoiceEntryController().getFoodData(allCategoryData[index]);
                                     setState(() {});
                                   },
@@ -649,7 +650,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                                   color: selectedButton == index
                                       ? Colors.amberAccent
                                       : Colors.white,
-                                  child: Text(allCategoryData[index]),
+                                  child: Text(allCategoryData[index][CategoryListKey.name.name]),
                                 );
                               },
                               separatorBuilder: (context, index) {
@@ -905,7 +906,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                         height: 50,
                         child: TextField(
                           controller: foodNameControllerForOther,
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.text,
                           maxLines: 3,
                           minLines: 1,
                           decoration: const InputDecoration(

@@ -111,7 +111,7 @@ class _DashBoardState extends State<DashBoard> {
                     ],
                   ),
                 ),
-                _BuildMostSellingItem(
+                BuildMostSellingItem(
                   width: width,
                   height: height,
                   items: countMostSellingFood,
@@ -154,7 +154,7 @@ class _DashBoardState extends State<DashBoard> {
                     ],
                   ),
                 ),
-                _BuildMostSellerList(
+                BuildMostSellerList(
                   width: width,
                   height: height,
                   items: countMostServingPerson,
@@ -253,7 +253,6 @@ class _DashBoardState extends State<DashBoard> {
         countMostSellingFoodBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
     countMostServingPerson = Map.fromEntries(
         countMostServingPersonBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
-
 
   }
 
@@ -401,8 +400,8 @@ class _DashBoardState extends State<DashBoard> {
           ),
           ListTile(
             dense: true,
-            leading: const Icon(Icons.devices),
-            title: const Text('Developer info'),
+            title: const Center(child: Text('Developer info')),
+
             onTap: () {
               Navigator.pop(context);
               showAboutDialog(context);
@@ -521,7 +520,6 @@ class _DashBoardState extends State<DashBoard> {
 
 }
 
-
 // classes for views
 
 class BuildBottomNavbar extends StatelessWidget {
@@ -552,8 +550,8 @@ class BuildBottomNavbar extends StatelessWidget {
   }
 }
 
-class _BuildMostSellingItem extends StatelessWidget {
-  const _BuildMostSellingItem({
+class BuildMostSellingItem extends StatelessWidget {
+  const BuildMostSellingItem({
     Key? key, required this.items, required this.height, required this.width, required this.foods, required this.title,
   }) : super(key: key);
 
@@ -564,6 +562,7 @@ class _BuildMostSellingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(16),
@@ -588,7 +587,7 @@ class _BuildMostSellingItem extends StatelessWidget {
                   color: index%2==0? Colors.blue.shade300 : Colors.blue.shade200,
                   child: Row(
                     children: [
-                      Expanded(child: Text('${index+1}. ${food[0]['name']}')),
+                      Expanded(child: Text('${index+1}. ${foods[index]['name']}')),
                       Text(items.values.elementAt(index).toString())
                     ],
                   ),
@@ -601,8 +600,8 @@ class _BuildMostSellingItem extends StatelessWidget {
   }
 }
 
-class _BuildMostSellerList extends StatelessWidget {
-  const _BuildMostSellerList({
+class BuildMostSellerList extends StatelessWidget {
+  const BuildMostSellerList({
     Key? key, required this.items, required this.height, required this.width, required this.waiterList, required this.title,
   }) : super(key: key);
 
@@ -613,13 +612,14 @@ class _BuildMostSellerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(color: Color(0xff40407a)),
       child: items.isEmpty ? const Center(child: Text('No data available!')) : Column(
         children:  [
-           Text(title,
+          Text(title,
             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
           const SizedBox(
@@ -632,7 +632,7 @@ class _BuildMostSellerList extends StatelessWidget {
               itemBuilder: (context, index) {
 
                 List waiter = waiterList.where((element) => element['name'] == items.keys.elementAt(index)).toList();
-
+                // print(waiterList[0]['name']);
               return Container(
                 height: 32,
                 padding: const EdgeInsets.all(8),
@@ -640,7 +640,7 @@ class _BuildMostSellerList extends StatelessWidget {
                 child: Row(
                   children: [
                     Text('${index+1}. '),
-                    Expanded(child: Text(waiter[0]['name'] ?? '')), // ${}
+                    Expanded(child: Text(waiter.isNotEmpty ? waiter[index]['name'] : 'Anonymous')), // ${}
                     Text(items.values.elementAt(index).toString())
                   ],
                 ),
@@ -705,12 +705,12 @@ class DrawerListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 24, top: 4, bottom: 4),
+      padding: const EdgeInsets.only(left: 24, top: 8, bottom: 8),
       child: Row(
         children:  [
           Icon(icon, color: Colors.grey.shade700),
-          const SizedBox(width: 16,),
-          Text(text, style: const TextStyle(fontWeight: FontWeight.w500),)],
+          const SizedBox(width: 20,),
+          Text(text, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),)],
       ),
     );
   }

@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
   // String userRole = 'manager';
-  bool isPasswordVisible = false;
+  bool isPasswordVisible = true;
 
   @override
   initState() {
@@ -46,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
 
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
@@ -222,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
   // login with firebase auth
   userLogin() async {
     bool emailValid = RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(emailController.text);
 
     setState(() {});

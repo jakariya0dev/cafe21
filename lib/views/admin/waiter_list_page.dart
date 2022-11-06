@@ -1,11 +1,12 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/app_color.dart';
-import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/model/data.dart';
+
+import 'package:cafe21/controller/dashboard_controller.dart';
 
 class WaiterListPage extends StatefulWidget {
   const WaiterListPage({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class WaiterListPage extends StatefulWidget {
 }
 
 class _WaiterListPageState extends State<WaiterListPage> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -295,10 +297,10 @@ class _WaiterListPageState extends State<WaiterListPage> {
                     }
                     else{
                       Navigator.pop(context);
-                      await AdminDashboardController()
-                          .deleteWaiterData(allWaiterData[index]['docId']);
-                      String msg =
+                      showLoadingDialog('Updating...');
+                      bool isSuccessful =
                       await AdminDashboardController().updateWaiterData({
+                        'docId' : allWaiterData[index]['docId'],
                         'id': idController.text,
                         'name': nameController.text,
                         'phone': phoneController.text,
@@ -307,9 +309,16 @@ class _WaiterListPageState extends State<WaiterListPage> {
                         'address': addressController.text,
                         'image': '',
                       });
-                      allWaiterData.clear();
-                      // getData();
-                      CommonFunction().showSnackBar(msg, context);
+                      if(isSuccessful){
+                        await fetchUpdatedData();
+                        pop();
+                        showSnackbar('Successfully deleted');
+
+                      }
+                      else{
+                        pop();
+                        showSnackbar('Failed to delete');
+                      }
                     }
                   },
                   child: const Text(
@@ -345,11 +354,14 @@ class _WaiterListPageState extends State<WaiterListPage> {
                       'No internet!\nCheck internet connection', context);
                 } else {
                   Navigator.pop(context);
-                  String msg = await AdminDashboardController()
+                  bool isSuccessful = await AdminDashboardController()
                       .deleteWaiterData(allWaiterData[index]['docId']);
-                  allWaiterData.clear();
-                  // getData();
-                  CommonFunction().showSnackBar(msg, context);
+                  if(isSuccessful){
+                    await fetchUpdatedData();
+                    showSnackbar('Successfully deleted');
+                  }else{
+                    showSnackbar('Failed to delete');
+                  }
                 }
               },
               color: const Color(AppColor.box5),
@@ -372,5 +384,19 @@ class _WaiterListPageState extends State<WaiterListPage> {
         );
       },
     );
+  }
+  pop(){
+    Navigator.pop(context);
+  }
+  fetchUpdatedData() async {
+    allWaiterData.clear();
+    await DashboardController().getAllWaiter();
+    setState(() {});
+  }
+  showSnackbar(String msg){
+    CommonFunction().showSnackBar(msg, context);
+  }
+  showLoadingDialog(String title){
+    CommonFunction().showLoadingIndicatorWithTitle(context: context, title: title);
   }
 }
