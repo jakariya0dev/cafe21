@@ -2,8 +2,7 @@ import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/model/data.dart';
-
-import '../cons/enums.dart';
+import 'package:cafe21/cons/enums.dart';
 
 
 class DashboardController{

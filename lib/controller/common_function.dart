@@ -4,36 +4,40 @@ import 'package:flutter/material.dart';
 import '../cons/app_config.dart';
 import '../main.dart';
 
-class CommonFunction{
-
-  showWarningDialog(msg,context){
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        title: const Text('Warning!'),
-        content: Text(msg),
-        actions: [
-          ElevatedButton(onPressed: () {
-            Navigator.pop(context);
-          }, child: const Text('Ok'))
-        ],
-      );
-    });
+class CommonFunction {
+  showWarningDialog(msg, context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Warning!'),
+            content: Text(msg),
+            actions: [
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Ok'))
+            ],
+          );
+        });
   }
 
-  showLoadingIndicatorWithTitle({required context, required title, message}){
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-
-        content: ListTile(
-          leading: const CircularProgressIndicator(),
-          title: Text(title),
-          subtitle: Text(message ?? 'Please wait.'),
-        ),
-      );
-    });
+  showLoadingIndicatorWithTitle({required context, required title, message}) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: ListTile(
+              leading: const CircularProgressIndicator(),
+              title: Text(title),
+              subtitle: Text(message ?? 'Please wait.'),
+            ),
+          );
+        });
   }
 
-  saveDemoInvoice(){
+  saveDemoInvoice() {
     DateTime dateTime = DateTime.now();
     var year = dateTime.year;
     var month = dateTime.month;
@@ -43,41 +47,44 @@ class CommonFunction{
 
     var id = generateInvoiceId();
 
-      var db = FirebaseFirestore.instance;
-      db.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').doc(id).set({
-        'customer' : 'ABC ${dateTime.second}',
-        'phone' : ms.toString(),
-        'address' : month.toString(),
-        'discount' : hour.toString(),
-        'discountType' : '%',
-        'tax' : month.toString(),
-        'waiterName' : 'Jack',
-        'waiterId' : '150',
-        'table' : "7",
-        'dateTime' : dateTime,
-        'paymentMethod' : 'Online Payment',
-        'orders' : [],
-        'subTotal': '140',
-        'total' : '130',
-        'netBill' : '155'
-      });
+    var db = FirebaseFirestore.instance;
+    db
+        .collection(AppConfig.dbName)
+        .doc('invoices')
+        .collection('invoice-details')
+        .doc(id)
+        .set({
+      'customer': 'ABC ${dateTime.second}',
+      'phone': ms.toString(),
+      'address': month.toString(),
+      'discount': hour.toString(),
+      'discountType': '%',
+      'tax': month.toString(),
+      'waiterName': 'Jack',
+      'waiterId': '150',
+      'table': "7",
+      'dateTime': dateTime,
+      'paymentMethod': 'Online Payment',
+      'orders': [],
+      'subTotal': '140',
+      'total': '130',
+      'netBill': '155'
+    });
   }
 
-  showSnackBar(msg, context){
+  showSnackBar(msg, context) {
     SnackBar snackBar = SnackBar(
       content: Text(msg),
       action: SnackBarAction(
           label: 'ok',
           onPressed: () {
-            ScaffoldMessenger.of(context)
-                .hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }),
     );
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
 
-  String generateInvoiceId(){
-
+  String generateInvoiceId() {
     String id, year, month, day, hour, minute, second;
     DateTime date = DateTime.now();
     year = date.year.toString();
@@ -87,39 +94,115 @@ class CommonFunction{
     int pMinute = date.minute;
     int pSecond = date.second;
 
-    if(pMonth<10) {
+    if (pMonth < 10) {
       month = pMonth.toString().padLeft(2, '0');
-    }else {
+    } else {
       month = pMonth.toString();
     }
 
-    if(pDay<10) {
+    if (pDay < 10) {
       day = pDay.toString().padLeft(2, '0');
-    }else {
+    } else {
       day = pDay.toString();
     }
 
-    if(pHour<10) {
+    if (pHour < 10) {
       hour = pHour.toString().padLeft(2, '0');
-    }else {
+    } else {
       hour = pHour.toString();
     }
 
-    if(pMinute<10) {
+    if (pMinute < 10) {
       minute = pMinute.toString().padLeft(2, '0');
-    }else {
+    } else {
       minute = pMinute.toString();
     }
 
-    if(pSecond<10) {
+    if (pSecond < 10) {
       second = pSecond.toString().padLeft(2, '0');
-    }else {
+    } else {
       second = pSecond.toString();
     }
 
-
-    id = year+month+day+hour+minute+second;
+    id = year + month + day + hour + minute + second;
     return id;
   }
-}
 
+  // first time generate database
+  // db name
+// app_users
+//
+//
+// invoice_list
+//
+
+  generateDatabase() {
+    var db = FirebaseFirestore.instance;
+    createAppUser(){}
+    testCategoryName() async {
+      late bool isSuccessful;
+      await db
+          .collection('food_categories')
+          .doc()
+          .set({'name': 'test category'}).then((value) => isSuccessful = true, onError: (e) {
+        isSuccessful = false;
+        print(e);
+      });
+
+      return isSuccessful;
+    }
+    testWaiterData() async {
+      late bool isSuccessful;
+      await db
+          .collection('waiter_list')
+          .doc('01300000000')
+          .set({
+        'id': '000',
+        'name': 'test waiter',
+        'phone': '01234567890',
+        'email': 'test@main.com',
+        'nid': '1234567890',
+        'address': 'CO road, Rangpur',
+        'image': '',
+      }).then((value) => isSuccessful = true, onError: (e){
+        print(e);
+        return isSuccessful = false;
+      });
+      return isSuccessful;
+    }
+    testFoodData() async {
+      late bool isSuccessful;
+      await db.collection('food_items').doc().set({
+        'category': 'test category',
+        'description': 'This is test description',
+        'name': 'This is test item',
+        'price': '0'
+      }).then((value) => isSuccessful = true, onError: (e) {
+        print(e);
+        return isSuccessful = false;
+      });
+      return isSuccessful;
+    }
+    testInvoice(){
+      db.collection('invoice_list').doc().set({
+        'customer' : 'test customer',
+        'phone' : '01234567890',
+        'address' : 'CO road',
+        'discount' : '0',
+        'discountType' : '%',
+        'tax' : '0',
+        'waiterName' : 'Test waiter',
+        'waiterId' : '000',
+        'table' : '1',
+        'dateTime' : DateTime.now(),
+        'paymentMethod' : 'Payment due',
+        'orders' : [],
+        'subTotal': '100',
+        'total' : '80',
+        'netBill' : '90'
+      }).whenComplete((){
+
+      });
+    }
+  }
+}

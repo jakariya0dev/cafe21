@@ -2,6 +2,7 @@ import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminDashboardController {
+
   var db = FirebaseFirestore.instance;
 
   // Food Data Manipulation
@@ -218,4 +219,5 @@ class AdminDashboardController {
 
     return isSuccessful;
   }
+
 }

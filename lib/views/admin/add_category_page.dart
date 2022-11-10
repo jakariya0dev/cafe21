@@ -118,10 +118,10 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
         nameController.clear();
         await getData();
         Navigator.pop(context);
-        CommonFunction().showSnackBar('Successfully deleted', context);
+        CommonFunction().showSnackBar('Successfully added', context);
       }
       else {
-        CommonFunction().showSnackBar('Cant delete', context);
+        CommonFunction().showSnackBar('Cant add category', context);
       }
     }
   }
