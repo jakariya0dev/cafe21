@@ -7,8 +7,7 @@ import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-
-import '../admin_dashboard.dart';
+import 'package:cafe21/views/admin/admin_dashboard.dart';
 
 class AddFoodPage extends StatefulWidget {
   const AddFoodPage({Key? key, required this.index}) : super(key: key);

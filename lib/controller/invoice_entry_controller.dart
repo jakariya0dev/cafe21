@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../cons/app_config.dart';
-import '../views/invoice_print.dart';
+import '../views/invoice/invoice_print.dart';
 
 class InvoiceEntryController{
 

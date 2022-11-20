@@ -1,14 +1,14 @@
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
-import 'package:cafe21/views//invoice_list.dart';
+import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/controller/drawer_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafe21/cons/const_string.dart';
 import 'package:cafe21/model/data.dart';
-import 'admin_dashboard.dart';
-import 'invoice_entry.dart';
+import 'admin/admin_dashboard.dart';
+import 'invoice/invoice_entry.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);

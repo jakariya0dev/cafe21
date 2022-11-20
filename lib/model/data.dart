@@ -9,4 +9,5 @@ List <InvoiceModel> allSellsData = [];
 List allFoodsData = [];
 List allWaiterData = [];
 List allCategoryData = [];
+List allAppUserData = [];
 Map<String, dynamic> cafeDetails = {};

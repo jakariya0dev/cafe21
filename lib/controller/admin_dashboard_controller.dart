@@ -1,6 +1,8 @@
 import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../model/data.dart';
+
 class AdminDashboardController {
 
   var db = FirebaseFirestore.instance;
@@ -220,4 +222,15 @@ class AdminDashboardController {
     return isSuccessful;
   }
 
+  getAppUserData() async {
+    await db.collection('app_users').get().then((value) {
+      for (var doc in value.docs) {
+        allAppUserData.add({
+          'user-email': doc['user-email'],
+          'user-password': doc['user-password'],
+          'user-role': doc['user-role'],
+        });
+      }
+    });
+  }
 }

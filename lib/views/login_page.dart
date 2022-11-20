@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafe21/cons/const_string.dart';
 import 'package:cafe21/model/user_model.dart';
+import '../controller/common_function.dart';
 import '../controller/connection_checker.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,7 +25,6 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
   bool isLoginButtonPressed = false;
   SharedPreferences? prefs;
-
 
   // String userRole = 'manager';
   bool isPasswordVisible = true;
@@ -231,6 +231,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // login with firebase auth
   userLogin() async {
+
     bool emailValid = RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(emailController.text);
@@ -243,7 +244,11 @@ class _LoginPageState extends State<LoginPage> {
       warningDialog('Not valid email address.');
     } else if (passwordController.text.isEmpty) {
       warningDialog('Enter user password.');
-    } else {
+    }
+    else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
+      CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
+    }
+    else {
       isLoginButtonPressed = !isLoginButtonPressed;
       setState(() {});
 

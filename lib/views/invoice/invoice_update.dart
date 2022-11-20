@@ -5,7 +5,7 @@ import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/const.dart';
 import 'package:cafe21/cons/app_config.dart';
-import 'package:cafe21/views/invoice_list.dart';
+import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:cafe21/widget/discount_container.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

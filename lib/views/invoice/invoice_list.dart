@@ -8,13 +8,13 @@ import 'package:cafe21/controller/invoice_list_controller.dart';
 import 'package:cafe21/main.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cafe21/model/invoice_model.dart';
-import 'package:cafe21/views/invoice_details.dart';
-import 'package:cafe21/views/invoice_entry.dart';
+import 'package:cafe21/views/invoice/invoice_details.dart';
+import 'package:cafe21/views/invoice/invoice_entry.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'dashboard_page.dart';
+import '../dashboard_page.dart';
 
 class InvoiceList extends StatefulWidget {
   const InvoiceList({Key? key}) : super(key: key);

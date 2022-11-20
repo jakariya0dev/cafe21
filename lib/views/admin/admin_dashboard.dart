@@ -1,13 +1,15 @@
 import 'package:cafe21/app_color.dart';
+import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:flutter/material.dart';
-import 'package:cafe21/app_user.dart';
-import 'admin/add_category_page.dart';
-import 'admin/add_food_page.dart';
-import 'admin/add_waiter_page.dart';
-import 'admin/category_list_page.dart';
-import 'admin/product_list_page.dart';
-import 'admin/waiter_list_page.dart';
+import 'package:cafe21/views/admin/app_user.dart';
+import 'add_user.dart';
+import 'add_category_page.dart';
+import 'add_food_page.dart';
+import 'add_waiter_page.dart';
+import 'category_list_page.dart';
+import 'product_list_page.dart';
+import 'waiter_list_page.dart';
 import 'cafe_details.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -31,6 +33,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   initState(){
     bottomNavIndex = widget.index;
+    AdminDashboardController().getAppUserData();
     super.initState();
   }
 
@@ -48,7 +51,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: MaterialButton(
+            child: bottomNavIndex ==4 ? null : MaterialButton(
               onPressed: () {
                 if(bottomNavIndex==0){
                   Navigator.push(context, MaterialPageRoute(builder: (context) => AddFoodPage(index: bottomNavIndex)));
@@ -56,9 +59,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 else if(bottomNavIndex==1){
                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddCategoryPage(index: bottomNavIndex)));
                 }
-                else{
+                else if(bottomNavIndex==2){
                    Navigator.push(context, MaterialPageRoute(builder: (context) => AddWaiterPage(index: bottomNavIndex)));
                 }
+                else if(bottomNavIndex==3){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AddUser()));
+                }
+                else{}
               },
               color: const Color(AppColor.box5),
               child: Text(addButtonText),
