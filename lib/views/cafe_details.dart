@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cafe21/controller/common_function.dart';
 
+import 'package:cafe21/model/data.dart';
+
 class CafeDetails extends StatefulWidget {
   const CafeDetails({Key? key}) : super(key: key);
 
@@ -11,12 +13,12 @@ class CafeDetails extends StatefulWidget {
 class _CafeDetailsState extends State<CafeDetails> {
 
   int selectedCategoryButtonIndex = 0;
-  TextEditingController cafeNameController = TextEditingController();
-  TextEditingController cafeAddressController = TextEditingController();
-  TextEditingController cafePhoneController = TextEditingController();
-  TextEditingController adminEmailController = TextEditingController();
-  TextEditingController cafePasswordController = TextEditingController();
-  TextEditingController purchaseCodeController = TextEditingController();
+  TextEditingController cafeNameController = TextEditingController(text: cafeDetails['cafe-name']);
+  TextEditingController cafeAddressController = TextEditingController(text: cafeDetails['cafe-address']);
+  TextEditingController cafePhoneController = TextEditingController(text: cafeDetails['cafe-phone']);
+  TextEditingController adminEmailController = TextEditingController(text: cafeDetails['admin-email']);
+  TextEditingController cafePasswordController = TextEditingController(text: cafeDetails['admin-password']);
+  TextEditingController purchaseCodeController = TextEditingController(text: cafeDetails['purchase-code']);
 
   EdgeInsets containerPadding =
   const EdgeInsets.only(left: 0, right: 0, top: 4);

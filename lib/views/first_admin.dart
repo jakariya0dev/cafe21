@@ -1,6 +1,11 @@
+import 'package:cafe21/controller/common_function.dart';
+import 'package:cafe21/views/dashboard_page.dart';
+import 'package:cafe21/views/login_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../controller/common_function.dart';
+import '../controller/first_admin_controller.dart';
 
 class FirstAdmin extends StatefulWidget {
   const FirstAdmin({Key? key}) : super(key: key);
@@ -10,6 +15,9 @@ class FirstAdmin extends StatefulWidget {
 }
 
 class _FirstAdminState extends State<FirstAdmin> {
+
+  late SharedPreferences prefs;
+
   TextEditingController cafeNameController = TextEditingController();
   TextEditingController cafeAddressController = TextEditingController();
   TextEditingController cafePhoneController = TextEditingController();
@@ -24,12 +32,34 @@ class _FirstAdminState extends State<FirstAdmin> {
   double containerGap = 16;
 
   @override
+  void initState() {
+    init();
+    super.initState();
+  }
+
+  init() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cafe21'),
         centerTitle: true,
         automaticallyImplyLeading: false,
+        actions: [
+          PopupMenuButton(
+            onSelected: (value){
+              if(value.toString().contains('log-in')){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+              }
+            },
+            itemBuilder: (context) {
+            return [
+              const PopupMenuItem(value: 'log-in', child: Text('Log in'))
+            ];
+          },)
+        ],
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
@@ -166,6 +196,16 @@ class _FirstAdminState extends State<FirstAdmin> {
                   )),
                 ),
               ),
+              const SizedBox(height: 16),
+              const Text('Or'),
+              const SizedBox(height: 10),
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                },
+                child: const Text('Logging to account', style: TextStyle(color: Colors.purple),),
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -173,35 +213,46 @@ class _FirstAdminState extends State<FirstAdmin> {
     );
   }
 
-  saveData(){
-
+  saveData() async {
     bool isEmailValid = RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(adminEmailController.text);
+            r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(adminEmailController.text);
 
-    if(cafeNameController.text.isEmpty){
+    if (cafeNameController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Cafe Name', context);
-    }
-    else if(cafeAddressController.text.isEmpty) {
+    } else if (cafeAddressController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Cafe Address', context);
-    }
-    else if(cafePhoneController.text.isEmpty){
+    } else if (cafePhoneController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Cafe Phone', context);
-    }
-    else if(adminEmailController.text.isEmpty){
+    } else if (adminEmailController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Email Address', context);
-    }
-    else if(isEmailValid == false){
+    } else if (isEmailValid == false) {
       CommonFunction().showSnackBar('Email not valid', context);
-    }
-    else if(cafePasswordController.text.isEmpty){
+    } else if (cafePasswordController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Admin Password', context);
-    }
-    else if(purchaseCodeController.text.isEmpty){
+    } else if (purchaseCodeController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Purchase Code', context);
-    }
-    else{
-      print("object");
-    }
+    } else {
 
+      Map<String, dynamic> cafeDetails = {
+        'cafe-name': cafeNameController.text,
+        'cafe-address': cafeAddressController.text,
+        'cafe-phone': cafePhoneController.text,
+        'admin-email': adminEmailController.text,
+        'admin-password': cafePasswordController.text,
+        'purchase-code' : purchaseCodeController.text
+      };
+
+      bool isSuccessful = await FirstAdminController().saveCafeDetails(cafeDetails);
+      await FirstAdminController().createTestManagerAccount();
+
+      if(isSuccessful){
+        await prefs.setBool('isLogged', true);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DashBoard()));
+      }else{
+        CommonFunction().showSnackBar('Failed to save data', context);
+      }
+
+    }
   }
 }

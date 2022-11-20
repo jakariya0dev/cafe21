@@ -25,13 +25,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   init() async {
     SharedPreferences prefs =  await SharedPreferences.getInstance();
-    // prefs.setBool('isFirstInstall', true);
 
     Future.delayed(const Duration(seconds: 3), () {
       if(prefs.getBool('isNotFirstInstall') == true){
         if(prefs.getBool('isLogged') == true){
           Navigator.push(context, MaterialPageRoute(builder: (context) => const DashBoard()));
-          // Navigator.push(context, MaterialPageRoute(builder: (context) => const FirstAdmin()));
         }else{
           Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
         }

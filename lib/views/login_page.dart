@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/views/dashboard_page.dart';
+import 'package:cafe21/views/first_admin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -179,6 +180,15 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    const Text('Or'),
+                    const SizedBox(height: 10),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const FirstAdmin()));
+                      },
+                      child: const Text('Create admin account', style: TextStyle(color: Colors.purple),),
+                    )
                   ],
                 ),
               )

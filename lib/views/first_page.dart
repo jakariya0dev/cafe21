@@ -1,4 +1,5 @@
 import 'package:cafe21/controller/common_function.dart';
+import 'package:cafe21/views/first_admin.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dashboard_page.dart';
@@ -70,7 +71,7 @@ class _FirstPageState extends State<FirstPage> {
 
                 await prefs.setBool('isNotFirstInstall', true);
                 await CommonFunction.generateDatabase();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const DashBoard()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const FirstAdmin()));
               } :() {
                 index++; setState(() {});
               },

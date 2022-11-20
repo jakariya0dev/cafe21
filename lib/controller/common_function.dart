@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/main.dart';
 
@@ -130,12 +131,9 @@ class CommonFunction {
   static generateDatabase() async {
     var db = FirebaseFirestore.instance;
 
-    // create test user admin
-
-
     // testCategoryName
       await db
-          .collection('food_categories')
+          .collection('food-categories')
           .doc()
           .set({'name': 'test category'}).then((value) => isCategoryDatabaseCreated = true, onError: (e) {
         isCategoryDatabaseCreated = false;
@@ -144,7 +142,7 @@ class CommonFunction {
 
     // testWaiterData
       await db
-          .collection('waiter_list')
+          .collection('waiter-list')
           .doc('01300000000')
           .set({
         'id': '000',
@@ -158,9 +156,10 @@ class CommonFunction {
         print(e);
         return isWaiterDatabaseCreated = false;
       });
-    // testFoodData
 
-      await db.collection('food_items').doc().set({
+
+    // testFoodData
+      await db.collection('food-items').doc().set({
         'category': 'test category',
         'description': 'This is test description',
         'name': 'This is test item',
@@ -171,7 +170,7 @@ class CommonFunction {
       });
 
     // testInvoice
-      await db.collection('invoice_list').doc().set({
+      await db.collection('invoice-list').doc().set({
         'customer' : 'test customer',
         'phone' : '01234567890',
         'address' : 'CO road',

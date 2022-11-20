@@ -1,6 +1,7 @@
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:flutter/material.dart';
+import 'package:cafe21/app_user.dart';
 import 'admin/add_category_page.dart';
 import 'admin/add_food_page.dart';
 import 'admin/add_waiter_page.dart';
@@ -24,7 +25,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   String addButtonText = '';
 
   // bottom navbar
-  List pages = const [ProductListPage(), FoodCategoryPage(), WaiterListPage(), CafeDetails()];
+  List pages = const [ProductListPage(), FoodCategoryPage(), WaiterListPage(), AppUser(), CafeDetails()];
   late int bottomNavIndex;
 
   @override
@@ -35,6 +36,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   @override
   Widget build(BuildContext context) {
+
     setButtonText();
 
     return Scaffold(
@@ -64,11 +66,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
           )
         ],
       ),
-      body: allCategoryData.isNotEmpty
-          ? pages[bottomNavIndex]
-          : const Center(
-              child: CircularProgressIndicator(),
-            ),
+      body: pages[bottomNavIndex],
+      // body: allCategoryData.isNotEmpty
+      //     ? pages[bottomNavIndex]
+      //     : const Center(
+      //         child: CircularProgressIndicator(),
+      //       ),
       bottomNavigationBar: Container(
         margin: const EdgeInsets.all(10),
         child: BottomNavigationBar(
@@ -91,9 +94,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.person_pin_outlined), label: 'Waiter'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.admin_panel_settings_outlined), label: 'Cafe'),
-            BottomNavigationBarItem(
                 icon: Icon(Icons.supervised_user_circle), label: 'User'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.admin_panel_settings_outlined), label: 'Cafe'),
+
           ],
         ),
       ),
@@ -107,7 +111,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
     else if(bottomNavIndex==1){
       addButtonText = 'Add category';
     }
-    else{
+    else if(bottomNavIndex==2){
+      addButtonText = 'Add waiter';
+    }
+    else if(bottomNavIndex==3){
+      addButtonText = 'Add User';
+    }
+    else {
       addButtonText = 'Add waiter';
     }
   }

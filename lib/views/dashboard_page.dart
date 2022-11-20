@@ -50,7 +50,7 @@ class _DashBoardState extends State<DashBoard> {
     await DashboardController().getAllFood();
     await DashboardController().getAllFoodCategory();
     await DashboardController().getAllWaiter();
-
+    await DashboardController().getCafeDetails();
     // user role remember
     prefs = await SharedPreferences.getInstance();
     userRole = prefs?.getString(ConstString.userRole);
@@ -330,7 +330,7 @@ class _DashBoardState extends State<DashBoard> {
           UserAccountsDrawerHeader(
             currentAccountPicture: const CircleAvatar(child: Text('Logo')),
             accountName: Text(userRole.toString()),
-            accountEmail: const Text('Chef de cuisine'),
+            accountEmail: Text(cafeDetails['cafe-name']),
           ),
           Expanded(
             child: ListView(

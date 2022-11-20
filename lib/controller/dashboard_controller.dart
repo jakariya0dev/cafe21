@@ -1,4 +1,6 @@
-import 'package:cafe21/cons/app_config.dart';
+
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/model/data.dart';
@@ -86,6 +88,25 @@ class DashboardController{
       }
 
     });
+
+  }
+  
+  getCafeDetails() async {
+
+    var data = await db.collection('cafe_details').doc('admin').get() ;
+    
+    // cafeDetails = jsonDecode(data.toString());
+
+    cafeDetails.addAll({
+      'admin-email' : data['admin-email'],
+      'admin-password' : data['admin-password'],
+      'cafe-address' : data['cafe-address'],
+      'cafe-name' : data['cafe-name'],
+      'cafe-phone' : data['cafe-phone'],
+      'purchase-code' : data['purchase-code'],
+    });
+    print(data.id);
+    print(data['admin-email']);
 
   }
 
