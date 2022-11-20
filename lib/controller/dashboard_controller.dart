@@ -11,7 +11,7 @@ class DashboardController{
 
   getAllSellsData() async {
 
-    await db.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').get().then((value){
+    await db.collection('invoice_list').get().then((value){
       for(var element in value.docs){
         InvoiceModel invoiceModel = InvoiceModel(
             invoiceId: element.id,
@@ -40,7 +40,7 @@ class DashboardController{
 
   getAllFood() async {
 
-    await db.collection(AppConfig.dbName).doc('foods').collection('products').get().then((value) {
+    await db.collection('food_items').get().then((value) {
 
       for(var doc in value.docs){
         allFoodsData.add({
@@ -56,7 +56,7 @@ class DashboardController{
 
   getAllFoodCategory()async{
 
-    await db.collection(AppConfig.dbName).doc('foods').collection('food-category').get().then((value) {
+    await db.collection('food_categories').get().then((value) {
       for (var doc in value.docs){
           allCategoryData.add({
             CategoryListKey.id.name : doc.id,
@@ -70,7 +70,7 @@ class DashboardController{
 
   getAllWaiter() async {
 
-    await db.collection(AppConfig.dbName).doc('users').collection('waiters').get().then((value) {
+    await db.collection('waiter_list').get().then((value) {
 
       for(var item in value.docs){
         allWaiterData.add({

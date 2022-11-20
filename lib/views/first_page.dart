@@ -1,3 +1,4 @@
+import 'package:cafe21/controller/common_function.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dashboard_page.dart';
@@ -31,8 +32,10 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   Widget build(BuildContext context) {
+
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -64,7 +67,9 @@ class _FirstPageState extends State<FirstPage> {
             ),
             TextButton(
               onPressed: index == 2 ? () async {
+
                 await prefs.setBool('isNotFirstInstall', true);
+                await CommonFunction.generateDatabase();
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const DashBoard()));
               } :() {
                 index++; setState(() {});

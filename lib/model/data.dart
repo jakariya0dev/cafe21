@@ -9,3 +9,4 @@ List <InvoiceModel> allSellsData = [];
 List allFoodsData = [];
 List allWaiterData = [];
 List allCategoryData = [];
+Map<String, String> cafeDetails = {};

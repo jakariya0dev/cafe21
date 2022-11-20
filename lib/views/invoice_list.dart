@@ -325,15 +325,11 @@ class BuildInvoiceListItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      DateFormat.yMMMd()
-                          .add_jm()
-                          .format(invoiceData.dateTime.toDate())
-                          .toString(),
-                      textAlign: TextAlign.center,
+                      'id: ${invoiceData.invoiceId}',
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          letterSpacing: .5),
+                          color: Colors.black54),
                     ),
                     const SizedBox(
                       height: 2,
@@ -341,10 +337,15 @@ class BuildInvoiceListItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'id: ${invoiceData.invoiceId}',
+                          DateFormat.yMMMd()
+                              .add_jm()
+                              .format(invoiceData.dateTime.toDate())
+                              .toString(),
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                               fontWeight: FontWeight.normal,
-                              color: Colors.black54),
+                              fontSize: 12,
+                              letterSpacing: .5),
                         ),
                         const SizedBox(width: 4),
                         Container(

@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import '../cons/app_config.dart';
-import '../main.dart';
+import 'package:cafe21/main.dart';
 
 class CommonFunction {
+
+  static bool isCategoryDatabaseCreated = false, isWaiterDatabaseCreated = false;
+  static bool isFoodDatabaseCreated = false, isInvoiceDatabaseCreated = false;
+
   showWarningDialog(msg, context) {
     showDialog(
         context: context,
@@ -48,10 +50,7 @@ class CommonFunction {
     var id = generateInvoiceId();
 
     var db = FirebaseFirestore.instance;
-    db
-        .collection(AppConfig.dbName)
-        .doc('invoices')
-        .collection('invoice-details')
+    db.collection('invoices')
         .doc(id)
         .set({
       'customer': 'ABC ${dateTime.second}',
@@ -128,31 +127,22 @@ class CommonFunction {
     return id;
   }
 
-  // first time generate database
-  // db name
-// app_users
-//
-//
-// invoice_list
-//
-
-  generateDatabase() {
+  static generateDatabase() async {
     var db = FirebaseFirestore.instance;
-    createAppUser(){}
-    testCategoryName() async {
-      late bool isSuccessful;
+
+    // create test user admin
+
+
+    // testCategoryName
       await db
           .collection('food_categories')
           .doc()
-          .set({'name': 'test category'}).then((value) => isSuccessful = true, onError: (e) {
-        isSuccessful = false;
+          .set({'name': 'test category'}).then((value) => isCategoryDatabaseCreated = true, onError: (e) {
+        isCategoryDatabaseCreated = false;
         print(e);
       });
 
-      return isSuccessful;
-    }
-    testWaiterData() async {
-      late bool isSuccessful;
+    // testWaiterData
       await db
           .collection('waiter_list')
           .doc('01300000000')
@@ -164,27 +154,24 @@ class CommonFunction {
         'nid': '1234567890',
         'address': 'CO road, Rangpur',
         'image': '',
-      }).then((value) => isSuccessful = true, onError: (e){
+      }).then((value) => isWaiterDatabaseCreated = true, onError: (e){
         print(e);
-        return isSuccessful = false;
+        return isWaiterDatabaseCreated = false;
       });
-      return isSuccessful;
-    }
-    testFoodData() async {
-      late bool isSuccessful;
+    // testFoodData
+
       await db.collection('food_items').doc().set({
         'category': 'test category',
         'description': 'This is test description',
         'name': 'This is test item',
         'price': '0'
-      }).then((value) => isSuccessful = true, onError: (e) {
+      }).then((value) => isFoodDatabaseCreated = true, onError: (e) {
         print(e);
-        return isSuccessful = false;
+        return isFoodDatabaseCreated = false;
       });
-      return isSuccessful;
-    }
-    testInvoice(){
-      db.collection('invoice_list').doc().set({
+
+    // testInvoice
+      await db.collection('invoice_list').doc().set({
         'customer' : 'test customer',
         'phone' : '01234567890',
         'address' : 'CO road',
@@ -200,9 +187,10 @@ class CommonFunction {
         'subTotal': '100',
         'total' : '80',
         'netBill' : '90'
-      }).whenComplete((){
-
+      }).then((value) => isInvoiceDatabaseCreated = true, onError: (e) {
+        print(e);
+        return isInvoiceDatabaseCreated = false;
       });
-    }
+
   }
 }

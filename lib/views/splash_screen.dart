@@ -1,4 +1,5 @@
 import 'package:cafe21/views/dashboard_page.dart';
+import 'package:cafe21/views/first_admin.dart';
 import 'package:cafe21/views/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if(prefs.getBool('isNotFirstInstall') == true){
         if(prefs.getBool('isLogged') == true){
           Navigator.push(context, MaterialPageRoute(builder: (context) => const DashBoard()));
+          // Navigator.push(context, MaterialPageRoute(builder: (context) => const FirstAdmin()));
         }else{
           Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
         }
@@ -40,6 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
