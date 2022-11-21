@@ -1,3 +1,4 @@
+import 'package:cafe21/controller/app_user_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,6 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
 
   List<String> userRoleList = ['Manager', 'Cashier', 'Waiter', 'Other'];
   String selectedUserRole = 'Select Role';
-  bool isUserRoleSelected = false;
 
   // <-Start-> variable for container decoration
   EdgeInsets containerPadding =
@@ -98,19 +98,19 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
                         ),
                         TextField(
                           controller: userEmailController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                               hintText: 'Enter mail here',
                               border: InputBorder.none,
                               prefixIcon:
-                              const Icon(Icons.mail_outline_outlined),
-                              suffixIcon: InkWell(
-                                onTap: () {
-                                  userEmailController.clear();
-                                  setState(() {});
-                                },
-                                child: const Icon(Icons.clear),
-                              )),
-                        ),
+                              Icon(Icons.mail_outline_outlined),
+                              // suffixIcon: InkWell(
+                              //   onTap: () {
+                              //     userEmailController.clear();
+                              //     setState(() {});
+                              //   },
+                              //   child: const Icon(Icons.clear),
+                              // )),
+                        ),)
                       ],
                     ),
                   ),
@@ -133,18 +133,18 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
                         ),
                         TextField(
                           controller: userPasswordController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                               hintText: 'Type password here',
                               border: InputBorder.none,
-                              prefixIcon: const Icon(Icons.lock_outline),
-                              suffixIcon: InkWell(
-                                onTap: () {
-                                  userPasswordController.clear();
-                                  setState(() {});
-                                },
-                                child: const Icon(Icons.clear),
-                              )),
-                        ),
+                              prefixIcon: Icon(Icons.lock_outline),
+                              // suffixIcon: InkWell(
+                              //   onTap: () {
+                              //     userPasswordController.clear();
+                              //     setState(() {});
+                              //   },
+                              //   child: const Icon(Icons.clear),
+                              // )),
+                        ),)
                       ],
                     ),
                   ),
@@ -176,7 +176,6 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
                               .toList(),
                           onChanged: (value) {
                             selectedUserRole = value.toString();
-                            isUserRoleSelected = true;
                             setState(() {});
                           },
                         )
@@ -185,7 +184,7 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
                   ),
                   const SizedBox(height: 24),
                   InkWell(
-                    onTap: saveNewUser,
+                    onTap: updateUserData,
                     child: Container(
                       width: double.maxFinite,
                       height: 50,
@@ -211,45 +210,44 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
   // Business logic
   var db = FirebaseFirestore.instance;
 
-  saveNewUser() async {
+  updateUserData() async {
     bool emailValid = RegExp(
         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(userEmailController.text);
 
     if (userEmailController.text.isEmpty) {
       CommonFunction().showSnackBar('User mail can\'t empty', context);
-    } else if (emailValid == false) {
-      CommonFunction().showSnackBar('Not valid email', context);
-    } else if (userPasswordController.text.isEmpty) {
-      CommonFunction().showSnackBar('User password can\'t empty', context);
-    } else if (isUserRoleSelected == false) {
-      CommonFunction().showSnackBar('Select user role', context);
     }
-    if (connectivityResult != ConnectivityResult.mobile &&
+    else if (emailValid == false) {
+      CommonFunction().showSnackBar('Not valid email', context);
+    }
+    else if (userPasswordController.text.isEmpty) {
+      CommonFunction().showSnackBar('User password can\'t empty', context);
+    }
+    else if (connectivityResult != ConnectivityResult.mobile &&
         connectivityResult != ConnectivityResult.wifi) {
       CommonFunction()
           .showSnackBar('No internet!\nCheck internet connection', context);
-    } else {
+    }
+    else {
       CommonFunction().showLoadingIndicatorWithTitle(
           context: context, title: 'Creating ew user');
-      await db.collection('app_users').doc(userEmailController.text).set({
-        'user-email': userEmailController.text,
-        'user-password': userPasswordController.text,
-        'user-role': selectedUserRole
-      }).then((value) {
+      bool isSuccessful = await AppUserController().updateUser(newUser: {
+        'user-email' : userEmailController.text,
+        'user-password' : userPasswordController.text,
+        'user-role' : selectedUserRole,
+      }, oldEmail: widget.user['user-email']);
+      if(isSuccessful){
+        // allAppUserData.clear();
+        await AdminDashboardController().getAppUserData();
         Navigator.pop(context);
-        CommonFunction().showSnackBar('Successfully created new user', context);
-      }, onError: (e) {
+        CommonFunction().showSnackBar('Successfully updated', context);
+      }
+      else{
         Navigator.pop(context);
-        CommonFunction().showSnackBar('Cant create new user', context);
-      });
-      userEmailController.clear();
-      userPasswordController.clear();
-      allAppUserData.clear();
-      await AdminDashboardController().getAppUserData();
-      print(allAppUserData);
+        CommonFunction().showSnackBar('Failed to update', context);
+      }
     }
   }
-
 
 }

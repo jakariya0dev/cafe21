@@ -93,11 +93,11 @@ class DashboardController{
   
   getCafeDetails() async {
 
-    var data = await db.collection('cafe_details').doc('admin').get() ;
+    var data = await db.collection('cafe-details').doc('admin').get() ;
     
     // cafeDetails = jsonDecode(data.toString());
 
-    cafeDetails.addAll({
+    cafeDetailsData.addAll({
       'admin-email' : data['admin-email'],
       'admin-password' : data['admin-password'],
       'cafe-address' : data['cafe-address'],
@@ -105,8 +105,6 @@ class DashboardController{
       'cafe-phone' : data['cafe-phone'],
       'purchase-code' : data['purchase-code'],
     });
-    print(data.id);
-    print(data['admin-email']);
 
   }
 

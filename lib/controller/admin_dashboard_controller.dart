@@ -223,7 +223,8 @@ class AdminDashboardController {
   }
 
   getAppUserData() async {
-    await db.collection('app_users').get().then((value) {
+    allAppUserData.clear();
+    await db.collection('app-users').get().then((value) {
       for (var doc in value.docs) {
         allAppUserData.add({
           'user-email': doc['user-email'],

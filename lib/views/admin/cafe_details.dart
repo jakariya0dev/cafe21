@@ -12,12 +12,12 @@ class CafeDetails extends StatefulWidget {
 class _CafeDetailsState extends State<CafeDetails> {
 
   int selectedCategoryButtonIndex = 0;
-  TextEditingController cafeNameController = TextEditingController(text: cafeDetails['cafe-name']);
-  TextEditingController cafeAddressController = TextEditingController(text: cafeDetails['cafe-address']);
-  TextEditingController cafePhoneController = TextEditingController(text: cafeDetails['cafe-phone']);
-  TextEditingController adminEmailController = TextEditingController(text: cafeDetails['admin-email']);
-  TextEditingController cafePasswordController = TextEditingController(text: cafeDetails['admin-password']);
-  TextEditingController purchaseCodeController = TextEditingController(text: cafeDetails['purchase-code']);
+  TextEditingController cafeNameController = TextEditingController(text: cafeDetailsData['cafe-name']);
+  TextEditingController cafeAddressController = TextEditingController(text: cafeDetailsData['cafe-address']);
+  TextEditingController cafePhoneController = TextEditingController(text: cafeDetailsData['cafe-phone']);
+  // TextEditingController adminEmailController = TextEditingController(text: cafeDetailsData['admin-email']);
+  // TextEditingController cafePasswordController = TextEditingController(text: cafeDetailsData['admin-password']);
+  // TextEditingController purchaseCodeController = TextEditingController(text: cafeDetailsData['purchase-code']);
 
   EdgeInsets containerPadding =
   const EdgeInsets.only(left: 0, right: 0, top: 4);
@@ -27,6 +27,8 @@ class _CafeDetailsState extends State<CafeDetails> {
 
   @override
   Widget build(BuildContext context) {
+
+    print(cafePhoneController);
     return Container(
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
@@ -124,8 +126,8 @@ class _CafeDetailsState extends State<CafeDetails> {
 
   saveData(){
 
-    bool isEmailValid = RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(adminEmailController.text);
+    // bool isEmailValid = RegExp(
+    //     r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(adminEmailController.text);
 
     if(cafeNameController.text.isEmpty){
       CommonFunction().showSnackBar('Enter Cafe Name', context);
@@ -136,18 +138,18 @@ class _CafeDetailsState extends State<CafeDetails> {
     else if(cafePhoneController.text.isEmpty){
       CommonFunction().showSnackBar('Enter Cafe Phone', context);
     }
-    else if(adminEmailController.text.isEmpty){
-      CommonFunction().showSnackBar('Enter Email Address', context);
-    }
-    else if(isEmailValid == false){
-      CommonFunction().showSnackBar('Email not valid', context);
-    }
-    else if(cafePasswordController.text.isEmpty){
-      CommonFunction().showSnackBar('Enter Admin Password', context);
-    }
-    else if(purchaseCodeController.text.isEmpty){
-      CommonFunction().showSnackBar('Enter Purchase Code', context);
-    }
+    // else if(adminEmailController.text.isEmpty){
+    //   CommonFunction().showSnackBar('Enter Email Address', context);
+    // }
+    // else if(isEmailValid == false){
+    //   CommonFunction().showSnackBar('Email not valid', context);
+    // }
+    // else if(cafePasswordController.text.isEmpty){
+    //   CommonFunction().showSnackBar('Enter Admin Password', context);
+    // }
+    // else if(purchaseCodeController.text.isEmpty){
+    //   CommonFunction().showSnackBar('Enter Purchase Code', context);
+    // }
     else{
       print("object");
     }

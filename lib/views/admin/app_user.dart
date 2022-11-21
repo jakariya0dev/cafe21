@@ -23,6 +23,7 @@ class _AppUserState extends State<AppUser> {
   }
 
   init() async {
+    print(allAppUserData);
     ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
@@ -35,9 +36,9 @@ class _AppUserState extends State<AppUser> {
       child: allAppUserData.isEmpty ? const Center(child: Text('No user found'),): Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0),
-            child:  Text('Total app user 2'),
+           Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child:  Text('Total app user ${allAppUserData.length}'),
           ),
           Expanded(
             child: ListView.builder(
@@ -100,6 +101,9 @@ class _AppUserState extends State<AppUser> {
         await AdminDashboardController().getAppUserData();
         Navigator.pop(context);
         CommonFunction().showSnackBar('Successfully deleted', context);
+        setState(() {
+
+        });
       }else{
         CommonFunction().showSnackBar('Failed to deleted', context);
       }
@@ -108,26 +112,7 @@ class _AppUserState extends State<AppUser> {
   }
 
   updateUser(int index) async {
-
-    Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateAppUser(user: allAppUserData[index])));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UpdateAppUser(user: allAppUserData[index])));
   }
-  //   if (connectivityResult != ConnectivityResult.mobile &&
-  //       connectivityResult != ConnectivityResult.wifi) {
-  //     CommonFunction()
-  //         .showSnackBar('No internet!\nCheck internet connection', context);
-  //   } else {
-  //
-  //     bool isSuccessful = await AppUserController().deleteUser(index);
-  //
-  //     if(isSuccessful){
-  //       allAppUserData.clear();
-  //       await AdminDashboardController().getAppUserData();
-  //       Navigator.pop(context);
-  //       CommonFunction().showSnackBar('Successfully deleted', context);
-  //     }else{
-  //       CommonFunction().showSnackBar('Failed to deleted', context);
-  //     }
-  //   }
-  // }
 
 }

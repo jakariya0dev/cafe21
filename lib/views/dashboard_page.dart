@@ -330,7 +330,7 @@ class _DashBoardState extends State<DashBoard> {
           UserAccountsDrawerHeader(
             currentAccountPicture: const CircleAvatar(child: Text('Logo')),
             accountName: Text(userRole.toString()),
-            accountEmail: Text(cafeDetails['cafe-name']),
+            accountEmail: Text('cafe-name'), //cafeDetails[
           ),
           Expanded(
             child: ListView(

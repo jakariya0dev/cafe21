@@ -54,16 +54,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
             child: bottomNavIndex ==4 ? null : MaterialButton(
               onPressed: () {
                 if(bottomNavIndex==0){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddFoodPage(index: bottomNavIndex)));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddFoodPage(index: bottomNavIndex)));
                 }
                 else if(bottomNavIndex==1){
                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddCategoryPage(index: bottomNavIndex)));
                 }
                 else if(bottomNavIndex==2){
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => AddWaiterPage(index: bottomNavIndex)));
+                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddWaiterPage(index: bottomNavIndex)));
                 }
                 else if(bottomNavIndex==3){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AddUser()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AddUser()));
                 }
                 else{}
               },

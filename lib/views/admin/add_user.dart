@@ -1,4 +1,5 @@
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
+import 'package:cafe21/controller/app_user_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -227,24 +228,26 @@ class _AddUserState extends State<AddUser> {
     } else {
       CommonFunction().showLoadingIndicatorWithTitle(
           context: context, title: 'Creating ew user');
-      await db.collection('app_users').doc(userEmailController.text).set({
+      bool isSuccessful = await AppUserController().addNewUser({
         'user-email': userEmailController.text,
         'user-password': userPasswordController.text,
         'user-role': selectedUserRole
-      }).then((value) {
-        Navigator.pop(context);
-        CommonFunction().showSnackBar('Successfully created new user', context);
-      }, onError: (e) {
-        Navigator.pop(context);
-        CommonFunction().showSnackBar('Cant create new user', context);
       });
-      userEmailController.clear();
-      userPasswordController.clear();
-      allAppUserData.clear();
-      await AdminDashboardController().getAppUserData();
-      print(allAppUserData);
+      if(isSuccessful){
+        userEmailController.clear();
+        userPasswordController.clear();
+        // allAppUserData.clear();
+        await AdminDashboardController().getAppUserData();
+        Navigator.pop(context);
+        CommonFunction()
+            .showSnackBar('Successfully Added', context);
+      }
+      else{
+        Navigator.pop(context);
+        CommonFunction()
+            .showSnackBar('Failed to add user', context);
+      }
     }
   }
-
 
 }

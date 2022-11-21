@@ -10,4 +10,4 @@ List allFoodsData = [];
 List allWaiterData = [];
 List allCategoryData = [];
 List allAppUserData = [];
-Map<String, dynamic> cafeDetails = {};
+Map<String, dynamic> cafeDetailsData = {};

@@ -1,11 +1,9 @@
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cafe21/views/login_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../controller/first_admin_controller.dart';
+import 'package:cafe21/controller/first_admin_controller.dart';
 
 class FirstAdmin extends StatefulWidget {
   const FirstAdmin({Key? key}) : super(key: key);
@@ -51,7 +49,7 @@ class _FirstAdminState extends State<FirstAdmin> {
           PopupMenuButton(
             onSelected: (value){
               if(value.toString().contains('log-in')){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage()));
               }
             },
             itemBuilder: (context) {
@@ -76,108 +74,204 @@ class _FirstAdminState extends State<FirstAdmin> {
               Container(
                 padding: containerPadding,
                 decoration: containerDecoration,
-                child: TextField(
-                  controller: cafeNameController,
-                  decoration: InputDecoration(
-                      hintText: 'Enter Cafe Name',
-                      border: InputBorder.none,
-                      prefixIcon: const Icon(Icons.restaurant),
-                      suffixIcon: InkWell(
-                          onTap: () {
-                            cafeNameController.clear();
-                            setState(() {});
-                          },
-                          child: const Icon(Icons.clear))),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 10),
+                      child: Text(
+                        'Cafe Name',
+                        style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 14,
+                            color: Colors.grey.shade600),
+                      ),
+                    ),
+                    TextField(
+                      controller: cafeNameController,
+                      decoration: InputDecoration(
+                          hintText: 'Enter Cafe Name',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          border: InputBorder.none,
+                          prefixIcon: const Icon(Icons.restaurant),
+                          suffixIcon: InkWell(
+                              onTap: () {
+                                cafeNameController.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(Icons.clear))),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: containerGap),
               Container(
                 padding: containerPadding,
                 decoration: containerDecoration,
-                child: TextField(
-                  controller: cafeAddressController,
-                  decoration: InputDecoration(
-                      hintText: 'Enter Cafe Address',
-                      border: InputBorder.none,
-                      prefixIcon: const Icon(Icons.add_home),
-                      suffixIcon: InkWell(
-                          onTap: () {
-                            cafeAddressController.clear();
-                            setState(() {});
-                          },
-                          child: const Icon(Icons.clear))),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 10),
+                      child: Text(
+                        'Cafe Address',
+                        style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 14,
+                            color: Colors.grey.shade600),
+                      ),
+                    ),
+                    TextField(
+                      controller: cafeAddressController,
+                      decoration: InputDecoration(
+                          hintText: 'Enter Cafe Address',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          border: InputBorder.none,
+                          prefixIcon: const Icon(Icons.add_home),
+                          suffixIcon: InkWell(
+                              onTap: () {
+                                cafeAddressController.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(Icons.clear))),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: containerGap),
               Container(
                 padding: containerPadding,
                 decoration: containerDecoration,
-                child: TextField(
-                  controller: cafePhoneController,
-                  decoration: InputDecoration(
-                      hintText: 'Enter Cafe Phone',
-                      border: InputBorder.none,
-                      prefixIcon: const Icon(Icons.phone_android_rounded),
-                      suffixIcon: InkWell(
-                          onTap: () {
-                            cafePhoneController.clear();
-                            setState(() {});
-                          },
-                          child: const Icon(Icons.clear))),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 10),
+                      child: Text(
+                        'Cafe Phone',
+                        style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 14,
+                            color: Colors.grey.shade600),
+                      ),
+                    ),
+                    TextField(
+                      controller: cafePhoneController,
+                      decoration: InputDecoration(
+                          hintText: 'Enter cafe phone',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          border: InputBorder.none,
+                          prefixIcon: const Icon(Icons.phone_android_rounded),
+                          suffixIcon: InkWell(
+                              onTap: () {
+                                cafePhoneController.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(Icons.clear))),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: containerGap),
               Container(
                 padding: containerPadding,
                 decoration: containerDecoration,
-                child: TextField(
-                  controller: adminEmailController,
-                  decoration: InputDecoration(
-                      hintText: 'Enter Email Address',
-                      border: InputBorder.none,
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      suffixIcon: InkWell(
-                          onTap: () {
-                            adminEmailController.clear();
-                            setState(() {});
-                          },
-                          child: const Icon(Icons.clear))),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 10),
+                      child: Text(
+                        'Admin Email',
+                        style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 14,
+                            color: Colors.grey.shade600),
+                      ),
+                    ),
+                    TextField(
+                      controller: adminEmailController,
+                      decoration: InputDecoration(
+                          hintText: 'Enter admin email',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          border: InputBorder.none,
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          suffixIcon: InkWell(
+                              onTap: () {
+                                adminEmailController.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(Icons.clear))),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: containerGap),
               Container(
                 padding: containerPadding,
                 decoration: containerDecoration,
-                child: TextField(
-                  controller: cafePasswordController,
-                  decoration: InputDecoration(
-                      hintText: 'Enter Admin Password',
-                      border: InputBorder.none,
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      suffixIcon: InkWell(
-                          onTap: () {
-                            cafePasswordController.clear();
-                            setState(() {});
-                          },
-                          child: const Icon(Icons.clear))),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 10),
+                      child: Text(
+                        'Admin Password',
+                        style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 14,
+                            color: Colors.grey.shade600),
+                      ),
+                    ),
+                    TextField(
+                      controller: cafePasswordController,
+                      decoration: InputDecoration(
+                          hintText: 'Enter Admin Password',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          border: InputBorder.none,
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: InkWell(
+                              onTap: () {
+                                cafePasswordController.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(Icons.clear))),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: containerGap),
               Container(
                 padding: containerPadding,
                 decoration: containerDecoration,
-                child: TextField(
-                  controller: purchaseCodeController,
-                  decoration: InputDecoration(
-                      hintText: 'Enter Your Purchase Code',
-                      border: InputBorder.none,
-                      prefixIcon: const Icon(Icons.qr_code_sharp),
-                      suffixIcon: InkWell(
-                          onTap: () {
-                            purchaseCodeController.clear();
-                            setState(() {});
-                          },
-                          child: const Icon(Icons.clear))),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 10),
+                      child: Text(
+                        'Purchase Code',
+                        style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 14,
+                            color: Colors.grey.shade600),
+                      ),
+                    ),
+                    TextField(
+                      controller: purchaseCodeController,
+                      decoration: InputDecoration(
+                          hintText: 'Enter Purchase Code',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          border: InputBorder.none,
+                          prefixIcon: const Icon(Icons.qr_code_sharp),
+                          suffixIcon: InkWell(
+                              onTap: () {
+                                purchaseCodeController.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(Icons.clear))),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: containerGap),
@@ -203,7 +297,7 @@ class _FirstAdminState extends State<FirstAdmin> {
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
                 },
-                child: const Text('Logging to account', style: TextStyle(color: Colors.purple),),
+                child: const Text('Login to account', style: TextStyle(color: Colors.purple),),
               ),
               const SizedBox(height: 16),
             ],
@@ -234,23 +328,29 @@ class _FirstAdminState extends State<FirstAdmin> {
       CommonFunction().showSnackBar('Enter Purchase Code', context);
     } else {
 
+      CommonFunction().showLoadingIndicatorWithTitle(title: 'Creating Admin Account...', context: context);
+
       Map<String, dynamic> cafeDetails = {
         'cafe-name': cafeNameController.text,
         'cafe-address': cafeAddressController.text,
         'cafe-phone': cafePhoneController.text,
-        'admin-email': adminEmailController.text,
-        'admin-password': cafePasswordController.text,
-        'purchase-code' : purchaseCodeController.text
       };
 
-      bool isSuccessful = await FirstAdminController().saveCafeDetails(cafeDetails);
-      await FirstAdminController().createTestManagerAccount();
+      bool isSuccessful = await FirstAdminController().createAdminAccount(
+          email: adminEmailController.text,
+          password: cafePasswordController.text,
+          cafeDetails: cafeDetails,
+          context: context
+      );
 
       if(isSuccessful){
         await prefs.setBool('isLogged', true);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => DashBoard()));
+        Navigator.pop(context);
+        // print(isSuccessful);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashBoard()));
       }else{
-        CommonFunction().showSnackBar('Failed to save data', context);
+        // print(isSuccessful);
+        Navigator.pop(context);
       }
 
     }
