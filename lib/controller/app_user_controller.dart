@@ -54,4 +54,17 @@ class AppUserController{
 
     return isSuccessful;
   }
+
+  getAppUserData() async {
+
+    await db.collection('app-users').get().then((value) {
+      for (var doc in value.docs) {
+        allAppUserData.add({
+          'user-email': doc['user-email'],
+          'user-password': doc['user-password'],
+          'user-role': doc['user-role'],
+        });
+      }
+    });
+  }
 }

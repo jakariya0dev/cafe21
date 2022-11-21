@@ -1,11 +1,11 @@
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/app_user_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
-import 'package:cafe21/model/data.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/controller/connection_checker.dart';
+import '../../model/data.dart';
 import 'admin_dashboard.dart';
 
 class AddUser extends StatefulWidget {
@@ -16,6 +16,7 @@ class AddUser extends StatefulWidget {
 }
 
 class _AddUserState extends State<AddUser> {
+
   TextEditingController userEmailController = TextEditingController();
   TextEditingController userPasswordController = TextEditingController();
 
@@ -23,14 +24,13 @@ class _AddUserState extends State<AddUser> {
   String selectedUserRole = 'Select Role';
   bool isUserRoleSelected = false;
 
-  // <-Start-> variable for container decoration
+  // <---Start---> variable for container decoration
   EdgeInsets containerPadding =
       const EdgeInsets.only(left: 0, right: 0, top: 4);
   BoxDecoration containerDecoration = BoxDecoration(
       color: Colors.white, borderRadius: BorderRadius.circular(10));
   double containerGap = 16;
-
-  // <-End-> variable for container decoration
+  // <---End---> variable for container decoration
 
   @override
   initState() {
@@ -39,7 +39,7 @@ class _AddUserState extends State<AddUser> {
   }
 
   init() async {
-    ConnectionChecker().checkInternetConnection(() {
+    await ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
   }
@@ -204,9 +204,6 @@ class _AddUserState extends State<AddUser> {
     );
   }
 
-  // Business logic
-  var db = FirebaseFirestore.instance;
-
   saveNewUser() async {
     bool emailValid = RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -214,20 +211,24 @@ class _AddUserState extends State<AddUser> {
 
     if (userEmailController.text.isEmpty) {
       CommonFunction().showSnackBar('User mail can\'t empty', context);
-    } else if (emailValid == false) {
+    }
+    else if (emailValid == false) {
       CommonFunction().showSnackBar('Not valid email', context);
-    } else if (userPasswordController.text.isEmpty) {
+    }
+    else if (userPasswordController.text.isEmpty) {
       CommonFunction().showSnackBar('User password can\'t empty', context);
-    } else if (isUserRoleSelected == false) {
+    }
+    else if (isUserRoleSelected == false) {
       CommonFunction().showSnackBar('Select user role', context);
     }
-    if (connectivityResult != ConnectivityResult.mobile &&
+    else if (connectivityResult != ConnectivityResult.mobile &&
         connectivityResult != ConnectivityResult.wifi) {
       CommonFunction()
           .showSnackBar('No internet!\nCheck internet connection', context);
-    } else {
+    }
+    else {
       CommonFunction().showLoadingIndicatorWithTitle(
-          context: context, title: 'Creating ew user');
+          context: context, title: 'Creating new user');
       bool isSuccessful = await AppUserController().addNewUser({
         'user-email': userEmailController.text,
         'user-password': userPasswordController.text,
@@ -236,8 +237,8 @@ class _AddUserState extends State<AddUser> {
       if(isSuccessful){
         userEmailController.clear();
         userPasswordController.clear();
-        // allAppUserData.clear();
-        await AdminDashboardController().getAppUserData();
+        allAppUserData.clear();
+        await AppUserController().getAppUserData();
         Navigator.pop(context);
         CommonFunction()
             .showSnackBar('Successfully Added', context);

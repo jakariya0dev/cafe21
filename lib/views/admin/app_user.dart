@@ -1,5 +1,6 @@
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/app_user_controller.dart';
+import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/views/admin/update_app_user.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +24,7 @@ class _AppUserState extends State<AppUser> {
   }
 
   init() async {
-    print(allAppUserData);
-    ConnectionChecker().checkInternetConnection(() {
+    await ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
   }
@@ -40,7 +40,7 @@ class _AppUserState extends State<AppUser> {
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child:  Text('Total app user ${allAppUserData.length}'),
           ),
-          Expanded(
+           Expanded(
             child: ListView.builder(
               itemCount: allAppUserData.length,
               itemBuilder: (context, index) {
@@ -98,7 +98,7 @@ class _AppUserState extends State<AppUser> {
 
       if(isSuccessful){
         allAppUserData.clear();
-        await AdminDashboardController().getAppUserData();
+        await AppUserController().getAppUserData();
         Navigator.pop(context);
         CommonFunction().showSnackBar('Successfully deleted', context);
         setState(() {

@@ -16,6 +16,7 @@ class FoodCategoryPage extends StatefulWidget {
 }
 
 class _FoodCategoryPageState extends State<FoodCategoryPage> {
+
   DashboardController dashboardController = DashboardController();
 
   getData() async {

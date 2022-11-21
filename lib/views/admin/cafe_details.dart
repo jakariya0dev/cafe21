@@ -19,11 +19,13 @@ class _CafeDetailsState extends State<CafeDetails> {
   // TextEditingController cafePasswordController = TextEditingController(text: cafeDetailsData['admin-password']);
   // TextEditingController purchaseCodeController = TextEditingController(text: cafeDetailsData['purchase-code']);
 
+  // <-- start --> variable for container decoration
   EdgeInsets containerPadding =
   const EdgeInsets.only(left: 0, right: 0, top: 4);
   BoxDecoration containerDecoration = BoxDecoration(
       color: Colors.white, borderRadius: BorderRadius.circular(10));
   double containerGap = 16;
+// <-- end --> variable for container decoration
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +105,7 @@ class _CafeDetailsState extends State<CafeDetails> {
               ),
               SizedBox(height: containerGap),
               InkWell(
-                onTap: saveData,
+                onTap: updateData,
                 child: Container(
                   width: double.maxFinite,
                   height: 50,
@@ -112,19 +114,31 @@ class _CafeDetailsState extends State<CafeDetails> {
                       borderRadius: BorderRadius.circular(10)),
                   child: const Center(
                       child: Text(
-                        'Update Data',
+                        'UPDATE CAFE DETAILS',
                         style: TextStyle(color: Colors.white),
                       )),
                 ),
               ),
-              const SizedBox(height: 65),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  InkWell(onTap: () {
+
+                  }, child: const Text('Change Admin Mail', style: TextStyle(color: Colors.purple, fontWeight: FontWeight.w600),)),
+                  const SizedBox(height: 15),
+                  InkWell(onTap: () {
+
+                  }, child: const Text('Reset Admin Password', style: TextStyle(color: Colors.purple, fontWeight: FontWeight.w600),))
+                ],
+              )
             ],
           ),
         ),
     );
   }
 
-  saveData(){
+  updateData(){
 
     // bool isEmailValid = RegExp(
     //     r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(adminEmailController.text);

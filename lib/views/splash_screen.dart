@@ -1,8 +1,12 @@
+import 'package:cafe21/controller/app_user_controller.dart';
+import 'package:cafe21/views/admin/app_user.dart';
 import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cafe21/views/first_admin.dart';
 import 'package:cafe21/views/login_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import '../model/data.dart';
 import 'first_page.dart';
 
 
@@ -23,7 +27,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   }
 
+
   init() async {
+
+    await AppUserController().getAppUserData();
     SharedPreferences prefs =  await SharedPreferences.getInstance();
 
     Future.delayed(const Duration(seconds: 3), () {
@@ -61,4 +68,5 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
+
 }

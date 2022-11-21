@@ -8,7 +8,7 @@ class AdminDashboardController {
   var db = FirebaseFirestore.instance;
 
   // Food Data Manipulation
-  getProductData(category) async {
+  /*getProductData(category) async {
     List data = [];
     await db
         .collection(AppConfig.dbName)
@@ -32,7 +32,7 @@ class AdminDashboardController {
     });
 
     return data;
-  }
+  }*/
 
   addNewFoodData(productData) async {
     late bool isSuccessful;
@@ -81,7 +81,7 @@ class AdminDashboardController {
   }
 
   // Waiter Data Manipulation
-  getWaiterData() async {
+  /*getWaiterData() async {
     List waiterList = [];
 
     await db
@@ -105,7 +105,7 @@ class AdminDashboardController {
     });
 
     return waiterList;
-  }
+  }*/
 
   addNewWaiterData(waiterData) async {
     late bool isSuccessful;
@@ -166,7 +166,7 @@ class AdminDashboardController {
   }
 
   // Category Data Manipulation
-  getCategoryList() async {
+  /*getCategoryList() async {
     var categoryList = await db
         .collection(AppConfig.dbName)
         .doc('foods')
@@ -174,7 +174,7 @@ class AdminDashboardController {
         .doc('category')
         .get();
     return categoryList['names'];
-  }
+  }*/
 
   addNewCategoryName({required name}) async {
     late bool isSuccessful;
@@ -222,16 +222,4 @@ class AdminDashboardController {
     return isSuccessful;
   }
 
-  getAppUserData() async {
-    allAppUserData.clear();
-    await db.collection('app-users').get().then((value) {
-      for (var doc in value.docs) {
-        allAppUserData.add({
-          'user-email': doc['user-email'],
-          'user-password': doc['user-password'],
-          'user-role': doc['user-role'],
-        });
-      }
-    });
-  }
 }

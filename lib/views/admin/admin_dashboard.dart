@@ -31,10 +31,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
   late int bottomNavIndex;
 
   @override
-  initState(){
-    bottomNavIndex = widget.index;
-    AdminDashboardController().getAppUserData();
+  initState() {
+    init();
     super.initState();
+  }
+
+  init() async {
+    bottomNavIndex = widget.index;
   }
 
   @override
