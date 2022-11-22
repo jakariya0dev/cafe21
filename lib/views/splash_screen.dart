@@ -1,11 +1,12 @@
 import 'package:cafe21/controller/app_user_controller.dart';
 import 'package:cafe21/views/admin/app_user.dart';
 import 'package:cafe21/views/dashboard_page.dart';
-import 'package:cafe21/views/first_admin.dart';
+import 'package:cafe21/views/create_cafe_admin.dart';
 import 'package:cafe21/views/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import '../cons/enums.dart';
 import '../model/data.dart';
 import 'first_page.dart';
 
@@ -35,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Future.delayed(const Duration(seconds: 3), () {
       if(prefs.getBool('isNotFirstInstall') == true){
-        if(prefs.getBool('isLogged') == true){
+        if(prefs.getBool(UserRoleKey.isLogged.name) == true){
           Navigator.push(context, MaterialPageRoute(builder: (context) => const DashBoard()));
         }else{
           Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));

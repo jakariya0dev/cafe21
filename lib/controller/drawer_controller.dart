@@ -7,6 +7,8 @@ import 'package:cafe21/cons/const_string.dart';
 import 'package:cafe21/views/login_page.dart';
 
 import '../cons/app_config.dart';
+import '../cons/enums.dart';
+import '../model/data.dart';
 import '../model/invoice_model.dart';
 
 class MyDrawerController{
@@ -16,10 +18,10 @@ class MyDrawerController{
 
   userLogOut(context) async {
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     await FirebaseAuth.instance.signOut();
-    prefs.remove(ConstString.isLogged);
-    prefs.remove(ConstString.userRole);
+    prefs?.remove(UserRoleKey.isLogged.name);
+    prefs?.remove(UserRoleKey.userRole.name);
 
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage(),));

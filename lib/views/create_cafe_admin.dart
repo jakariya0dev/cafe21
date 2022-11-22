@@ -3,16 +3,16 @@ import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cafe21/views/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cafe21/controller/first_admin_controller.dart';
+import 'package:cafe21/controller/create_admin_controller.dart';
 
-class FirstAdmin extends StatefulWidget {
-  const FirstAdmin({Key? key}) : super(key: key);
+class CreateCafeAdmin extends StatefulWidget {
+  const CreateCafeAdmin({Key? key}) : super(key: key);
 
   @override
-  State<FirstAdmin> createState() => _FirstAdminState();
+  State<CreateCafeAdmin> createState() => _CreateCafeAdminState();
 }
 
-class _FirstAdminState extends State<FirstAdmin> {
+class _CreateCafeAdminState extends State<CreateCafeAdmin> {
 
   late SharedPreferences prefs;
 
@@ -336,7 +336,7 @@ class _FirstAdminState extends State<FirstAdmin> {
         'cafe-phone': cafePhoneController.text,
       };
 
-      bool isSuccessful = await FirstAdminController().createAdminAccount(
+      bool isSuccessful = await CreateAdminController().createAdminAccount(
           email: adminEmailController.text,
           password: cafePasswordController.text,
           cafeDetails: cafeDetails,

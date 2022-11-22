@@ -7,6 +7,7 @@ import 'package:cafe21/controller/drawer_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafe21/cons/const_string.dart';
 import 'package:cafe21/model/data.dart';
+import '../cons/enums.dart';
 import 'admin/admin_dashboard.dart';
 import 'invoice/invoice_entry.dart';
 
@@ -51,9 +52,9 @@ class _DashBoardState extends State<DashBoard> {
     await DashboardController().getAllFoodCategory();
     await DashboardController().getAllWaiter();
     await DashboardController().getCafeDetails();
+
     // user role remember
-    prefs = await SharedPreferences.getInstance();
-    userRole = prefs?.getString(ConstString.userRole);
+    userRole = prefs?.getString(UserRoleKey.userRole.name);
     getDailyData();
     calculationInvoiceData();
     calculateMostSells();

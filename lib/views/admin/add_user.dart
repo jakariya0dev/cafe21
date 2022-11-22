@@ -1,11 +1,9 @@
-import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/app_user_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
-import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/controller/connection_checker.dart';
-import '../../model/data.dart';
+import 'package:cafe21/model/data.dart';
 import 'admin_dashboard.dart';
 
 class AddUser extends StatefulWidget {

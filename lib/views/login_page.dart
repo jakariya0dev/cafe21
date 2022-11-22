@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/views/dashboard_page.dart';
-import 'package:cafe21/views/first_admin.dart';
+import 'package:cafe21/views/create_cafe_admin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -185,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 10),
                     InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const FirstAdmin()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCafeAdmin()));
                       },
                       child: const Text('Create admin account', style: TextStyle(color: Colors.purple),),
                     )
@@ -257,9 +257,9 @@ class _LoginPageState extends State<LoginPage> {
             .signInWithEmailAndPassword(
                 email: emailController.text, password: passwordController.text);
         if (credential.user?.uid != null) {
-          UserModel user = await getUserData(emailController.text);
-          await prefs?.setString(ConstString.userRole, user.userRole);
-          await prefs?.setString(ConstString.userMail, user.mail);
+          // UserModel user = await getUserData(emailController.text);
+          // await prefs?.setString(ConstString.userRole, user.userRole);
+          // await prefs?.setString(ConstString.userMail, user.mail);
           await prefs?.setBool(ConstString.isLogged, true);
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const DashBoard()));
