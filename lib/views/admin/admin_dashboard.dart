@@ -1,9 +1,7 @@
 import 'package:cafe21/app_color.dart';
-import 'package:cafe21/controller/admin_dashboard_controller.dart';
-import 'package:cafe21/model/data.dart';
+import 'package:cafe21/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/views/admin/app_user.dart';
-import '../../controller/app_user_controller.dart';
 import 'add_user.dart';
 import 'add_category_page.dart';
 import 'add_food_page.dart';
@@ -39,7 +37,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   init() async {
     bottomNavIndex = widget.index;
-    await AppUserController().getAppUserData();
+    await AuthController().getAppUserData();
   }
 
   @override

@@ -1,7 +1,6 @@
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
-import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/const.dart';
 import 'package:cafe21/cons/app_config.dart';
@@ -13,6 +12,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cafe21/controller/connection_checker.dart';
+import 'package:cafe21/controller/invoice_controller.dart';
 
 
 class InvoiceUpdate extends StatefulWidget {
@@ -56,7 +56,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
   late TextEditingController customerController, phoneController, addressController;
   late TextEditingController discountController, taxController, tableController;
 
-  getData() async {
+  getFoodData() async {
 
     initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[0]).toList();
 
@@ -100,7 +100,11 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         total = double.parse(widget.invoiceData.total);      // food total after discount
         netBill = double.parse(widget.invoiceData.netBill);
 
-        getData();
+        ConnectionChecker().checkInternetConnection((){
+          setState(() {});
+        });
+
+        getFoodData();
 
         super.initState();
 
@@ -108,6 +112,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
   @override
   Widget build(BuildContext context) {
+
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
@@ -560,7 +565,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                             onPressed: () async {
                               selectedButton = index;
                               initialFoodData.clear();
-                              initialFoodData = await InvoiceEntryController().getFoodData(allCategoryData[index]);
+                              initialFoodData = await InvoiceController().getFoodData(allCategoryData[index]);
                               setState(() {});
                             },
                             elevation: selectedButton == index ? 10 : 0,

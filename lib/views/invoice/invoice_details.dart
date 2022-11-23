@@ -4,7 +4,6 @@ import 'package:cafe21/const.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
-import 'package:cafe21/controller/invoice_list_controller.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice/invoice_list.dart';
@@ -14,6 +13,7 @@ import 'package:cafe21/widget/discount_container.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cafe21/controller/invoice_controller.dart';
 
 class InvoiceDetails extends StatefulWidget {
   const InvoiceDetails(
@@ -197,7 +197,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
 
   deleteInvoice() async {
     CommonFunction().showLoadingIndicatorWithTitle(context: context, title: 'Deleting...');
-    await InvoiceListController()
+    await InvoiceController()
         .deleteInvoice(widget.invoiceData.invoiceId);
     allSellsData.clear(); // from data file
     await DashboardController().getAllSellsData();

@@ -3,7 +3,6 @@ import 'package:cafe21/app_color.dart';
 import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
-import 'package:cafe21/controller/invoice_entry_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +12,7 @@ import 'package:cafe21/model/order_item_model.dart';
 import 'package:cafe21/widget/discount_container.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cafe21/controller/connection_checker.dart';
-
+import 'package:cafe21/controller/invoice_controller.dart';
 import 'invoice_print.dart';
 
 class InvoiceEntry extends StatefulWidget {
@@ -67,7 +66,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
 
   @override
   void initState() {
-    invoiceId = InvoiceEntryController().generateInvoiceId();
+    invoiceId = InvoiceController().generateInvoiceId();
     ConnectionChecker().checkInternetConnection((){
       setState(() {});
     });
@@ -278,7 +277,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
           netBill: netBill.toStringAsFixed(2),
           biller: prefs?.getString(UserKey.email.name)
       );
-      await InvoiceEntryController().saveInvoiceToServer(invoice, context);
+      await InvoiceController().saveInvoiceToServer(invoice, context);
       allSellsData.clear();
       await DashboardController().getAllSellsData();
       // for getting just added invoice data from server data

@@ -1,5 +1,4 @@
-import 'package:cafe21/controller/app_user_controller.dart';
-import 'package:cafe21/controller/dashboard_controller.dart';
+import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -232,14 +231,14 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
     else {
       CommonFunction().showLoadingIndicatorWithTitle(
           context: context, title: 'Creating ew user');
-      bool isSuccessful = await AppUserController().updateUser(newUser: {
+      bool isSuccessful = await AuthController().updateUser(newUser: {
         'user-email' : userEmailController.text,
         'user-password' : userPasswordController.text,
         'user-role' : selectedUserRole,
       }, oldEmail: widget.user['user-email']);
       if(isSuccessful){
         allAppUserData.clear();
-        await AppUserController().getAppUserData();
+        await AuthController().getAppUserData();
         Navigator.pop(context);
         CommonFunction().showSnackBar('Successfully updated', context);
       }

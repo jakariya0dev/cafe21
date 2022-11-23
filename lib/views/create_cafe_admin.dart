@@ -1,9 +1,9 @@
+import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cafe21/views/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cafe21/controller/create_admin_controller.dart';
 
 class CreateCafeAdmin extends StatefulWidget {
   const CreateCafeAdmin({Key? key}) : super(key: key);
@@ -38,6 +38,7 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
   init() async {
     prefs = await SharedPreferences.getInstance();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -336,7 +337,7 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
         'cafe-phone': cafePhoneController.text,
       };
 
-      bool isSuccessful = await CreateAdminController().createAdminAccount(
+      bool isSuccessful = await AuthController().createAdminAccount(
           email: adminEmailController.text,
           password: cafePasswordController.text,
           cafeDetails: cafeDetails,

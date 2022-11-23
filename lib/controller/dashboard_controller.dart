@@ -101,4 +101,13 @@ class DashboardController{
 
   }
 
+  weeklyData(invoiceDat) async {
+    List filteredInvoiceData = [], sellsData = [];
+    DateTime dayBeforeAWeek = DateTime.now().subtract(const Duration(days: 1));
+
+    sellsData = await DashboardController().getAllSellsData();
+    filteredInvoiceData = sellsData.where((element) => element.dateTime.toDate().isAfter(dayBeforeAWeek)).toList();
+    return filteredInvoiceData;
+  }
+
 }

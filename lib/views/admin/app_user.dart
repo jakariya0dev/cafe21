@@ -1,6 +1,4 @@
-import 'package:cafe21/controller/admin_dashboard_controller.dart';
-import 'package:cafe21/controller/app_user_controller.dart';
-import 'package:cafe21/controller/dashboard_controller.dart';
+import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/views/admin/update_app_user.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -94,11 +92,11 @@ class _AppUserState extends State<AppUser> {
     } else {
 
       CommonFunction().showLoadingIndicatorWithTitle(title: 'Deleting user', context: context);
-      bool isSuccessful = await AppUserController().deleteUser(index);
+      bool isSuccessful = await AuthController().deleteUser(index);
 
       if(isSuccessful){
         allAppUserData.clear();
-        await AppUserController().getAppUserData();
+        await AuthController().getAppUserData();
         Navigator.pop(context);
         CommonFunction().showSnackBar('Successfully deleted', context);
         setState(() {

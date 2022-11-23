@@ -1,15 +1,13 @@
 import 'package:cafe21/app_color.dart';
+import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:flutter/material.dart';
-import 'package:cafe21/controller/drawer_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cafe21/cons/const_string.dart';
 import 'package:cafe21/model/data.dart';
-import '../cons/enums.dart';
+import 'package:cafe21/cons/enums.dart';
 import 'admin/admin_dashboard.dart';
-import 'invoice/invoice_entry.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -331,7 +329,7 @@ class _DashBoardState extends State<DashBoard> {
           UserAccountsDrawerHeader(
             currentAccountPicture: const CircleAvatar(child: Text('Logo')),
             accountName: Text(userRole.toString()),
-            accountEmail: Text('cafe-name'), //cafeDetails[
+            accountEmail: const Text('cafe-name'), //cafeDetails[
           ),
           Expanded(
             child: ListView(
@@ -389,7 +387,7 @@ class _DashBoardState extends State<DashBoard> {
                 ),
                 InkWell(
                   onTap: () async {
-                    await MyDrawerController().userLogOut(context);
+                    await AuthController().userLogOut(context);
                   },
                   child: const DrawerListTile(
                     icon: Icons.logout,
@@ -581,7 +579,7 @@ class BuildMostSellingItem extends StatelessWidget {
             child: ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {
-                List food = foods.where((element) => element['id'] == items.keys.elementAt(index)).toList();
+                // List food = foods.where((element) => element['id'] == items.keys.elementAt(index)).toList();
                 return Container(
                   height: 32,
                   padding: const EdgeInsets.all(8),

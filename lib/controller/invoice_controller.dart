@@ -1,9 +1,7 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/cons/app_config.dart';
 
-
-class InvoiceEntryController{
+class InvoiceController{
 
   var db = FirebaseFirestore.instance;
 
@@ -76,6 +74,12 @@ class InvoiceEntryController{
     });
   }
 
+  deleteInvoice(invoiceId) async {
+    late String msg;
+    msg = await db.collection(AppConfig.invoiceCollection).doc(invoiceId).delete().then((value) => msg = 'Successfully Deleted!', onError: (e) => msg = 'Cant delete: $e');
+    return msg;
+  }
+
   Future<List> getFoodData(String type) async {
 
     var foodData = [];
@@ -97,30 +101,4 @@ class InvoiceEntryController{
     return foodData;
 
   }
-
-  // getCategoryList() async {
-  //
-  //   var categoryList = await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').get();
-  //   return categoryList['names'];
-  // }
-
-  // getWaiterData() async {
-  //
-  //   List waiterList = [];
-  //
-  //   await db.collection(AppConfig.dbName).doc('users').collection('waiters').get().then((value) {
-  //
-  //     for(var item in value.docs){
-  //       waiterList.add({
-  //         'id' : item['id'],
-  //         'name' : item['name'],
-  //       });
-  //     }
-  //
-  //   });
-  //
-  //   return waiterList;
-  // }
-
-
 }

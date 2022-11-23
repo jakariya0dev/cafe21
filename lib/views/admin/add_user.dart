@@ -1,9 +1,9 @@
-import 'package:cafe21/controller/app_user_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/model/data.dart';
+import 'package:cafe21/controller/auth_controller.dart';
 import 'admin_dashboard.dart';
 
 class AddUser extends StatefulWidget {
@@ -227,7 +227,7 @@ class _AddUserState extends State<AddUser> {
     else {
       CommonFunction().showLoadingIndicatorWithTitle(
           context: context, title: 'Creating new user');
-      bool isSuccessful = await AppUserController().addNewUser({
+      bool isSuccessful = await AuthController().addNewUser({
         'user-email': userEmailController.text,
         'user-password': userPasswordController.text,
         'user-role': selectedUserRole
@@ -236,7 +236,7 @@ class _AddUserState extends State<AddUser> {
         userEmailController.clear();
         userPasswordController.clear();
         allAppUserData.clear();
-        await AppUserController().getAppUserData();
+        await AuthController().getAppUserData();
         Navigator.pop(context);
         CommonFunction()
             .showSnackBar('Successfully Added', context);

@@ -1,3 +1,4 @@
+import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -405,7 +406,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                         
                         Navigator.pop(context);
                         showLoadingIndicator('Updating Admin Mail');
-                        bool isSuccessful = await CafeDetailsController().updateAdminEmail(
+                        bool isSuccessful = await AuthController().updateAdminEmail(
                             oldEmail: oldEmailController.text,
                             password: passwordController.text,
                             newEmail: newEmailController.text,
@@ -438,6 +439,7 @@ class _CafeDetailsState extends State<CafeDetails> {
   }
 
   updateAdminPassword() {
+    
     TextEditingController emailController = TextEditingController();
     TextEditingController oldPasswordController = TextEditingController();
     TextEditingController newPasswordController = TextEditingController();
@@ -446,219 +448,224 @@ class _CafeDetailsState extends State<CafeDetails> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-
-          title: const Text(
-            'Update Admin Password',
-            style: TextStyle(
-                color: Colors.purple, fontSize: 16, fontFamily: 'Roboto'),
-          ),
-          contentPadding: const EdgeInsets.all(16),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: containerPadding,
-                decoration: containerDecoration,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 0, top: 10),
-                      child: Text(
-                        'Admin Email Address',
-                        style: TextStyle(
-                            fontFamily: 'Lato',
-                            fontSize: 12,
-                            color: Colors.grey.shade600),
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: const Text(
+              'Update Admin Password',
+              style: TextStyle(
+                  color: Colors.purple, fontSize: 16, fontFamily: 'Roboto'),
+            ),
+            contentPadding: const EdgeInsets.all(16),
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: containerPadding,
+                  decoration: containerDecoration,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 0, top: 10),
+                        child: Text(
+                          'Admin Email Address',
+                          style: TextStyle(
+                              fontFamily: 'Lato',
+                              fontSize: 12,
+                              color: Colors.grey.shade600),
+                        ),
                       ),
-                    ),
-                    TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                          hintText: 'Enter admin mail',
-                          hintStyle: TextStyle(color: Colors.grey.shade400),
-                          border: const UnderlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 2,
-                          )),
-                          // prefixIcon: const Icon(Icons.mail_outline_outlined),
-                          suffixIcon: InkWell(
-                            onTap: () {
-                              emailController.clear();
-                              setState(() {});
-                            },
-                            child: const Icon(Icons.clear),
-                          )),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: containerGap),
-              Container(
-                padding: containerPadding,
-                decoration: containerDecoration,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 0, top: 10),
-                      child: Text(
-                        'Old Password',
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'Roboto',
-                            color: Colors.grey.shade600),
+                      TextField(
+                        controller: emailController,
+                        decoration: InputDecoration(
+                            hintText: 'Enter admin mail',
+                            errorText: emailErrorText,
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
+                            border: const UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 2,
+                                )),
+                            // prefixIcon: const Icon(Icons.mail_outline_outlined),
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                emailController.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(Icons.clear),
+                            )),
                       ),
-                    ),
-                    TextField(
-                      controller: oldPasswordController,
-                      decoration: InputDecoration(
-                          hintText: 'Type new password',
-                          hintStyle: TextStyle(color: Colors.grey.shade400),
-                          border: const UnderlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 2,
-                          )),
-                          // prefixIcon: const Icon(Icons.lock_outline),
-                          suffixIcon: InkWell(
-                            onTap: () {
-                              oldPasswordController.clear();
-                              setState(() {});
-                            },
-                            child: const Icon(Icons.clear),
-                          )),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: containerGap),
-              Container(
-                padding: containerPadding,
-                decoration: containerDecoration,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 0, top: 10),
-                      child: Text(
-                        'New Password',
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'Roboto',
-                            color: Colors.grey.shade600),
+                SizedBox(height: containerGap),
+                Container(
+                  padding: containerPadding,
+                  decoration: containerDecoration,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 0, top: 10),
+                        child: Text(
+                          'Old Password',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Roboto',
+                              color: Colors.grey.shade600),
+                        ),
                       ),
-                    ),
-                    TextField(
-                      controller: newPasswordController,
-                      decoration: InputDecoration(
-                          hintText: 'Type new password',
-                          hintStyle: TextStyle(color: Colors.grey.shade400),
-                          border: const UnderlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 2,
-                          )),
-                          // prefixIcon: const Icon(Icons.lock_outline),
-                          suffixIcon: InkWell(
-                            onTap: () {
-                              newPasswordController.clear();
-                              setState(() {});
-                            },
-                            child: const Icon(Icons.clear),
-                          )),
-                    ),
-                  ],
+                      TextField(
+                        controller: oldPasswordController,
+                        decoration: InputDecoration(
+                            hintText: 'Type new password',
+                            errorText: oldPasswordErrorText,
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
+                            border: const UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 2,
+                                )),
+                            // prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                oldPasswordController.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(Icons.clear),
+                            )),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          actionsAlignment: MainAxisAlignment.center,
-          actions: [
-            MaterialButton(
-                color: const Color(AppColor.box4),
-                onPressed: () async {
-                  bool isEmailValid = RegExp(
-                      r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                      .hasMatch(emailController.text);
+                SizedBox(height: containerGap),
+                Container(
+                  padding: containerPadding,
+                  decoration: containerDecoration,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 0, top: 10),
+                        child: Text(
+                          'New Password',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Roboto',
+                              color: Colors.grey.shade600),
+                        ),
+                      ),
+                      TextField(
+                        controller: newPasswordController,
+                        decoration: InputDecoration(
+                            hintText: 'Type new password',
+                            errorText: newPasswordErrorText,
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
+                            border: const UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 2,
+                                )),
+                            // prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                newPasswordController.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(Icons.clear),
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              MaterialButton(
+                  color: const Color(AppColor.box4),
+                  onPressed: () async {
 
-                  if (emailController.text.isEmpty) {
-                    emailErrorText = 'Can not empty!';
-                    newPasswordErrorText = '';
-                    oldPasswordErrorText = '';
-                    setState(() {});
-                  }
-                  else if (isEmailValid == false) {
-                    emailErrorText = 'Not a valid mail!';
-                    newPasswordErrorText = '';
-                    oldPasswordErrorText = '';
-                    setState(() {});
-                  }
-                  else if (oldPasswordController.text.isEmpty) {
-                    emailErrorText = '';
-                    oldPasswordErrorText = 'Can not empty!';
-                    newPasswordErrorText = '';
-                    setState(() {});
-                  }
-                  else if (newPasswordController.text.isEmpty) {
-                    emailErrorText = '';
-                    oldPasswordErrorText = '';
-                    newPasswordErrorText = 'Can not empty!';
-                    setState(() {});
-                  }
-                  else if (connectivityResult != ConnectivityResult.mobile &&
-                      connectivityResult != ConnectivityResult.wifi) {
+                    bool isEmailValid = RegExp(
+                        r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        .hasMatch(emailController.text);
 
-                    emailController.clear();
-                    newPasswordController.clear();
-                    oldPasswordController.clear();
-
-                    Navigator.pop(context);
-                    showSnackbar('No internet connection');
-                  }
-                  else {
-
-                    Navigator.pop(context);
-                    showLoadingIndicator('Updating Admin Mail');
-                    bool isSuccessful = await CafeDetailsController().updateAdminPassword(
-                        email: emailController.text.trim(),
-                        oldPassword: oldPasswordController.text.trim(),
-                        newPassword: newPasswordController.text.trim(),
-                        context: context);
-                    if(isSuccessful){
-                      popContext();
-                      showSnackbar('Successfully updated');
-                    }else{
-                      popContext();
+                    if (emailController.text.isEmpty) {
+                      emailErrorText = 'Can not empty!';
+                      newPasswordErrorText = '';
+                      oldPasswordErrorText = '';
+                      setState(() {});
                     }
-                  }
-                },
-                child: const Text(
-                  'UPDATE',
-                  style: TextStyle(color: Colors.white),
-                )),
-            MaterialButton(
-                color: const Color(AppColor.box5),
-                onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  'CANCEL',
-                  style: TextStyle(color: Colors.white),
-                ))
-          ],
-        );
+                    else if (isEmailValid == false) {
+                      emailErrorText = 'Not a valid mail!';
+                      newPasswordErrorText = '';
+                      oldPasswordErrorText = '';
+                      setState(() {});
+                    }
+                    else if (oldPasswordController.text.isEmpty) {
+                      emailErrorText = '';
+                      oldPasswordErrorText = 'Can not empty!';
+                      newPasswordErrorText = '';
+                      setState(() {});
+                    }
+                    else if (newPasswordController.text.isEmpty) {
+                      emailErrorText = '';
+                      oldPasswordErrorText = '';
+                      newPasswordErrorText = 'Can not empty!';
+                      setState(() {});
+                    }
+                    else if (connectivityResult != ConnectivityResult.mobile &&
+                        connectivityResult != ConnectivityResult.wifi) {
+
+                      emailController.clear();
+                      newPasswordController.clear();
+                      oldPasswordController.clear();
+
+                      Navigator.pop(context);
+                      showSnackbar('No internet connection');
+                    }
+                    else {
+
+                      Navigator.pop(context);
+                      showLoadingIndicator('Updating Admin Mail');
+                      bool isSuccessful = await AuthController().updateAdminPassword(
+                          email: emailController.text.trim(),
+                          oldPassword: oldPasswordController.text.trim(),
+                          newPassword: newPasswordController.text.trim(),
+                          context: context);
+                      if(isSuccessful){
+                        popContext();
+                        showSnackbar('Successfully updated');
+                      }else{
+                        popContext();
+                      }
+                    }
+                  },
+                  child: const Text(
+                    'UPDATE',
+                    style: TextStyle(color: Colors.white),
+                  )),
+              MaterialButton(
+                  color: const Color(AppColor.box5),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.white),
+                  ))
+            ],
+          );
+        },);
       },
     );
 
   }
 
-  void showSnackbar(String msg) {
+  showSnackbar(String msg) {
     CommonFunction().showSnackBar(msg, context);
   }
 
-  void showLoadingIndicator(String msg) {
+  showLoadingIndicator(String msg) {
     CommonFunction().showLoadingIndicatorWithTitle(context: context, title: msg);
   }
   

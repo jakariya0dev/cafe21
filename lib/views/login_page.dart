@@ -1,17 +1,13 @@
-import 'dart:async';
 import 'package:cafe21/app_color.dart';
-import 'package:cafe21/cons/app_config.dart';
-import 'package:cafe21/model/user_model.dart';
+import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/views/create_cafe_admin.dart';
 import 'package:cafe21/views/dashboard_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
-import 'package:cafe21/controller/user_login_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -261,7 +257,7 @@ class _LoginPageState extends State<LoginPage> {
     else if(radioValue == UserRoleKey.user.name){
       isLoginButtonPressed = !isLoginButtonPressed;
       setState(() {});
-      bool isSuccessful = await UserLoginController().userLogin(
+      bool isSuccessful = await AuthController().userLogin(
           emailController.text.trim(),
           passwordController.text.trim(),
           context
@@ -280,7 +276,7 @@ class _LoginPageState extends State<LoginPage> {
     else if(radioValue == UserRoleKey.admin.name){
           isLoginButtonPressed = !isLoginButtonPressed;
           setState(() {});
-          bool isSuccessful = await UserLoginController().adminLogin(
+          bool isSuccessful = await AuthController().adminLogin(
               emailController.text.trim(),
               passwordController.text.trim(),
               context

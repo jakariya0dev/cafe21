@@ -1,14 +1,10 @@
-import 'package:cafe21/controller/app_user_controller.dart';
-import 'package:cafe21/views/admin/app_user.dart';
+
 import 'package:cafe21/views/dashboard_page.dart';
-import 'package:cafe21/views/create_cafe_admin.dart';
 import 'package:cafe21/views/login_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import '../cons/enums.dart';
-import '../model/data.dart';
-import 'onboarding_page.dart';
+import 'package:cafe21/cons/enums.dart';
+import 'package:cafe21/model/data.dart';
+import 'on_boarding_page.dart';
 
 
 class SplashScreen extends StatefulWidget {
