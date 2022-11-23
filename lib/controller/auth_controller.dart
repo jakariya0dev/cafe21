@@ -79,17 +79,17 @@ class AuthController{
 
   userLogin(email, password, context) async {
 
-
     await db.collection('user-list').doc(email).get().then((value) async {
-      if(value.exists && value['user-password'] == password){
-
+      if(!value.exists){
+        CommonFunction().showSnackBar('User does not exist', context);
+      }
+      else if(value.exists && value['user-password'] != password){
+        CommonFunction().showSnackBar('Password does\'t matched', context);
+      }
+      else if(value.exists && value['user-password'] != password){
         await prefs?.setBool(UserRoleKey.isLogged.name, true);
         await prefs?.setString(UserKey.email.name, email);
         await prefs?.setString(UserRoleKey.userRole.name, UserRoleKey.user.name);
-
-      }
-      else{
-        CommonFunction().showSnackBar('User does not exist', context);
       }
       isSuccessful = true;
     }, onError: (e){

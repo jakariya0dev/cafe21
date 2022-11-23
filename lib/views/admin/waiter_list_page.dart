@@ -1,6 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/app_color.dart';
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
@@ -22,53 +22,63 @@ class _WaiterListPageState extends State<WaiterListPage> {
     return Container(
       margin: const EdgeInsets.all(16),
       constraints: const BoxConstraints(),
-      child: allWaiterData.isEmpty ? const Center(child: Text('No waiter date')) : ListView.separated(
-        itemCount: allWaiterData.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            isThreeLine: false,
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            dense: true,
-            onTap: () {
-              editWaiter(index);
-            },
-            onLongPress: () {
-              deleteWaiter(index);
-            },
-            tileColor:
-            index % 2 == 0 ? Colors.blue.shade100 : Colors.blue.shade100,
-            leading: CircleAvatar(
-              child: Text((index + 1).toString()),
-            ),
-            title: Text('Name: ${allWaiterData[index]['name']}'),
-            subtitle: Text('Phone: ${allWaiterData[index]['phone']}'),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  '100',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: Colors.black54),
-                ),
-                const SizedBox(
+      child: allWaiterData.isEmpty ? const Center(child: Text('No waiter date')) : Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child:  Text('Total waiter: ${allWaiterData.length}'),
+          ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: allWaiterData.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  isThreeLine: false,
+                  shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  dense: true,
+                  onTap: () {
+                    editWaiter(index);
+                  },
+                  onLongPress: () {
+                    deleteWaiter(index);
+                  },
+                  tileColor: Colors.white,
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.blue,
+                    child: Text((index + 1).toString(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                  ),
+                  title: Text('Name: ${allWaiterData[index]['name']}'),
+                  subtitle: Text('Phone: ${allWaiterData[index]['phone']}'),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '100',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Colors.black54),
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        'Orders'.toUpperCase(),
+                        style: const TextStyle(fontSize: 9),
+                      )
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(
                   height: 4,
-                ),
-                Text(
-                  'Orders'.toUpperCase(),
-                  style: const TextStyle(fontSize: 9),
-                )
-              ],
+                );
+              },
             ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            height: 4,
-          );
-        },
+          ),
+        ],
       ),
     );
   }

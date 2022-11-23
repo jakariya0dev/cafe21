@@ -1,6 +1,6 @@
-import 'package:cafe21/app_color.dart';
-import 'package:cafe21/cons/const_string.dart';
-import 'package:cafe21/const.dart';
+import 'package:cafe21/cons/app_color.dart';
+import 'package:cafe21/cons/const.dart';
+import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
@@ -27,7 +27,7 @@ class _InvoiceListState extends State<InvoiceList> {
   List invoiceData = []; // all data for ui rendering
   List<String> buttonList = ['All', 'Paid', 'Unpaid'];
   String selectedButton = 'All';
-  String appbarTitle = 'all invoice';
+  String appbarTitle = 'All invoices';
   Widget bodyPlaceholder = const Text('No sells data available!');
 
   @override
@@ -54,7 +54,7 @@ class _InvoiceListState extends State<InvoiceList> {
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         titleTextStyle: const TextStyle(fontWeight: FontWeight.normal),
-        title: Text(appbarTitle),
+        title: Text(appbarTitle, style: const TextStyle(color: Colors.white)),
         leading: IconButton(
           onPressed: () => Navigator.pushReplacement(
               context,
@@ -106,9 +106,10 @@ class _InvoiceListState extends State<InvoiceList> {
                         itemBuilder: (context, index) {
                           return InkWell(
                               onLongPress: (){
-                                if (prefs?.getString(ConstString.userRole) ==
-                                    ConstString.userRoleAdmin) {
+                                if (prefs?.getString(UserRoleKey.userRole.name) ==
+                                    UserRoleKey.admin.name) {
                                   deleteInvoice(index);
+
                                 } else {
                                   CommonFunction().showWarningDialog(
                                       'Only admin can delete invoice', context);
@@ -289,12 +290,14 @@ class BuildInvoiceListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     bool isPaid;
     double netBill = double.parse(invoiceData.netBill);
 
     if (invoiceData.paymentMethod == paymentMethodList[3]) {
       isPaid = false;
-    } else {
+    }
+    else {
       isPaid = true;
     }
 

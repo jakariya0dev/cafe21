@@ -6,14 +6,14 @@ import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/model/data.dart';
 
-class AppUser extends StatefulWidget {
-  const AppUser({Key? key}) : super(key: key);
+class UserList extends StatefulWidget {
+  const UserList({Key? key}) : super(key: key);
 
   @override
-  State<AppUser> createState() => _AppUserState();
+  State<UserList> createState() => _UserListState();
 }
 
-class _AppUserState extends State<AppUser> {
+class _UserListState extends State<UserList> {
 
   @override
   initState() {
@@ -31,8 +31,7 @@ class _AppUserState extends State<AppUser> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: allAppUserData.isEmpty ? const Center(child: Text('No user found'),): Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: allAppUserData.isEmpty ? const Center(child: Text('No user found')): Column(
         children: [
            Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -51,7 +50,9 @@ class _AppUserState extends State<AppUser> {
                   child: ListTile(
                     leading: Column(
                       children: [
-                        const CircleAvatar(child: Icon(Icons.person)),
+                        const CircleAvatar(
+                            backgroundColor: Colors.blue,
+                            child: Icon(Icons.person, color: Colors.white,),),
                         const SizedBox(height: 2),
                         Text(allAppUserData[index]['user-role'], style: const TextStyle(fontSize: 11),),
                       ],

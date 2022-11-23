@@ -4,10 +4,6 @@ class AppConfig{
   static const String restaurantName = 'Chef De Cuisine';
   static const String restaurantCell = '01762940480';
 
-// //    User role
-//   static late String userRole;
-
-
   /*
   * Database name
   * Don't edit this

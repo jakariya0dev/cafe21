@@ -1,4 +1,4 @@
-import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/app_color.dart';
 import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
@@ -16,7 +16,6 @@ class ProductListPage extends StatefulWidget {
 }
 
 class _ProductListPageState extends State<ProductListPage> {
-
   List<dynamic> foodList = [];
   int selectedCategoryButtonIndex = 0;
   DashboardController dashboardController = DashboardController();
@@ -93,7 +92,7 @@ class _ProductListPageState extends State<ProductListPage> {
                       return ListTile(
                         isThreeLine: false,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
+                            borderRadius: BorderRadius.circular(5)),
                         dense: true,
                         onTap: () {
                           editFoodItem(index);
@@ -101,13 +100,12 @@ class _ProductListPageState extends State<ProductListPage> {
                         onLongPress: () {
                           deleteFoodItem(index);
                         },
-                        tileColor: index % 2 == 0
-                            ? Colors.blue.shade100
-                            : Colors.blue.shade100,
+                        tileColor: Colors.white,
                         leading: CircleAvatar(
+                          backgroundColor: Colors.blue,
                           child: Text(
                             (index + 1).toString(),
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                         ),
                         title: Text(
@@ -305,8 +303,7 @@ class _ProductListPageState extends State<ProductListPage> {
                     if (nameController.text.isEmpty) {
                       errorMsg = 'Error: Enter food name!';
                       setState(() {});
-                    }
-                    else if (categoryId.isEmpty) {
+                    } else if (categoryId.isEmpty) {
                       errorMsg = 'Error: Select food category!';
                       setState(() {});
                     }
@@ -317,15 +314,13 @@ class _ProductListPageState extends State<ProductListPage> {
                     else if (priceController.text.isEmpty) {
                       errorMsg = 'Error: Food price is Empty!';
                       setState(() {});
-                    }
-                    else if (connectivityResult !=
+                    } else if (connectivityResult !=
                             ConnectivityResult.mobile &&
                         connectivityResult != ConnectivityResult.wifi) {
                       Navigator.pop(context);
                       CommonFunction().showSnackBar(
                           'No internet!\nCheck internet connection', context);
-                    }
-                    else {
+                    } else {
                       Navigator.pop(context);
                       String msg =
                           await AdminDashboardController().updateFoodData({

@@ -1,4 +1,4 @@
-import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/app_color.dart';
 import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/views/create_cafe_admin.dart';
 import 'package:cafe21/views/dashboard_page.dart';

@@ -1,5 +1,5 @@
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
-import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/app_color.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:cafe21/views/invoice/invoice_update.dart';

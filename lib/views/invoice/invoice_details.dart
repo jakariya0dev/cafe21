@@ -1,6 +1,6 @@
-import 'package:cafe21/app_color.dart';
-import 'package:cafe21/cons/const_string.dart';
-import 'package:cafe21/const.dart';
+import 'package:cafe21/cons/app_color.dart';
+import 'package:cafe21/cons/const.dart';
+import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
@@ -164,13 +164,12 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                       onPressed: () => Navigator.pop(context),
                     ),
                   ));
-                } else if (prefs?.getString(ConstString.userRole) !=
-                    ConstString.userRoleAdmin) {
+                } else if (prefs?.getString(UserRoleKey.userRole.name) !=
+                    UserRoleKey.admin.name) {
                   CommonFunction()
                       .showWarningDialog('Only admin can delete invoice', context);
                 } else {
                     deleteInvoice();
-
                 }
               },
               color: const Color(AppColor.box5),

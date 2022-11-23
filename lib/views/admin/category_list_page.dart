@@ -1,4 +1,4 @@
-import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/app_color.dart';
 import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
@@ -42,36 +42,63 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
     return Container(
       constraints: const BoxConstraints(),
       margin: const EdgeInsets.all(16),
-      child: allCategoryData.isEmpty ? const Center(child: Text('No food item')) : ListView.separated(
-        itemCount: allCategoryData.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            isThreeLine: false,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            dense: true,
-            onTap: () {
-              editCategory(index);
-            },
-            onLongPress: () async {
-              await deleteCategory(
-                  allCategoryData[index][CategoryListKey.id.name]);
-              setState(() {});
-            },
-            tileColor:
-                index % 2 == 0 ? Colors.blue.shade100 : Colors.blue.shade100,
-            trailing: const Icon(Icons.edit_calendar),
-            title: Text(
-              '${index + 1}. ${allCategoryData[index][CategoryListKey.name.name]}',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+      child: allCategoryData.isEmpty ? const Center(child: Text('No food item')) : Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child:  Text('Total food category: ${allCategoryData.length}'),
+          ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: allCategoryData.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  isThreeLine: false,
+                  shape:
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  dense: true,
+                  onTap: () {
+                    editCategory(index);
+                  },
+                  onLongPress: () async {
+                    await deleteCategory(
+                        allCategoryData[index][CategoryListKey.id.name]);
+                    setState(() {});
+                  },
+                  tileColor: Colors.white,
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '100',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black54),
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        'Orders'.toUpperCase(),
+                        style: const TextStyle(fontSize: 9),
+                      )
+                    ],
+                  ),
+                  title: Text(
+                    '${index + 1}. ${allCategoryData[index][CategoryListKey.name.name]}',
+                    style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  height: 8,
+                );
+              },
             ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            height: 4,
-          );
-        },
+          ),
+        ],
       ),
     );
   }

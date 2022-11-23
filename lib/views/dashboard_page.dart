@@ -1,4 +1,4 @@
-import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/app_color.dart';
 import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
@@ -68,7 +68,7 @@ class _DashBoardState extends State<DashBoard> {
     return Scaffold(
       backgroundColor: Colors.deepPurple.shade50,
       appBar: AppBar(
-        title: const Text('Sells Dashboard'),
+        title: const Text('Sells Dashboard', style: TextStyle(color: Colors.white)),
         titleTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
         actions: [
           Padding(

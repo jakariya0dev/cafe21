@@ -1,5 +1,5 @@
 
-import 'package:cafe21/app_color.dart';
+import 'package:cafe21/cons/app_color.dart';
 import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
@@ -7,7 +7,7 @@ import 'package:cafe21/model/invoice_model.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:cafe21/const.dart';
+import 'package:cafe21/cons/const.dart';
 import 'package:cafe21/model/order_item_model.dart';
 import 'package:cafe21/widget/discount_container.dart';
 import 'package:cafe21/model/data.dart';

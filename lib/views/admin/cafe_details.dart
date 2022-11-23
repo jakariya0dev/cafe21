@@ -4,7 +4,7 @@ import 'package:cafe21/model/data.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
-import '../../app_color.dart';
+import '../../cons/app_color.dart';
 import '../../controller/cafe_details_controller.dart';
 import '../../controller/connection_checker.dart';
 import '../../controller/dashboard_controller.dart';

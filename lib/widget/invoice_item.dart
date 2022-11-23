@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../const.dart';
+import '../cons/const.dart';
 
 class InvoiceItem extends StatelessWidget {
   const InvoiceItem({
