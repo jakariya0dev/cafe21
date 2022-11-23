@@ -1,8 +1,6 @@
-import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/views/create_cafe_admin.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dashboard_page.dart';
+import 'package:cafe21/model/data.dart';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({Key? key}) : super(key: key);
@@ -13,8 +11,6 @@ class FirstPage extends StatefulWidget {
 
 class _FirstPageState extends State<FirstPage> {
 
-  late SharedPreferences prefs;
-
   @override
   initState(){
     init();
@@ -22,7 +18,6 @@ class _FirstPageState extends State<FirstPage> {
   }
 
   init() async {
-    prefs = await SharedPreferences.getInstance();
   }
   
   int index = 0;
@@ -34,7 +29,7 @@ class _FirstPageState extends State<FirstPage> {
   @override
   Widget build(BuildContext context) {
 
-    double height = MediaQuery.of(context).size.height;
+    // double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -68,12 +63,12 @@ class _FirstPageState extends State<FirstPage> {
             ),
             TextButton(
               onPressed: index == 2 ? () async {
-
-                await prefs.setBool('isNotFirstInstall', true);
-                await CommonFunction.generateDatabase();
+                await prefs?.setBool('isNotFirstInstall', true);
+                // await CommonFunction.generateDatabase();
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCafeAdmin()));
-              } :() {
-                index++; setState(() {});
+              } : () {
+                    index++;
+                    setState(() {});
               },
               child: index == 2 ? const Text('Finish') : const Icon(Icons.arrow_forward_ios),
             )

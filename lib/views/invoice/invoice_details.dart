@@ -14,7 +14,6 @@ import 'package:cafe21/widget/discount_container.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class InvoiceDetails extends StatefulWidget {
   const InvoiceDetails(
@@ -29,7 +28,6 @@ class InvoiceDetails extends StatefulWidget {
 
 class _InvoiceDetailsState extends State<InvoiceDetails> {
   late double netBill, totalAmountAfterDiscount, totalAmount = 0;
-  SharedPreferences? pref;
 
   @override
   initState() {
@@ -50,7 +48,6 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
     netBill = totalAmountAfterDiscount +
         (totalAmountAfterDiscount * (int.parse(widget.invoiceData.tax) / 100));
 
-    pref = await SharedPreferences.getInstance();
   }
 
   @override
@@ -136,6 +133,10 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
           ),
         ),
       ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(8),
+        child: Text('Prepared by: ${widget.invoiceData.biller}', textAlign: TextAlign.center,),
+      ),
     );
   }
 
@@ -163,7 +164,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                       onPressed: () => Navigator.pop(context),
                     ),
                   ));
-                } else if (pref?.getString(ConstString.userRole) !=
+                } else if (prefs?.getString(ConstString.userRole) !=
                     ConstString.userRoleAdmin) {
                   CommonFunction()
                       .showWarningDialog('Only admin can delete invoice', context);

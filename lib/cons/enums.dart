@@ -6,9 +6,13 @@ enum AdminKey{
   adminEmail, adminUserId,
 }
 
+enum UserKey{
+  email, id,
+}
+
 enum UserRoleKey{
   isLogged,
   userRole,
   admin,
-  notAdmin
+  user,
 }

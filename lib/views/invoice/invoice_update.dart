@@ -771,15 +771,12 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         tableController.text.isEmpty) {
       showSnackBar('Fill all the field!');
 
-    } else if(orderedItemList.isEmpty){
+    }
+    else if(orderedItemList.isEmpty){
       showSnackBar('Add item in ordered list!');
     }
     else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('No internet!\nCheck internet connection'), action: SnackBarAction(
-        label: 'close',
-        onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-      ),));
+      CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
     }
     else {
 
@@ -807,7 +804,8 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         total = subTotal - discount;
         double tax = total * (double.parse(taxController.text.toString())/100);
         netBill = total + tax;
-      }else{
+      }
+      else{
         total = subTotal - double.parse(totalDiscount);
         double tax = total * (double.parse(taxController.text.toString())/100);
         netBill = total + tax;
@@ -815,7 +813,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
       var db = FirebaseFirestore.instance;
 
-      db.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').doc(widget.invoiceData.invoiceId).update({
+      db.collection(AppConfig.invoiceCollection).doc(widget.invoiceData.invoiceId).update({
         'invoiceId': widget.invoiceData.invoiceId,
         'customer': customerController.text,
         'phone': phoneController.text,

@@ -22,7 +22,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
     return Container(
       margin: const EdgeInsets.all(16),
       constraints: const BoxConstraints(),
-      child: ListView.separated(
+      child: allWaiterData.isEmpty ? const Center(child: Text('No waiter date')) : ListView.separated(
         itemCount: allWaiterData.length,
         itemBuilder: (context, index) {
           return ListTile(

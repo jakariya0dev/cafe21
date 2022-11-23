@@ -1,9 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:cafe21/cons/app_config.dart';
 
-import '../cons/app_config.dart';
-import '../views/invoice/invoice_print.dart';
 
 class InvoiceEntryController{
 
@@ -56,7 +54,7 @@ class InvoiceEntryController{
   }
 
   saveInvoiceToServer(invoice, context){
-    db.collection(AppConfig.dbName).doc('invoices').collection('invoice-details').doc(invoice.invoiceId).set({
+    db.collection(AppConfig.invoiceCollection).doc(invoice.invoiceId).set({
       'customer' : invoice.customer,
       'phone' : invoice.phone,
       'address' : invoice.address,
@@ -71,7 +69,8 @@ class InvoiceEntryController{
       'orders' : invoice.orders,
       'subTotal': invoice.subTotal,
       'total' : invoice.total,
-      'netBill' : invoice.netBill
+      'netBill' : invoice.netBill,
+      'biller' : invoice.biller
     }).whenComplete((){
 
     });
@@ -82,9 +81,7 @@ class InvoiceEntryController{
     var foodData = [];
 
     await db
-        .collection(AppConfig.dbName)
-        .doc('foods')
-        .collection('products')
+        .collection(AppConfig.foodCollection)
         .where('category', isEqualTo: type)
         .get()
         .then((value) {
@@ -101,29 +98,29 @@ class InvoiceEntryController{
 
   }
 
-  getCategoryList() async {
+  // getCategoryList() async {
+  //
+  //   var categoryList = await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').get();
+  //   return categoryList['names'];
+  // }
 
-    var categoryList = await db.collection(AppConfig.dbName).doc('foods').collection('food-category').doc('category').get();
-    return categoryList['names'];
-  }
-
-  getWaiterData() async {
-
-    List waiterList = [];
-
-    await db.collection(AppConfig.dbName).doc('users').collection('waiters').get().then((value) {
-
-      for(var item in value.docs){
-        waiterList.add({
-          'id' : item['id'],
-          'name' : item['name'],
-        });
-      }
-
-    });
-
-    return waiterList;
-  }
+  // getWaiterData() async {
+  //
+  //   List waiterList = [];
+  //
+  //   await db.collection(AppConfig.dbName).doc('users').collection('waiters').get().then((value) {
+  //
+  //     for(var item in value.docs){
+  //       waiterList.add({
+  //         'id' : item['id'],
+  //         'name' : item['name'],
+  //       });
+  //     }
+  //
+  //   });
+  //
+  //   return waiterList;
+  // }
 
 
 }

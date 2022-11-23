@@ -1,7 +1,5 @@
-import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../model/data.dart';
 
 class AdminDashboardController {
 
@@ -37,9 +35,7 @@ class AdminDashboardController {
   addNewFoodData(productData) async {
     late bool isSuccessful;
     await db
-        .collection(AppConfig.dbName)
-        .doc('foods')
-        .collection('products')
+        .collection('food-list')
         .doc()
         .set(productData)
         .then((value) => isSuccessful = true,
@@ -53,9 +49,7 @@ class AdminDashboardController {
   updateFoodData(productData, docId) async {
     String msg = '';
     await db
-        .collection(AppConfig.dbName)
-        .doc('foods')
-        .collection('products')
+        .collection('food-list')
         .doc(docId)
         .update(productData)
         .then((value) => msg = 'Successfully updated!',
@@ -67,9 +61,7 @@ class AdminDashboardController {
   deleteFoodData(docId, context) async {
     late String msg;
     await db
-        .collection(AppConfig.dbName)
-        .doc('foods')
-        .collection('products')
+        .collection('food-list')
         .doc(docId)
         .delete()
         .then((doc) {
@@ -110,9 +102,7 @@ class AdminDashboardController {
   addNewWaiterData(waiterData) async {
     late bool isSuccessful;
     await db
-        .collection(AppConfig.dbName)
-        .doc('users')
-        .collection('waiters')
+        .collection('waiter-list')
         .doc(waiterData['phone'])
         .set(waiterData).then((value) => isSuccessful = true, onError: (e){
           print(e);
@@ -124,9 +114,7 @@ class AdminDashboardController {
   updateWaiterData(waiterList) async {
     late bool isSuccessful;
     await db
-        .collection(AppConfig.dbName)
-        .doc('users')
-        .collection('waiters')
+        .collection('waiter-list')
         .doc(waiterList['docId'])
         .update({
       'id': waiterList['id'],
@@ -148,9 +136,7 @@ class AdminDashboardController {
   deleteWaiterData(docName) async {
     late bool isSuccessful;
     await db
-        .collection(AppConfig.dbName)
-        .doc('users')
-        .collection('waiters')
+        .collection('waiter-list')
         .doc(docName)
         .delete()
         .then(
@@ -179,9 +165,7 @@ class AdminDashboardController {
   addNewCategoryName({required name}) async {
     late bool isSuccessful;
     await db
-        .collection(AppConfig.dbName)
-        .doc('foods')
-        .collection('food-category')
+        .collection('category-list')
         .doc()
         .set({'name': name}).then((value) => isSuccessful = true, onError: (e) {
       isSuccessful = false;
@@ -194,9 +178,7 @@ class AdminDashboardController {
   updateCategoryName({required id, required name}) async {
     late bool isSuccessful;
     await db
-        .collection(AppConfig.dbName)
-        .doc('foods')
-        .collection('food-category')
+        .collection('category-list')
         .doc(id)
         .set({'name': name}).then((value) => isSuccessful = true, onError: (e) {
       isSuccessful = false;
@@ -209,9 +191,7 @@ class AdminDashboardController {
   deleteCategory(id) async {
     late bool isSuccessful;
     await db
-        .collection(AppConfig.dbName)
-        .doc('foods')
-        .collection('food-category')
+        .collection('category-list')
         .doc(id)
         .delete()
         .then((value) => isSuccessful = true, onError: (e) {

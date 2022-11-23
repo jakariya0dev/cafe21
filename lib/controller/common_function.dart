@@ -5,6 +5,7 @@ import 'package:cafe21/main.dart';
 
 class CommonFunction {
 
+
   static bool isCategoryDatabaseCreated = false, isWaiterDatabaseCreated = false;
   static bool isFoodDatabaseCreated = false, isInvoiceDatabaseCreated = false;
 
@@ -129,6 +130,7 @@ class CommonFunction {
   }
 
   static generateDatabase() async {
+
     var db = FirebaseFirestore.instance;
 
     // testCategoryName
@@ -136,9 +138,9 @@ class CommonFunction {
           .collection('food-categories')
           .doc()
           .set({'name': 'test category'}).then((value) => isCategoryDatabaseCreated = true, onError: (e) {
-        isCategoryDatabaseCreated = false;
-        print(e);
-      });
+              isCategoryDatabaseCreated = false;
+              print(e);
+          });
 
     // testWaiterData
       await db

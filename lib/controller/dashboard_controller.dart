@@ -1,7 +1,7 @@
+import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/model/data.dart';
-import 'package:cafe21/cons/enums.dart';
 
 
 class DashboardController{
@@ -10,7 +10,7 @@ class DashboardController{
 
   getAllSellsData() async {
 
-    await db.collection('invoice_list').get().then((value){
+    await db.collection(AppConfig.invoiceCollection).get().then((value){
       for(var element in value.docs){
         InvoiceModel invoiceModel = InvoiceModel(
             invoiceId: element.id,
@@ -28,7 +28,8 @@ class DashboardController{
             paymentMethod : element['paymentMethod'],
             subTotal: element['subTotal'],
             total: element['total'],
-            netBill: element['netBill']
+            netBill: element['netBill'],
+            biller: element['biller']
         );
         allSellsData.add(invoiceModel);
       }
@@ -39,7 +40,7 @@ class DashboardController{
 
   getAllFood() async {
 
-    await db.collection('food_items').get().then((value) {
+    await db.collection('food-list').get().then((value) {
 
       for(var doc in value.docs){
         allFoodsData.add({
@@ -55,11 +56,11 @@ class DashboardController{
 
   getAllFoodCategory()async{
 
-    await db.collection('food_categories').get().then((value) {
+    await db.collection('category-list').get().then((value) {
       for (var doc in value.docs){
           allCategoryData.add({
-            CategoryListKey.id.name : doc.id,
-            CategoryListKey.name.name : doc[CategoryListKey.name.name]
+            'id' : doc.id,
+            'name': doc['name']
           });
       }
     });
@@ -69,7 +70,7 @@ class DashboardController{
 
   getAllWaiter() async {
 
-    await db.collection('waiter_list').get().then((value) {
+    await db.collection('waiter-list').get().then((value) {
 
       for(var item in value.docs){
         allWaiterData.add({

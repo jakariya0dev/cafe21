@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'package:cafe21/app_color.dart';
 import 'package:cafe21/cons/app_config.dart';
-import 'package:cafe21/views/dashboard_page.dart';
+import 'package:cafe21/model/user_model.dart';
 import 'package:cafe21/views/create_cafe_admin.dart';
+import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cafe21/cons/const_string.dart';
-import 'package:cafe21/model/user_model.dart';
-import '../controller/common_function.dart';
-import '../controller/connection_checker.dart';
+import 'package:cafe21/cons/enums.dart';
+import 'package:cafe21/controller/common_function.dart';
+import 'package:cafe21/controller/connection_checker.dart';
+import 'package:cafe21/controller/user_login_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // String userRole = 'manager';
   bool isPasswordVisible = true;
+  String radioValue = UserRoleKey.user.name;
 
   @override
   initState() {
@@ -36,48 +37,44 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   init() async {
-    prefs = await SharedPreferences.getInstance();
-    ConnectionChecker().checkInternetConnection((){
-      setState(() {
-
-      });
+    ConnectionChecker().checkInternetConnection(() {
+      setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      height: height * 0.4,
-                      decoration: const BoxDecoration(
-                          color: Colors.blue,
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [Color(0xff2B1C9B), Color(0xff583de7)])),
-                    ),
-                  ],
-                ),
+        child: Stack(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: height * 0.4,
+                    decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [Color(0xff2B1C9B), Color(0xff583de7)])),
+                  ),
+                ],
               ),
-              Center(
+            ),
+            Center(
+              child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(height: height * 0.25),
+                    SizedBox(height: height * 0.15),
                     Container(
                       padding: const EdgeInsets.all(24),
                       width: width * 0.8,
@@ -103,12 +100,15 @@ class _LoginPageState extends State<LoginPage> {
                                 color: Colors.deepPurple,
                                 fontWeight: FontWeight.w500),
                             decoration: InputDecoration(
-                              suffix: InkWell(
-                                  onTap: () {
-                                    emailController.clear();
-                                    setState(() {});
-                                  },
-                                  child: const Icon(Icons.clear, color: Colors.purple,)),
+                                suffix: InkWell(
+                                    onTap: () {
+                                      emailController.clear();
+                                      setState(() {});
+                                    },
+                                    child: const Icon(
+                                      Icons.clear,
+                                      color: Colors.purple,
+                                    )),
                                 hintText: 'User Email',
                                 hintStyle: TextStyle(
                                     color: Colors.deepPurple.shade200,
@@ -133,7 +133,12 @@ class _LoginPageState extends State<LoginPage> {
                                       isPasswordVisible = !isPasswordVisible;
                                       setState(() {});
                                     },
-                                    child: Icon(isPasswordVisible ? Icons.visibility : Icons.visibility_off, color: Colors.purple,)),
+                                    child: Icon(
+                                      isPasswordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Colors.purple,
+                                    )),
                                 hintStyle: const TextStyle(
                                     color: Colors.deepPurple,
                                     fontWeight: FontWeight.w100),
@@ -143,7 +148,31 @@ class _LoginPageState extends State<LoginPage> {
                                         color: Colors.deepPurple, width: 1.5))),
                             keyboardType: TextInputType.phone,
                           ),
-                          const SizedBox(height: 42),
+                          const SizedBox(height: 10),
+                          RadioListTile(
+                            contentPadding: EdgeInsets.zero,
+                            isThreeLine: false,
+                            title: const Text('User', style: TextStyle(fontWeight: FontWeight.bold),),
+                            value: UserRoleKey.user.name,
+                            groupValue: radioValue,
+                            onChanged: (value) {
+                              setState(() {
+                                radioValue = value.toString();
+                              });
+                            },
+                          ),
+                          RadioListTile(
+                            contentPadding: EdgeInsets.zero,
+                            isThreeLine: false,
+                            title: const Text('Admin', style: TextStyle(fontWeight: FontWeight.bold),),
+                            value: UserRoleKey.admin.name,
+                            groupValue: radioValue,
+                            onChanged: (value) {
+                              setState(() {
+                                radioValue = value.toString();
+                              });
+                            },
+                          ),
                           AnimatedContainer(
                             height: 50,
                             duration: const Duration(milliseconds: 300),
@@ -160,18 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                                         color: Colors.white),
                                   )
                                 : TextButton(
-                                    onPressed: () {
-                                      if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
-                                        userLogin();
-                                      } else{
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                          content: const Text('No internet!\nCheck internet connection'), action: SnackBarAction(
-                                          label: 'close',
-                                          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-                                        ),));
-                                      }
-
-                                    },
+                                    onPressed: loginToAccount,
                                     child: const Text(
                                       'Log in',
                                       style: TextStyle(color: Colors.white),
@@ -180,114 +198,118 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     const Text('Or'),
                     const SizedBox(height: 10),
                     InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCafeAdmin()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CreateCafeAdmin()));
                       },
-                      child: const Text('Create admin account', style: TextStyle(color: Colors.purple),),
+                      child: const Text(
+                        'Create admin account',
+                        style: TextStyle(color: Colors.purple),
+                      ),
                     )
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: const Padding(
-        padding: EdgeInsets.only(left: 42.0, right: 42, top: 10, bottom: 32),
-        child: Text(
-          'If you don\'t have an account or forgot it please call our helpline at +8801521466603',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Roboto'
-          ),
+              ),
+            ),
+            const Positioned(
+              top: 16,
+              right: 16,
+              child: CircleAvatar(child: Icon(Icons.question_mark)),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  warningDialog(msg) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Warning!'),
-            content: Text(msg),
-            actions: [
-              ElevatedButton(
-                  onPressed: () {
-                    isLoginButtonPressed = false;
-                    setState(() {});
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Ok'))
-            ],
-          );
-        });
-  }
-
+  // loginToAccount() {
+  //
+  //   if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
+  //     CommonFunction().showSnackBar('No internet connection', context);
+  //   }
+  //   else {
+  //     userLogin();
+  //   }
+  // }
   // login with firebase auth
-  userLogin() async {
+  loginToAccount() async {
 
     bool emailValid = RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(emailController.text);
 
-    setState(() {});
-
     if (emailController.text.isEmpty) {
-      warningDialog('Enter email address.');
-    } else if (!emailValid) {
-      warningDialog('Not valid email address.');
-    } else if (passwordController.text.isEmpty) {
-      warningDialog('Enter user password.');
+      CommonFunction().showSnackBar('Enter your email', context);
     }
-    else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
-      CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
+    else if (!emailValid) {
+      CommonFunction().showSnackBar('Email is not valid', context);
     }
-    else {
+    else if (passwordController.text.isEmpty) {
+      CommonFunction().showSnackBar('Enter your password', context);
+    }
+    else if (connectivityResult != ConnectivityResult.mobile &&
+        connectivityResult != ConnectivityResult.wifi) {
+      CommonFunction()
+          .showSnackBar('No internet!\nCheck internet connection', context);
+    }
+    else if(radioValue == UserRoleKey.user.name){
       isLoginButtonPressed = !isLoginButtonPressed;
       setState(() {});
-
-      try {
-        final credential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-                email: emailController.text, password: passwordController.text);
-        if (credential.user?.uid != null) {
-          // UserModel user = await getUserData(emailController.text);
-          // await prefs?.setString(ConstString.userRole, user.userRole);
-          // await prefs?.setString(ConstString.userMail, user.mail);
-          await prefs?.setBool(ConstString.isLogged, true);
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const DashBoard()));
-        }
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
-          warningDialog('No user found for that email.');
-        } else if (e.code == 'wrong-password') {
-          warningDialog('Wrong password provided.');
-        }
+      bool isSuccessful = await UserLoginController().userLogin(
+          emailController.text.trim(),
+          passwordController.text.trim(),
+          context
+      );
+      if(isSuccessful) {
+        isLoginButtonPressed = !isLoginButtonPressed;
+        setState(() {});
+        // Navigator.pushReplacement(context,
+        //     MaterialPageRoute(builder: (context) => const DashBoard()));
+      }
+      else {
+        isLoginButtonPressed = !isLoginButtonPressed;
+        setState(() {});
       }
     }
+    else if(radioValue == UserRoleKey.admin.name){
+          isLoginButtonPressed = !isLoginButtonPressed;
+          setState(() {});
+          bool isSuccessful = await UserLoginController().adminLogin(
+              emailController.text.trim(),
+              passwordController.text.trim(),
+              context
+          );
+          if(isSuccessful) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const DashBoard()));
+          }
+          else {
+            isLoginButtonPressed = !isLoginButtonPressed;
+            setState(() {});
+          }
+        }
   }
 
-  Future<UserModel> getUserData(String? uid) async {
-    var value = await FirebaseFirestore.instance
-        .collection(AppConfig.dbName)
-        .doc('users')
-        .collection('all-users')
-        .doc(uid)
-        .get();
-    UserModel user = UserModel(
-        id: value['id'],
-        name: value['name'],
-        mail: value['mail'],
-        phone: value['phone'],
-        userRole: value['user-role']);
-
-    return user;
-  }
+  // Future<UserModel> getUserData(String? uid) async {
+  //   var value = await FirebaseFirestore.instance
+  //       .collection(AppConfig.dbName)
+  //       .doc('users')
+  //       .collection('all-users')
+  //       .doc(uid)
+  //       .get();
+  //   UserModel user = UserModel(
+  //       id: value['id'],
+  //       name: value['name'],
+  //       mail: value['mail'],
+  //       phone: value['phone'],
+  //       userRole: value['user-role']);
+  //
+  //   return user;
+  // }
 }

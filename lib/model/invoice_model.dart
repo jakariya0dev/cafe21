@@ -3,6 +3,7 @@ class InvoiceModel{
 
    final String invoiceId, customer, phone, address, discount, tax, waiterName, waiterId, table;
    final String discountType, paymentMethod, subTotal, total, netBill;
+   final String? biller;
    final dateTime;
    final List orders;
 
@@ -22,7 +23,8 @@ class InvoiceModel{
     required this.orders,
     required this.subTotal,
     required this.total,
-    required this.netBill
+    required this.netBill,
+    required this.biller,
   });
 
    // factory InvoiceModel.fromFirestore(

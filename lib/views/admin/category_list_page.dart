@@ -42,7 +42,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
     return Container(
       constraints: const BoxConstraints(),
       margin: const EdgeInsets.all(16),
-      child: ListView.separated(
+      child: allCategoryData.isEmpty ? const Center(child: Text('No food item')) : ListView.separated(
         itemCount: allCategoryData.length,
         itemBuilder: (context, index) {
           return ListTile(

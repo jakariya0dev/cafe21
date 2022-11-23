@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const SplashScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

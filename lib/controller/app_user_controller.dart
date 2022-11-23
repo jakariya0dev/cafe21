@@ -1,3 +1,4 @@
+import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/model/data.dart';
 
@@ -7,7 +8,7 @@ class AppUserController{
 
   addNewUser(Map user) async {
     bool isSuccessful = false;
-    await db.collection('app-users').doc(user['user-email']).set({
+    await db.collection(AppConfig.userCollection).doc(user['user-email']).set({
       'user-email': user['user-email'],
       'user-password': user['user-password'],
       'user-role': user['user-role'],
@@ -23,7 +24,7 @@ class AppUserController{
   deleteUser(index) async {
 
     bool isSuccessful = false;
-    await db.collection('app-users').doc(allAppUserData[index]['user-email']).delete().then((value){
+    await db.collection(AppConfig.userCollection).doc(allAppUserData[index]['user-email']).delete().then((value){
       isSuccessful = true;
     }, onError: (e){
       isSuccessful = false;
@@ -40,7 +41,7 @@ class AppUserController{
 
   updateUser({required Map newUser, required String oldEmail}) async {
     bool isSuccessful = false;
-    await db.collection('app-users').doc(newUser['user-email']).set({
+    await db.collection(AppConfig.userCollection).doc(newUser['user-email']).set({
       'user-email': newUser['user-email'],
       'user-password': newUser['user-password'],
       'user-role': newUser['user-role']
@@ -57,7 +58,7 @@ class AppUserController{
 
   getAppUserData() async {
 
-    await db.collection('app-users').get().then((value) {
+    await db.collection(AppConfig.userCollection).get().then((value) {
       for (var doc in value.docs) {
         allAppUserData.add({
           'user-email': doc['user-email'],

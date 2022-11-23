@@ -229,18 +229,9 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
       CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
     }
     else {
+
       // for loading indicator
-      showDialog(context: context, builder: (context) {
-        return AlertDialog(
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: const [
-              CircularProgressIndicator(),
-              Text('Please wait...')
-            ],
-          ),
-        );
-      });
+      CommonFunction().showLoadingIndicatorWithTitle(context: context, title: 'Invoice saving...');
 
       // for generating order list
       List<Map<String, String>> orderListWithMap = [];
@@ -284,7 +275,8 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
           orders: orderListWithMap,
           subTotal: subTotal.toStringAsFixed(2),
           total: total.toStringAsFixed(2),
-          netBill: netBill.toStringAsFixed(2)
+          netBill: netBill.toStringAsFixed(2),
+          biller: prefs?.getString(UserKey.email.name)
       );
       await InvoiceEntryController().saveInvoiceToServer(invoice, context);
       allSellsData.clear();
@@ -292,13 +284,14 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
       // for getting just added invoice data from server data
       List iv = allSellsData.where((e) => e.invoiceId== invoiceId).toList();
 
-      Navigator.push(
+      Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => InvoicePrint(
                 invoiceData: iv[0]),
           ));
     }
+
   }
 
   Container buildTitleCard() {

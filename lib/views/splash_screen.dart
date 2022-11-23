@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import '../cons/enums.dart';
 import '../model/data.dart';
-import 'first_page.dart';
+import 'onboarding_page.dart';
 
 
 class SplashScreen extends StatefulWidget {
@@ -31,12 +31,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   init() async {
 
-    await AppUserController().getAppUserData();
-    SharedPreferences prefs =  await SharedPreferences.getInstance();
-
     Future.delayed(const Duration(seconds: 3), () {
-      if(prefs.getBool('isNotFirstInstall') == true){
-        if(prefs.getBool(UserRoleKey.isLogged.name) == true){
+      if(prefs?.getBool('isNotFirstInstall') == true){
+        if(prefs?.getBool(UserRoleKey.isLogged.name) == true){
           Navigator.push(context, MaterialPageRoute(builder: (context) => const DashBoard()));
         }else{
           Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
