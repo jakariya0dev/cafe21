@@ -1,4 +1,5 @@
 import 'package:cafe21/model/data.dart';
+import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cafe21/views/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/controller/common_function.dart';
@@ -54,6 +55,7 @@ class AuthController{
     return isSuccessful;
   }
 
+
   /*
   * Intentionally we didn't direct update here
   * First we add new doc and then delete old one
@@ -90,6 +92,7 @@ class AuthController{
         await prefs?.setBool(UserRoleKey.isLogged.name, true);
         await prefs?.setString(UserKey.email.name, email);
         await prefs?.setString(UserRoleKey.userRole.name, UserRoleKey.user.name);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard()));
       }
       isSuccessful = true;
     }, onError: (e){
@@ -126,7 +129,6 @@ class AuthController{
   }
 
   userLogOut(context) async {
-
 
     await FirebaseAuth.instance.signOut();
     prefs?.remove(UserRoleKey.isLogged.name);

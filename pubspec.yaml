@@ -27,6 +27,7 @@ dependencies:
   firebase_auth: ^3.8.0
   shared_preferences: ^2.0.15
   connectivity_plus: ^2.3.9
+  flutter_svg: ^1.1.6
 
 
 
@@ -43,6 +44,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/on_svg/
 
   # To add assets to your application, add an assets section, like this:
 

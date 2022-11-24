@@ -18,7 +18,19 @@ class Const {
   static const invDetailsListPrice = TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.blueGrey);
   static const italicStyleSubHeading = TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic);
 
+  // <--- var for on boarding page ---> START
+  static const onBoardingTitle1 = '';
+  static const onBoardingTitle2 = '';
+  static const onBoardingTitle3 = '';
+  static const onBoardingTitle4 = '';
+
+  static const onBoarding1 = '';
+  static const onBoarding2 = '';
+  static const onBoarding3 = '';
+  static const onBoarding4 = '';
+  // <--- var for on boarding page ---> END
 }
 
 var dummyImage =
     'https://images.pexels.com/photos/2983101/pexels-photo-2983101.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+

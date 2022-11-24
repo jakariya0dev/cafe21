@@ -1,15 +1,18 @@
 import 'package:cafe21/views/create_cafe_admin.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/model/data.dart';
+import 'package:flutter_svg/svg.dart';
 
-class FirstPage extends StatefulWidget {
-  const FirstPage({Key? key}) : super(key: key);
+import 'dashboard_page.dart';
+
+class OnBoardingPage extends StatefulWidget {
+  const OnBoardingPage({Key? key}) : super(key: key);
 
   @override
-  State<FirstPage> createState() => _FirstPageState();
+  State<OnBoardingPage> createState() => _OnBoardingPageState();
 }
 
-class _FirstPageState extends State<FirstPage> {
+class _OnBoardingPageState extends State<OnBoardingPage> {
 
   @override
   initState(){
@@ -20,11 +23,12 @@ class _FirstPageState extends State<FirstPage> {
   init() async {
   }
   
-  int index = 0;
+  int pageIndex = 0;
 
-  List icons = ['assets/icons/icon_waiter.png', 'assets/icons/icon_food.png', 'assets/icons/icon_invoice.png'];
+  final List _onBoardingIcons = ['assets/on_svg/category.svg', 'assets/on_svg/food.svg', 'assets/on_svg/waiter.svg', 'assets/on_svg/invoice.png'];
 
-  List descriptions = ['First add your waiter data in database', 'Next add your food category and all of you food item data', 'And after that you can add new sales data'];
+  final List _titles = ['First, Add Categories', 'Second, Add Food Items', 'Third, Add Waiters Name', 'Final, Create Invoices'];
+  final List _descriptions = ['First step, after creating admin account go to drawer section. Then click \'Admin Area\'. Then select category from bottom and add category name from top', 'Second step, after adding category name select foods section, Click add food from top bar. and fill the all necessary data then save it', 'Third step, you have to add Waiters Name. For now have added a test waiter, you can edit or delete it. And add new waiter data from waiter section', 'Final step, after completing all step now you can add invoice. Back to dashboard page and click new sale or invoice and save it '];
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +45,18 @@ class _FirstPageState extends State<FirstPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(icons[index], height: width*0.25, width: width*0.25),
+              SizedBox(
+                height: width * 0.75,
+                width: width * 0.75,
+                child: SvgPicture.asset(
+                    _onBoardingIcons[pageIndex],
+                    semanticsLabel: 'Acme Logo'
+                ),
+              ),
               const SizedBox(height: 32),
-              Text(descriptions[index], style: const TextStyle(fontSize: 22), textAlign: TextAlign.center,)
+              Text(_titles[pageIndex], style: const TextStyle(fontSize: 25), textAlign: TextAlign.center,),
+              const SizedBox(height: 10),
+              Text(_descriptions[pageIndex], style: const TextStyle(fontSize: 16), textAlign: TextAlign.center,),
             ],
           ),
         ),
@@ -55,22 +68,35 @@ class _FirstPageState extends State<FirstPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton(
-              onPressed: index == 0 ? null : () {
-                index--;
+              onPressed: pageIndex == 0 ? null : () {
+                pageIndex--;
                 setState(() {});
               },
-              child: const Icon(Icons.arrow_back_ios),
+              child: const Text('Back'),
+            ),
+            Row(
+              children: List.generate(4, (index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                  child: Icon(Icons.circle, size: 8, color: index == pageIndex ? Colors.purple : Colors.grey,),
+                );
+              }),
             ),
             TextButton(
-              onPressed: index == 2 ? () async {
-                await prefs?.setBool('isNotFirstInstall', true);
-                // await CommonFunction.generateDatabase();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCafeAdmin()));
+              onPressed: pageIndex == 3 ? () async {
+                if(prefs?.getBool('isNotFirstInstall')==true){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const DashBoard()));
+                }
+                else{
+                  await prefs?.setBool('isNotFirstInstall', true).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCafeAdmin())));
+                  
+                }
+
               } : () {
-                    index++;
+                pageIndex++;
                     setState(() {});
               },
-              child: index == 2 ? const Text('Finish') : const Icon(Icons.arrow_forward_ios),
+              child: pageIndex == 3 ? const Text('Finish') : const Text('Next'),
             )
           ],
         ),

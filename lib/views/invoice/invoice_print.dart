@@ -1,5 +1,6 @@
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:cafe21/cons/app_color.dart';
+import 'package:cafe21/model/data.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:cafe21/views/invoice/invoice_update.dart';
@@ -20,9 +21,12 @@ class InvoicePrint extends StatefulWidget {
 
 class _InvoicePrintState extends State<InvoicePrint> {
 
-  // subtotal = 440
-  // total = 420
-  // netBill =430
+  /*
+  *   Subtotal = 440  (adding all product)
+  *   Total = 420 (after total discount)
+  *   NetBill = 430 (after adding tax)
+  * */
+
 
   late String addedTax;
   String? selectDeviceName = 'Select Device';
@@ -127,7 +131,6 @@ class _InvoicePrintState extends State<InvoicePrint> {
         ),
         bottomNavigationBar: Container(
           height: 75,
-          // color: Colors.purple,
           padding: const EdgeInsets.all(16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,26 +160,29 @@ class _InvoicePrintState extends State<InvoicePrint> {
                 shape: const StadiumBorder(),
                 onPressed: () async {
                   if ((await printer.isConnected)!) {
-                    printer.printCustom('Chef De Cuisine', 3, 1);
-                    printer.printCustom('Badarganj Bus Stand, Badarganj', 1, 1);
-                    printer.printCustom('Cell: 01762940480', 1, 1);
-
+                    printer.printCustom(cafeDetailsData['cafe-name'], 3, 1);
+                    printer.printCustom(cafeDetailsData['cafe-address'], 1, 1);
+                    printer.printCustom(cafeDetailsData['cafe-phone'], 1, 1);
                     printer.printNewLine();
-                    printer.printCustom('inv. id: ${widget.invoiceData.invoiceId}', 0, 0);
-                    printer.printCustom('Timing: $date', 0, 0);
-                    printer.printCustom('Payment: ${widget.invoiceData.paymentMethod}', 0, 0);
-                    printer.printCustom('Ordered item(s)', 0, 0);
+                    printer.printCustom('inv. id: ${widget.invoiceData.invoiceId}', 1, 0);
+                    printer.printCustom('Timing: $date', 1, 0);
+                    printer.printCustom('Payment: ${widget.invoiceData.paymentMethod}', 1, 0);
+                    printer.printCustom('Ordered item(s)', 1, 0);
                     for (var i = 0; i < widget.invoiceData.orders.length; i++) {
-                      printer.printCustom('----------------------------', 0, 0);
-                      printer.printCustom('${i + 1}. ${widget.invoiceData.orders[i]['name']}', 0, 0);
-                      printer.printCustom('-${widget.invoiceData.orders[i]['quantity']}x${widget.invoiceData.orders[i]['price']}', 0, 2);
+                      printer.printCustom('----------------------------', 1, 0);
+                      printer.printCustom('${i + 1}. ${widget.invoiceData.orders[i]['name']}', 1, 0);
+                      printer.printCustom('-${widget.invoiceData.orders[i]['quantity']}x${widget.invoiceData.orders[i]['price']}', 1, 2);
                     }
-                    printer.printCustom('----------------------------', 0, 0);
-                    printer.printCustom('Total amount: ${widget.invoiceData.subTotal}', 0, 0);
-                    printer.printCustom('After discount: (${widget.invoiceData.discount}%): ${widget.invoiceData.total}', 0, 0);
-                    printer.printCustom('Added Tax (${widget.invoiceData.tax}%): $addedTax', 0, 0);
+                    printer.printCustom('----------------------------', 1, 0);
+                    printer.printCustom('Total amount: ${widget.invoiceData.subTotal}', 1, 0);
+                    printer.printCustom('After discount: (${widget.invoiceData.discount}%): ${widget.invoiceData.total}', 1, 0);
+                    printer.printCustom('Added Tax (${widget.invoiceData.tax}%): $addedTax', 1, 0);
                     printer.printCustom('Net Bill(${widget.invoiceData.tax}%): ${widget.invoiceData.netBill}', 3, 1);
-
+                    printer.printNewLine();
+                    printer.printCustom(developerInfo['info'], 1, 1);
+                    printer.printCustom(developerInfo['name'], 1, 1);
+                    printer.printCustom(developerInfo['web'], 1, 1);
+                    printer.printCustom(developerInfo['phone'], 1, 1);
                     printer.printNewLine();
                     printer.printNewLine();
                     printer.printNewLine();
@@ -275,7 +281,6 @@ class BuildOrderTitle extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
             ),
-
           ],
         ),
         const SizedBox(

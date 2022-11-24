@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cafe21/cons/enums.dart';
 import 'admin/admin_dashboard.dart';
+import 'on_boarding_page.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -31,7 +32,6 @@ class _DashBoardState extends State<DashBoard> {
   double totalWithTax = 0;
   double totalWithoutTax = 0;
   String title = 'Total Sells Data';
-  SharedPreferences? prefs;
   String? userRole;
 
 
@@ -113,8 +113,7 @@ class _DashBoardState extends State<DashBoard> {
                 BuildMostSellingItem(
                   width: width,
                   height: height,
-                  items: countMostSellingFood,
-                  foods: allFoodsData,
+                  mostSellingItems: countMostSellingFood,
                   title: 'Most Selling Foods'
                 ),
                 SizedBox(
@@ -220,8 +219,8 @@ class _DashBoardState extends State<DashBoard> {
 
   calculateMostSells(){
 
-    List foodIdFromInvoice = [];
-    List waiterNameFromInvoice = [];
+    List totalFoodIdFromInvoice = [];
+    List totalWaiterNameFromInvoice = [];
 
     Map <String, int> countMostSellingFoodBeforeSort = {};
     Map <String, int> countMostServingPersonBeforeSort = {};
@@ -229,21 +228,21 @@ class _DashBoardState extends State<DashBoard> {
     // getting all food id and waiter name from invoices
     for (var invoice in allSellsData) {
 
-      waiterNameFromInvoice.add(invoice.waiterName);
+      totalWaiterNameFromInvoice.add(invoice.waiterName);
 
       for(var item in invoice.orders){
-        foodIdFromInvoice.add(item['id']);
+        totalFoodIdFromInvoice.add(item['id']);
       }
 
     }
 
     // SUM of food orders
-    for (var foodId in foodIdFromInvoice){
+    for (var foodId in totalFoodIdFromInvoice){
       countMostSellingFoodBeforeSort[foodId] = (countMostSellingFoodBeforeSort[foodId] ?? 0) + 1;
     }
 
     // SUM of waiter orders
-    for (var waiterName in waiterNameFromInvoice){
+    for (var waiterName in totalWaiterNameFromInvoice){
       countMostServingPersonBeforeSort[waiterName] = (countMostServingPersonBeforeSort[waiterName] ?? 0) + 1;
     }
 
@@ -383,6 +382,17 @@ class _DashBoardState extends State<DashBoard> {
                   child: const DrawerListTile(
                     icon: Icons.admin_panel_settings_outlined,
                     text: 'Admin area',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const OnBoardingPage()));
+
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.admin_panel_settings_outlined,
+                    text: 'App Helper',
                   ),
                 ),
                 InkWell(
@@ -551,11 +561,10 @@ class BuildBottomNavbar extends StatelessWidget {
 
 class BuildMostSellingItem extends StatelessWidget {
   const BuildMostSellingItem({
-    Key? key, required this.items, required this.height, required this.width, required this.foods, required this.title,
+    Key? key, required this.mostSellingItems, required this.height, required this.width, required this.title,
   }) : super(key: key);
 
-  final Map items;
-  final List foods;
+  final Map mostSellingItems;
   final double height, width;
   final String title;
 
@@ -566,7 +575,7 @@ class BuildMostSellingItem extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(color: Color(0xff40407a)),
-      child: items.isEmpty ? const Center(child: Text('No data available!')) : Column(
+      child: mostSellingItems.isEmpty ? const Center(child: Text('No data available!')) : Column(
         children: [
           Text(title,
             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
@@ -577,17 +586,19 @@ class BuildMostSellingItem extends StatelessWidget {
           SizedBox(
             height: 100,
             child: ListView.builder(
-              itemCount: items.length,
+              itemCount: mostSellingItems.length,
               itemBuilder: (context, index) {
-                // List food = foods.where((element) => element['id'] == items.keys.elementAt(index)).toList();
+
+                List foodName = allFoodsData.where((element) => element['id'] == mostSellingItems.keys.elementAt(index)).toList();
+
                 return Container(
                   height: 32,
                   padding: const EdgeInsets.all(8),
                   color: index%2==0? Colors.blue.shade300 : Colors.blue.shade200,
                   child: Row(
                     children: [
-                      Expanded(child: Text('${index+1}. ${foods[index]['name']}')),
-                      Text(items.values.elementAt(index).toString())
+                      Expanded(child: foodName.isNotEmpty ? Text("${index+1}. ${foodName[0]['name']}") : Text("${index+1}. Anonymous")),
+                      Text(mostSellingItems.values.elementAt(index).toString())
                     ],
                   ),
                 );
@@ -631,7 +642,7 @@ class BuildMostSellerList extends StatelessWidget {
               itemBuilder: (context, index) {
 
                 List waiter = waiterList.where((element) => element['name'] == items.keys.elementAt(index)).toList();
-                // print(waiterList[0]['name']);
+
               return Container(
                 height: 32,
                 padding: const EdgeInsets.all(8),

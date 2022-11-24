@@ -247,7 +247,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                         TextField(
                           controller: oldEmailController,
                           decoration: InputDecoration(
-                              hintText: 'Enter admin mail',
+                              hintText: 'Type admin mail',
                               hintStyle: TextStyle(color: Colors.grey.shade400),
                               errorText: oldEmailErrorText,
                               border: const UnderlineInputBorder(
@@ -277,7 +277,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                         Padding(
                           padding: const EdgeInsets.only(left: 0, top: 10),
                           child: Text(
-                            'New Email',
+                            'New Email Address',
                             style: TextStyle(
                                 fontSize: 12,
                                 fontFamily: 'Roboto',
@@ -287,7 +287,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                         TextField(
                           controller: newEmailController,
                           decoration: InputDecoration(
-                              hintText: 'Type new password',
+                              hintText: 'Type new email',
                               errorText: newEmailErrorText,
                               hintStyle: TextStyle(color: Colors.grey.shade400),
                               border: const UnderlineInputBorder(
@@ -327,7 +327,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                         TextField(
                           controller: passwordController,
                           decoration: InputDecoration(
-                              hintText: 'Type new password',
+                              hintText: 'Type admin password',
                               hintStyle: TextStyle(color: Colors.grey.shade400),
                               errorText: adminPasswordErrorText,
                               border: const UnderlineInputBorder(
@@ -479,7 +479,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                       TextField(
                         controller: emailController,
                         decoration: InputDecoration(
-                            hintText: 'Enter admin mail',
+                            hintText: 'Enter admin mail here',
                             errorText: emailErrorText,
                             hintStyle: TextStyle(color: Colors.grey.shade400),
                             border: const UnderlineInputBorder(
@@ -519,7 +519,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                       TextField(
                         controller: oldPasswordController,
                         decoration: InputDecoration(
-                            hintText: 'Type new password',
+                            hintText: 'Type old password',
                             errorText: oldPasswordErrorText,
                             hintStyle: TextStyle(color: Colors.grey.shade400),
                             border: const UnderlineInputBorder(

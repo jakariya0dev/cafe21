@@ -77,13 +77,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
         ],
       ),
       body: pages[bottomNavIndex],
-      // body: allCategoryData.isNotEmpty
-      //     ? pages[bottomNavIndex]
-      //     : const Center(
-      //         child: CircularProgressIndicator(),
-      //       ),
       bottomNavigationBar: Container(
-        margin: const EdgeInsets.all(10),
+        margin: const EdgeInsets.all(16),
         child: BottomNavigationBar(
           currentIndex: bottomNavIndex,
           type: BottomNavigationBarType.fixed,

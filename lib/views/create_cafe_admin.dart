@@ -1,3 +1,4 @@
+import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/views/dashboard_page.dart';
@@ -315,19 +316,26 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
 
     if (cafeNameController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Cafe Name', context);
-    } else if (cafeAddressController.text.isEmpty) {
+    }
+    else if (cafeAddressController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Cafe Address', context);
-    } else if (cafePhoneController.text.isEmpty) {
+    }
+    else if (cafePhoneController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Cafe Phone', context);
-    } else if (adminEmailController.text.isEmpty) {
+    }
+    else if (adminEmailController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Email Address', context);
-    } else if (isEmailValid == false) {
+    }
+    else if (isEmailValid == false) {
       CommonFunction().showSnackBar('Email not valid', context);
-    } else if (cafePasswordController.text.isEmpty) {
+    }
+    else if (cafePasswordController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Admin Password', context);
-    } else if (purchaseCodeController.text.isEmpty) {
+    }
+    else if (purchaseCodeController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Purchase Code', context);
-    } else {
+    }
+    else {
 
       CommonFunction().showLoadingIndicatorWithTitle(title: 'Creating Admin Account...', context: context);
 
@@ -345,13 +353,16 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
       );
 
       if(isSuccessful){
-        await prefs.setBool('isLogged', true);
+        await prefs.setBool('isLogged', true).then((value) async {
+          await AdminDashboardController().addTestCategoryName();
+        });
         Navigator.pop(context);
-        // print(isSuccessful);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashBoard()));
-      }else{
-        // print(isSuccessful);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard()));
+      }
+      else{
+
         Navigator.pop(context);
+        // showing error snack bar from controller
       }
 
     }

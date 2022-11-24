@@ -255,23 +255,23 @@ class _LoginPageState extends State<LoginPage> {
           .showSnackBar('No internet!\nCheck internet connection', context);
     }
     else if(radioValue == UserRoleKey.user.name){
-      isLoginButtonPressed = !isLoginButtonPressed;
-      setState(() {});
-      bool isSuccessful = await AuthController().userLogin(
-          emailController.text.trim(),
-          passwordController.text.trim(),
-          context
-      );
-      if(isSuccessful) {
-        isLoginButtonPressed = !isLoginButtonPressed;
-        setState(() {});
-        // Navigator.pushReplacement(context,
-        //     MaterialPageRoute(builder: (context) => const DashBoard()));
-      }
-      else {
-        isLoginButtonPressed = !isLoginButtonPressed;
-        setState(() {});
-      }
+
+              isLoginButtonPressed = !isLoginButtonPressed;
+              setState(() {});
+              bool isSuccessful = await AuthController().userLogin(
+                  emailController.text.trim(),
+                  passwordController.text.trim(),
+                  context
+              );
+              if(isSuccessful) {
+
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const DashBoard()));
+              }
+              else {
+                isLoginButtonPressed = !isLoginButtonPressed;
+                setState(() {});
+              }
     }
     else if(radioValue == UserRoleKey.admin.name){
           isLoginButtonPressed = !isLoginButtonPressed;
@@ -292,20 +292,4 @@ class _LoginPageState extends State<LoginPage> {
         }
   }
 
-  // Future<UserModel> getUserData(String? uid) async {
-  //   var value = await FirebaseFirestore.instance
-  //       .collection(AppConfig.dbName)
-  //       .doc('users')
-  //       .collection('all-users')
-  //       .doc(uid)
-  //       .get();
-  //   UserModel user = UserModel(
-  //       id: value['id'],
-  //       name: value['name'],
-  //       mail: value['mail'],
-  //       phone: value['phone'],
-  //       userRole: value['user-role']);
-  //
-  //   return user;
-  // }
 }

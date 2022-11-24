@@ -6,31 +6,6 @@ class AdminDashboardController {
   var db = FirebaseFirestore.instance;
 
   // Food Data Manipulation
-  /*getProductData(category) async {
-    List data = [];
-    await db
-        .collection(AppConfig.dbName)
-        .doc('foods')
-        .collection('products')
-        .where(
-          'category',
-          isEqualTo: category,
-        )
-        .get()
-        .then((value) {
-      for (var doc in value.docs) {
-        data.add({
-          'docId': doc.id,
-          'name': doc['name'],
-          'type': doc['category'],
-          'description': doc['description'],
-          'price': doc['price']
-        });
-      }
-    });
-
-    return data;
-  }*/
 
   addNewFoodData(productData) async {
     late bool isSuccessful;
@@ -73,31 +48,6 @@ class AdminDashboardController {
   }
 
   // Waiter Data Manipulation
-  /*getWaiterData() async {
-    List waiterList = [];
-
-    await db
-        .collection(AppConfig.dbName)
-        .doc('users')
-        .collection('waiters')
-        .get()
-        .then((value) {
-      for (var item in value.docs) {
-        waiterList.add({
-          'docId': item.id,
-          'id': item['id'],
-          'name': item['name'],
-          'phone': item['phone'],
-          'email': item['email'],
-          'nid': item['nid'],
-          'address': item['address'],
-          'image': item['image']
-        });
-      }
-    });
-
-    return waiterList;
-  }*/
 
   addNewWaiterData(waiterData) async {
     late bool isSuccessful;
@@ -152,15 +102,6 @@ class AdminDashboardController {
   }
 
   // Category Data Manipulation
-  /*getCategoryList() async {
-    var categoryList = await db
-        .collection(AppConfig.dbName)
-        .doc('foods')
-        .collection('food-category')
-        .doc('category')
-        .get();
-    return categoryList['names'];
-  }*/
 
   addNewCategoryName({required name}) async {
     late bool isSuccessful;
@@ -197,6 +138,19 @@ class AdminDashboardController {
         .then((value) => isSuccessful = true, onError: (e) {
       print(e);
       return isSuccessful = false;
+    });
+
+    return isSuccessful;
+  }
+
+  addTestCategoryName() async {
+    late bool isSuccessful;
+    await db
+        .collection('category-list')
+        .doc('test-category')
+        .set({'name': 'Test category'}).then((value) => isSuccessful = true, onError: (e) {
+      isSuccessful = false;
+      print(e);
     });
 
     return isSuccessful;
