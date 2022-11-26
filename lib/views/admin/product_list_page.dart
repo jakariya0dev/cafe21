@@ -1,5 +1,4 @@
 import 'package:cafe21/cons/app_color.dart';
-import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
@@ -16,7 +15,7 @@ class ProductListPage extends StatefulWidget {
 }
 
 class _ProductListPageState extends State<ProductListPage> {
-  List<dynamic> foodList = [];
+  List<dynamic> foodListCategoryWise = [];
   int selectedCategoryButtonIndex = 0;
   DashboardController dashboardController = DashboardController();
 
@@ -54,11 +53,11 @@ class _ProductListPageState extends State<ProductListPage> {
                     child: TextButton(
                       onPressed: () {
                         selectedCategoryButtonIndex = index;
-                        foodList.clear();
+                        foodListCategoryWise.clear();
                         setData();
                       },
                       child: Text(
-                        allCategoryData[index][CategoryListKey.name.name],
+                        allCategoryData[index]['name'],
                         style: TextStyle(
                             fontWeight: index == selectedCategoryButtonIndex
                                 ? FontWeight.bold
@@ -77,18 +76,17 @@ class _ProductListPageState extends State<ProductListPage> {
           const SizedBox(
             height: 10,
           ),
-          foodList.isNotEmpty
+          foodListCategoryWise.isNotEmpty
               ? Expanded(
                   child: ListView.separated(
-                    itemCount: foodList.length,
+                    itemCount: foodListCategoryWise.length,
                     itemBuilder: (context, index) {
                       // find category name by id
-                      List categoryName = allCategoryData
-                          .where((e) =>
-                              e[CategoryListKey.id.name] ==
-                              foodList[index]['type'])
-                          .toList();
-
+                      // List categoryName = allCategoryData
+                      //     .where((e) =>
+                      //         e[CategoryListKey.id.name] ==
+                      //         foodListCategoryWise[index]['category'])
+                      //     .toList();
                       return ListTile(
                         isThreeLine: false,
                         shape: RoundedRectangleBorder(
@@ -102,6 +100,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         },
                         tileColor: Colors.white,
                         leading: CircleAvatar(
+                          radius: 16,
                           backgroundColor: Colors.blue,
                           child: Text(
                             (index + 1).toString(),
@@ -109,16 +108,16 @@ class _ProductListPageState extends State<ProductListPage> {
                           ),
                         ),
                         title: Text(
-                          foodList[index]['name'],
+                          foodListCategoryWise[index]['name'],
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 14),
+                              fontWeight: FontWeight.w500, fontSize: 16, color: Color(AppColor.darkBlue)),
                         ),
-                        subtitle: Text(categoryName[0]
-                                [CategoryListKey.name.name]
-                            .toString()),
+                        // subtitle: Text(categoryName[0]
+                        //         [CategoryListKey.name.name]
+                        //     .toString()),
                         trailing: Text(
-                          '\$${foodList[index]['price']}',
+                          '\$${foodListCategoryWise[index]['price']}',
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -128,7 +127,7 @@ class _ProductListPageState extends State<ProductListPage> {
                     },
                     separatorBuilder: (context, index) {
                       return const SizedBox(
-                        height: 4,
+                        height: 5,
                       );
                     },
                   ),
@@ -142,11 +141,11 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   setData() {
-    foodList = allFoodsData
+    foodListCategoryWise = allFoodsData
         .where((e) =>
-            e['type'] ==
+            e['category'] ==
             allCategoryData[selectedCategoryButtonIndex]
-                [CategoryListKey.id.name])
+                ['id'])
         .toList();
     setState(() {});
   }
@@ -155,20 +154,20 @@ class _ProductListPageState extends State<ProductListPage> {
 
   editFoodItem(index) {
     TextEditingController nameController =
-        TextEditingController(text: foodList[index]['name']);
+        TextEditingController(text: foodListCategoryWise[index]['name']);
     TextEditingController descriptionController =
-        TextEditingController(text: foodList[index]['description']);
+        TextEditingController(text: foodListCategoryWise[index]['description']);
     TextEditingController priceController =
-        TextEditingController(text: foodList[index]['price']);
+        TextEditingController(text: foodListCategoryWise[index]['price']);
 
     String errorMsg = '';
 
     // getting specific category map
     List category = allCategoryData
-        .where((e) => foodList[index]['type'] == e[CategoryListKey.id.name])
+        .where((e) => e['id'] == foodListCategoryWise[index]['category'])
         .toList();
-    String dropDownHeader = category[0][CategoryListKey.name.name];
-    String categoryId = foodList[index]['type'];
+    String dropDownHeader = category[0]['name'];
+    String categoryId = foodListCategoryWise[index]['category'];
 
     showDialog(
       context: context,
@@ -231,7 +230,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                 (e) => DropdownMenuItem(
                                   value: e,
                                   child: Text(
-                                    e[CategoryListKey.name.name].toString(),
+                                    e['name'].toString(),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -239,8 +238,8 @@ class _ProductListPageState extends State<ProductListPage> {
                               .toList(),
                           onChanged: (value) {
                             Map map = value as Map;
-                            dropDownHeader = map[CategoryListKey.name.name];
-                            categoryId = map[CategoryListKey.id.name];
+                            dropDownHeader = map['name'];
+                            categoryId = map['id'];
                             setState(() {});
                           },
                         ),
@@ -328,7 +327,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         'category': categoryId,
                         'description': descriptionController.text,
                         'price': priceController.text
-                      }, foodList[index]['id']);
+                      }, foodListCategoryWise[index]['id']);
                       await fetchUpdatedData();
                       showSnackbar(msg);
                     }
@@ -377,7 +376,7 @@ class _ProductListPageState extends State<ProductListPage> {
                 } else {
                   Navigator.pop(context);
                   String msg = await AdminDashboardController()
-                      .deleteFoodData(foodList[index]['id'], context);
+                      .deleteFoodData(foodListCategoryWise[index]['id'], context);
                   await fetchUpdatedData();
                   showSnackbar(msg);
                 }
@@ -409,7 +408,7 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   fetchUpdatedData() async {
-    foodList.clear();
+    foodListCategoryWise.clear();
     allFoodsData.clear();
     await dashboardController.getAllFood();
     setData();

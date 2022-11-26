@@ -1,18 +1,19 @@
-enum CategoryListKey{
-  id, name
-}
+// enum CategoryListKey{
+//   id, name
+// }
 
-enum AdminKey{
-  adminEmail, adminUserId,
+// enum AdminKey{
+//   adminEmail, adminUserId,
+// }
+
+enum UserRole{
+  admin,
+  user,
 }
 
 enum UserKey{
-  email, id,
-}
-
-enum UserRoleKey{
-  isLogged,
-  userRole,
-  admin,
-  user,
+  login,
+  role,
+  email,
+  uid,
 }

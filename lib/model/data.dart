@@ -2,6 +2,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'invoice_model.dart';
 
 SharedPreferences? prefs;
+String? userRoleData, userEmailData;
+
 
 List <InvoiceModel> allSellsData = [];
 List allFoodsData = [];
@@ -18,8 +20,8 @@ cafeDetails = {
 */
 Map<String, dynamic> cafeDetailsData = {};
 Map<String, dynamic> developerInfo = {
-  'info' : 'System Developed By',
   'name' : 'Brain Storm 21',
+  'mail' : 'query@brainstorm21.com',
   'web' : 'www.brainstorm21.com',
-  'phone' : '+8801521466603'
+  'cell' : '+8801521466603'
 };

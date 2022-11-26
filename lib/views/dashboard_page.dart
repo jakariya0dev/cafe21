@@ -4,10 +4,10 @@ import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cafe21/cons/enums.dart';
 import 'admin/admin_dashboard.dart';
+import 'invoice/invoice_entry.dart';
 import 'on_boarding_page.dart';
 
 class DashBoard extends StatefulWidget {
@@ -32,7 +32,6 @@ class _DashBoardState extends State<DashBoard> {
   double totalWithTax = 0;
   double totalWithoutTax = 0;
   String title = 'Total Sells Data';
-  String? userRole;
 
 
   @override
@@ -52,7 +51,12 @@ class _DashBoardState extends State<DashBoard> {
     await DashboardController().getCafeDetails();
 
     // user role remember
-    userRole = prefs?.getString(UserRoleKey.userRole.name);
+    userRoleData = prefs?.getString(UserKey.role.name);
+    userEmailData = prefs?.getString(UserKey.email.name);
+
+    // print(userRoleData);
+    // print(userEmailData);
+
     getDailyData();
     calculationInvoiceData();
     calculateMostSells();
@@ -75,7 +79,7 @@ class _DashBoardState extends State<DashBoard> {
             padding: const EdgeInsets.all(10.0),
             child: MaterialButton(
                 color: const Color(AppColor.box5),
-                onPressed: CommonFunction().saveDemoInvoice,//() => Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceEntry(),)),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const InvoiceEntry(),)),
                 child: Text(
                   'New sell',
                   style: TextStyle(color: Colors.grey.shade100),
@@ -326,9 +330,15 @@ class _DashBoardState extends State<DashBoard> {
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-            currentAccountPicture: const CircleAvatar(child: Text('Logo')),
-            accountName: Text(userRole.toString()),
-            accountEmail: const Text('cafe-name'), //cafeDetails[
+            accountName: Text(userRoleData.toString()[0].toUpperCase()+userRoleData.toString().substring(1), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+            accountEmail: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(userEmailData ?? ''),
+                const SizedBox(height: 4),
+                Text(cafeDetailsData['cafe-name'] ??'', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),)
+              ],
+            ),
           ),
           Expanded(
             child: ListView(
@@ -413,7 +423,7 @@ class _DashBoardState extends State<DashBoard> {
 
             onTap: () {
               Navigator.pop(context);
-              showAboutDialog(context);
+              CommonFunction().showAboutDialog(context);
             },
           ),
         ],
@@ -483,48 +493,6 @@ class _DashBoardState extends State<DashBoard> {
     sellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
     calculationInvoiceData();
     title = 'Daily Sells Data';
-  }
-
-  showAboutDialog(context){
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        scrollable: true,
-        backgroundColor: Colors.purple.shade500,
-        elevation: 24,
-        actionsAlignment: MainAxisAlignment.center,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10)
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircleAvatar(
-              radius: 35,
-              backgroundImage: AssetImage('assets/images/logo.png'),
-            ),
-            const SizedBox(height: 16,),
-            const Text('Brain Storm 21', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 25),),
-            Text('Your Complete it partner', style: TextStyle(color: Colors.grey.shade300),),
-            Text('www.brainstorm21.com', style: TextStyle(color: Colors.grey.shade300),),
-            Text('Cell: +8801521466603', style: TextStyle(color: Colors.grey.shade300),),
-            const SizedBox(height: 16,),
-            const Text('Email:\nquery@brainstorm21.com', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
-
-          ],
-
-        ),
-        actions: [
-          MaterialButton(
-            shape: const StadiumBorder(),
-            onPressed: () => Navigator.pop(context),
-            textColor: Colors.white,
-            color: const Color(AppColor.box7),
-            child: const Text('OK'),
-          )
-        ],
-      );
-    },);
   }
 
 }
@@ -650,7 +618,7 @@ class BuildMostSellerList extends StatelessWidget {
                 child: Row(
                   children: [
                     Text('${index+1}. '),
-                    Expanded(child: Text(waiter.isNotEmpty ? waiter[index]['name'] : 'Anonymous')), // ${}
+                    Expanded(child: Text(waiter.isNotEmpty ? waiter[0]['name'] : 'Anonymous')),
                     Text(items.values.elementAt(index).toString())
                   ],
                 ),

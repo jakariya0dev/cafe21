@@ -1,14 +1,11 @@
 import 'package:cafe21/controller/common_function.dart';
-import 'package:cafe21/model/data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-import '../cons/enums.dart';
 
 class CafeDetailsController{
 
   var db = FirebaseFirestore.instance;
-  var auth = FirebaseAuth.instance;
+
 
   updateCafeDetails(Map<String, dynamic> cafeMap, context) async {
 
@@ -20,6 +17,26 @@ class CafeDetailsController{
     });
 
     return isSuccessful;
+  }
+
+  setDeveloperDetails() async {
+
+    Map<String, dynamic> developerDetails = {
+      'info' : 'System Developed By',
+      'name' : 'Brain Storm 21',
+      'web' : 'www.brainstorm21.com',
+      'phone' : '+8801521466603'
+    };
+
+    // bool isSuccessful = false;
+    await db.collection('developer-details').doc('details').get().then((doc) async {
+      if(!doc.exists){
+        await db.collection('developer-details').doc('details').set(developerDetails);
+      }
+    });
+
+
+    // return isSuccessful;
   }
 
 }

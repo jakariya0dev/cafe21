@@ -15,7 +15,7 @@ class AdminDashboardController {
         .set(productData)
         .then((value) => isSuccessful = true,
             onError: (e){
-              print(e);
+              // print(e);
               return isSuccessful = false;
             });
     return isSuccessful;
@@ -55,7 +55,7 @@ class AdminDashboardController {
         .collection('waiter-list')
         .doc(waiterData['phone'])
         .set(waiterData).then((value) => isSuccessful = true, onError: (e){
-          print(e);
+          // print(e);
           return isSuccessful = false;
     });
     return isSuccessful;
@@ -76,7 +76,7 @@ class AdminDashboardController {
       'image': waiterList['image']
     }).then((value) => isSuccessful = true,
             onError: (e){
-      print(e);
+      // print(e);
       return isSuccessful = false;
             });
 
@@ -94,7 +94,7 @@ class AdminDashboardController {
         isSuccessful = true;
       },
       onError: (e) {
-        print(e);
+        // print(e);
         return isSuccessful = false;
       }
     );
@@ -110,7 +110,7 @@ class AdminDashboardController {
         .doc()
         .set({'name': name}).then((value) => isSuccessful = true, onError: (e) {
       isSuccessful = false;
-      print(e);
+      // print(e);
     });
 
     return isSuccessful;
@@ -123,7 +123,7 @@ class AdminDashboardController {
         .doc(id)
         .set({'name': name}).then((value) => isSuccessful = true, onError: (e) {
       isSuccessful = false;
-      print(e);
+      // print(e);
     });
 
     return isSuccessful;
@@ -136,7 +136,7 @@ class AdminDashboardController {
         .doc(id)
         .delete()
         .then((value) => isSuccessful = true, onError: (e) {
-      print(e);
+      // print(e);
       return isSuccessful = false;
     });
 
@@ -150,7 +150,7 @@ class AdminDashboardController {
         .doc('test-category')
         .set({'name': 'Test category'}).then((value) => isSuccessful = true, onError: (e) {
       isSuccessful = false;
-      print(e);
+      // print(e);
     });
 
     return isSuccessful;

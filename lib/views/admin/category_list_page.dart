@@ -1,5 +1,4 @@
 import 'package:cafe21/cons/app_color.dart';
-import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
@@ -62,9 +61,14 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                   },
                   onLongPress: () async {
                     await deleteCategory(
-                        allCategoryData[index][CategoryListKey.id.name]);
+                        allCategoryData[index]['id']);
                     setState(() {});
                   },
+                  leading: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.blue,
+                    child: Text('${index + 1}', style: const TextStyle(color: Colors.white),),
+                  ),
                   tileColor: Colors.white,
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +90,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                     ],
                   ),
                   title: Text(
-                    '${index + 1}. ${allCategoryData[index][CategoryListKey.name.name]}',
+                    '${allCategoryData[index]['name']}',
                     style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                   ),
                 );
@@ -107,7 +111,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
 
   editCategory(index) {
     TextEditingController nameController = TextEditingController(
-        text: allCategoryData[index][CategoryListKey.name.name]);
+        text: allCategoryData[index]['name']);
     String errorMsg = '';
 
     showDialog(
@@ -178,7 +182,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                     } else {
                       bool isSuccessful =
                           await AdminDashboardController().updateCategoryName(
-                        id: allCategoryData[index][CategoryListKey.id.name],
+                        id: allCategoryData[index]['id'],
                         name: nameController.text,
                       );
                       if (isSuccessful) {
@@ -224,7 +228,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                 } else {
                   bool isSuccessful =
                       await AdminDashboardController().deleteCategory(id);
-                  if (isSuccessful = true) {
+                  if (isSuccessful) {
                     Navigator.pop(context);
                     allCategoryData.clear();
                     getData();

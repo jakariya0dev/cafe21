@@ -46,7 +46,7 @@ class DashboardController{
         allFoodsData.add({
           'id' : doc.id,
           'name' : doc['name'],
-          'type' : doc['category'],
+          'category' : doc['category'],
           'description' : doc['description'],
           'price' : doc['price']
         });
@@ -71,6 +71,8 @@ class DashboardController{
   getAllWaiter() async {
 
     await db.collection('waiter-list').get().then((value) {
+
+      allWaiterData.clear();
 
       for(var item in value.docs){
         allWaiterData.add({
@@ -108,6 +110,16 @@ class DashboardController{
     sellsData = await DashboardController().getAllSellsData();
     filteredInvoiceData = sellsData.where((element) => element.dateTime.toDate().isAfter(dayBeforeAWeek)).toList();
     return filteredInvoiceData;
+  }
+  
+  getDeveloperInfo() async {
+    await db.collection('developer-details').doc('details').get().then((value){
+      developerInfo.addAll({
+        'name' : value['name'],
+        'web' : value['web'],
+        'cell' : value['cell']
+      });
+    });
   }
 
 }

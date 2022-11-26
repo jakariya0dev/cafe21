@@ -106,8 +106,8 @@ class _InvoiceListState extends State<InvoiceList> {
                         itemBuilder: (context, index) {
                           return InkWell(
                               onLongPress: (){
-                                if (prefs?.getString(UserRoleKey.userRole.name) ==
-                                    UserRoleKey.admin.name) {
+                                if (prefs?.getString(UserKey.role.name) ==
+                                    UserRole.admin.name) {
                                   deleteInvoice(index);
 
                                 } else {

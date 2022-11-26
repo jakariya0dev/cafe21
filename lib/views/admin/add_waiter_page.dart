@@ -82,7 +82,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.numbers),
                       hintText: 'Waiter ID',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade300),
+                      hintStyle: TextStyle(color: Colors.blue.shade200),
                       suffixIcon: InkWell(
                         onTap: () {
                           idController.clear();
@@ -106,7 +106,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.person),
                       hintText: 'Waiter name',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade300),
+                      hintStyle: TextStyle(color: Colors.blue.shade200),
                       suffixIcon: InkWell(
                         onTap: () {
                           nameController.clear();
@@ -131,7 +131,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.phone_android),
                       hintText: 'Phone number',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade300),
+                      hintStyle: TextStyle(color: Colors.blue.shade200),
                       suffixIcon: InkWell(
                         onTap: () {
                           phoneController.clear();
@@ -156,7 +156,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.mail_outline),
                       hintText: 'Email Address',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade300),
+                      hintStyle: TextStyle(color: Colors.blue.shade200),
                       suffixIcon: InkWell(
                         onTap: () {
                           emailController.clear();
@@ -181,7 +181,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.web),
                       hintText: 'National id number',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade300),
+                      hintStyle: TextStyle(color: Colors.blue.shade200),
                       suffixIcon: InkWell(
                         onTap: () {
                           nidController.clear();
@@ -208,7 +208,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       hintText: 'Details Address',
                       labelText: 'Address',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade300),
+                      hintStyle: TextStyle(color: Colors.blue.shade200),
                       suffixIcon: InkWell(
                         onTap: () {
                           addressController.clear();

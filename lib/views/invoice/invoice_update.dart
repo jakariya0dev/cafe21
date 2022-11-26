@@ -1,18 +1,15 @@
 import 'package:cafe21/cons/app_color.dart';
+import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
-import 'package:cafe21/controller/dashboard_controller.dart';
+import 'package:cafe21/controller/invoice_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/cons/const.dart';
-import 'package:cafe21/cons/app_config.dart';
-import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:cafe21/widget/discount_container.dart';
 import 'package:cafe21/model/data.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cafe21/controller/connection_checker.dart';
-import 'package:cafe21/controller/invoice_controller.dart';
 
 
 class InvoiceUpdate extends StatefulWidget {
@@ -28,6 +25,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
 
   List initialFoodData = [];
+  bool? isEnabled;
 
   // FOR DIALOG FIELD MANAGE
   List<int> itemQuantityList = [];
@@ -56,9 +54,9 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
   late TextEditingController customerController, phoneController, addressController;
   late TextEditingController discountController, taxController, tableController;
 
-  getFoodData() async {
+  getFoodDataForAddProductDialog({required String categoryId}) async {
 
-    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[0]).toList();
+    initialFoodData = allFoodsData.where((e) => e['category'] == categoryId).toList();
 
     // for managing dialog field
     for (var i = 0; i <= initialFoodData.length; i++) {
@@ -76,6 +74,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
   @override
   void initState() {
 
+        isEnabled = prefs?.getString(UserKey.role.name) == UserRole.user.name ? false : true;
         customerController = TextEditingController(text: widget.invoiceData.customer);
         phoneController = TextEditingController(text: widget.invoiceData.phone);
         addressController = TextEditingController(text: widget.invoiceData.address);
@@ -104,8 +103,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
           setState(() {});
         });
 
-        getFoodData();
-
+        getFoodDataForAddProductDialog(categoryId: allCategoryData[0]['id']);
         super.initState();
 
   }
@@ -166,7 +164,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
               color: Colors.purple.shade500,
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -180,7 +178,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                         'Total:',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(width: 8,),
@@ -202,9 +200,10 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                               ])),
                     ],
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     'Total ${orderedItemList.length} item(s) in order list',
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white, fontSize: 11),
                   ),
                 ],
               ),
@@ -213,7 +212,9 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                 minWidth: 100,
                 color: Colors.deepOrange,
                 onPressed: () {
-                  openFoodCartDialog(context);
+                  if(isEnabled!){
+                    openFoodCartDialog(context);
+                  }
                 },
                 child: const Text(
                   'Add item',
@@ -289,6 +290,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
           TextField(
             controller: customerController,
             decoration: InputDecoration(
+              enabled: isEnabled!,
               prefixIcon: const Icon(Icons.person),
               alignLabelWithHint: true,
               isDense: true,
@@ -301,6 +303,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
           const SizedBox(height: 10),
           TextField(
             controller: phoneController,
+            enabled: isEnabled!,
             keyboardType: TextInputType.phone,
             decoration: InputDecoration(
               isDense: true,
@@ -313,6 +316,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
           ),
           const SizedBox(height: 10),
           TextField(
+            enabled: isEnabled!,
             controller: addressController,
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.person_pin_outlined),
@@ -343,6 +347,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
             children: [
               Expanded(
                 child: TextField(
+                  enabled: isEnabled!,
                   controller: discountController,
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
@@ -376,6 +381,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
               const SizedBox(width: 4),
               Expanded(
                 child: TextField(
+                  enabled: isEnabled!,
                   controller: taxController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
@@ -394,6 +400,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
               const SizedBox(width: 4),
               Expanded(
                 child: TextField(
+                  enabled: isEnabled!,
                   controller: tableController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
@@ -485,7 +492,9 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                       const Expanded(child: SizedBox()),
                       InkWell(
                           onTap: () {
-                            removeItemFromOrderList(index);
+                            if(isEnabled!){
+                              removeItemFromOrderList(index);
+                            }
                           },
                           child: const Icon(
                             Icons.clear,
@@ -565,7 +574,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                             onPressed: () async {
                               selectedButton = index;
                               initialFoodData.clear();
-                              initialFoodData = await InvoiceController().getFoodData(allCategoryData[index]);
+                              getFoodDataForAddProductDialog(categoryId: allCategoryData[index]['id']);
                               setState(() {});
                             },
                             elevation: selectedButton == index ? 10 : 0,
@@ -575,7 +584,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                             color: selectedButton == index
                                 ? Colors.amberAccent
                                 : Colors.white,
-                            child: Text(allCategoryData[index]),
+                            child: Text(allCategoryData[index]['name'] ?? ''),
                           );
                         },
                         separatorBuilder: (context, index) {
@@ -754,19 +763,6 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
   }
 
-  showSnackBar(msg){
-    SnackBar snackBar = SnackBar(
-      content: Text(msg),
-      action: SnackBarAction(
-          label: 'ok',
-          onPressed: () {
-            ScaffoldMessenger.of(context)
-                .hideCurrentSnackBar();
-          }),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
   updateInvoice() async {
     if (customerController.text.isEmpty ||
         phoneController.text.isEmpty ||
@@ -774,11 +770,11 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         taxController.text.isEmpty ||
         addressController.text.isEmpty ||
         tableController.text.isEmpty) {
-      showSnackBar('Fill all the field!');
+      CommonFunction().showSnackBar('Fill all the field!', context);
 
     }
     else if(orderedItemList.isEmpty){
-      showSnackBar('Add item in ordered list!');
+      CommonFunction().showSnackBar('Add item in ordered list!', context);
     }
     else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
       CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
@@ -816,9 +812,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         netBill = total + tax;
       }
 
-      var db = FirebaseFirestore.instance;
-
-      db.collection(AppConfig.invoiceCollection).doc(widget.invoiceData.invoiceId).update({
+      Map<String, dynamic> invoice = {
         'invoiceId': widget.invoiceData.invoiceId,
         'customer': customerController.text,
         'phone': phoneController.text,
@@ -835,12 +829,11 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         'subTotal': subTotal.toStringAsFixed(2),
         'total': total.toStringAsFixed(2),
         'netBill': netBill.toStringAsFixed(2)
-      }).whenComplete(() async {
-        allSellsData.clear();
-        await DashboardController().getAllSellsData();
-        Navigator.pop(context);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
-      });
+      };
+
+      await InvoiceController().updateInvoice(docId: widget.invoiceData.invoiceId, invoice: invoice, context: context);
+
+
     }
   }
 

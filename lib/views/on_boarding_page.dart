@@ -25,7 +25,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   
   int pageIndex = 0;
 
-  final List _onBoardingIcons = ['assets/on_svg/category.svg', 'assets/on_svg/food.svg', 'assets/on_svg/waiter.svg', 'assets/on_svg/invoice.png'];
+  final List _onBoardingIcons = ['assets/on_svg/category.svg', 'assets/on_svg/food.svg', 'assets/on_svg/waiter.svg', 'assets/on_svg/invoice.svg'];
 
   final List _titles = ['First, Add Categories', 'Second, Add Food Items', 'Third, Add Waiters Name', 'Final, Create Invoices'];
   final List _descriptions = ['First step, after creating admin account go to drawer section. Then click \'Admin Area\'. Then select category from bottom and add category name from top', 'Second step, after adding category name select foods section, Click add food from top bar. and fill the all necessary data then save it', 'Third step, you have to add Waiters Name. For now have added a test waiter, you can edit or delete it. And add new waiter data from waiter section', 'Final step, after completing all step now you can add invoice. Back to dashboard page and click new sale or invoice and save it '];
@@ -54,9 +54,10 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 ),
               ),
               const SizedBox(height: 32),
-              Text(_titles[pageIndex], style: const TextStyle(fontSize: 25), textAlign: TextAlign.center,),
+              Text(_titles[pageIndex], style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.deepPurple), textAlign: TextAlign.center),
               const SizedBox(height: 10),
-              Text(_descriptions[pageIndex], style: const TextStyle(fontSize: 16), textAlign: TextAlign.center,),
+              Text(_descriptions[pageIndex], style: const TextStyle(fontSize: 16, color: Color(
+                  0xff161346)), textAlign: TextAlign.center,),
             ],
           ),
         ),

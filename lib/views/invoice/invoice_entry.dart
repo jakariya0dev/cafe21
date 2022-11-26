@@ -76,7 +76,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
 
   getData() async {
 
-    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[0][CategoryListKey.id.name]).toList();
+    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[0]['id']).toList();
 
     // for managing 'Add data' dialog field
     for (var i = 0; i <= initialFoodData.length; i++) {
@@ -123,11 +123,11 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
               children: [
                 // Title card
                 buildTitleCard(),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
                 buildCustomerSection(),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
                 buildFinanceSection(),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
                 const Padding(
                   padding: EdgeInsets.all(12),
                   child: Text(
@@ -145,7 +145,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
               color: Colors.purple.shade500,
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -159,7 +159,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                         'Total:',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(width: 8,),
@@ -181,9 +181,10 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                               ])),
                     ],
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     'Total ${orderedItemList.length} item(s) in order list',
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white, fontSize: 11),
                   ),
                 ],
               ),
@@ -280,6 +281,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
       await InvoiceController().saveInvoiceToServer(invoice, context);
       allSellsData.clear();
       await DashboardController().getAllSellsData();
+
       // for getting just added invoice data from server data
       List iv = allSellsData.where((e) => e.invoiceId== invoiceId).toList();
 
@@ -631,7 +633,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                                   onPressed: () async {
                                     selectedButton = index;
                                     initialFoodData.clear();
-                                    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[index][CategoryListKey.id.name]).toList();
+                                    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[index]['id']).toList();
                                     // initialFoodData = await InvoiceEntryController().getFoodData(allCategoryData[index]);
                                     setState(() {});
                                   },
@@ -642,7 +644,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                                   color: selectedButton == index
                                       ? Colors.amberAccent
                                       : Colors.white,
-                                  child: Text(allCategoryData[index][CategoryListKey.name.name]),
+                                  child: Text(allCategoryData[index]['name']),
                                 );
                               },
                               separatorBuilder: (context, index) {

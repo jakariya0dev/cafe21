@@ -1,5 +1,4 @@
 import 'package:cafe21/model/data.dart';
-import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cafe21/views/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/controller/common_function.dart';
@@ -38,7 +37,7 @@ class AuthController{
       isSuccessful = true;
     }, onError: (e) {
       isSuccessful = false;
-      print(e);
+      // print(e);
     });
     return isSuccessful;
   }
@@ -50,7 +49,7 @@ class AuthController{
       isSuccessful = true;
     }, onError: (e){
       isSuccessful = false;
-      print(e);
+      // print(e);
     });
     return isSuccessful;
   }
@@ -73,7 +72,7 @@ class AuthController{
       await db.collection('app-users').doc(oldEmail).delete();
     }, onError: (e) {
       isSuccessful = false;
-      print(e);
+      // print(e);
     });
 
     return isSuccessful;
@@ -84,22 +83,26 @@ class AuthController{
     await db.collection('user-list').doc(email).get().then((value) async {
       if(!value.exists){
         CommonFunction().showSnackBar('User does not exist', context);
+        isSuccessful = false;
       }
-      else if(value.exists && value['user-password'] != password){
+      else if(value.exists && (value['user-password'] != password)){
         CommonFunction().showSnackBar('Password does\'t matched', context);
+        isSuccessful = false;
       }
-      else if(value.exists && value['user-password'] != password){
-        await prefs?.setBool(UserRoleKey.isLogged.name, true);
+      else if(value.exists && (value['user-password'] == password)){
+        await prefs?.setBool(UserKey.login.name, true);
         await prefs?.setString(UserKey.email.name, email);
-        await prefs?.setString(UserRoleKey.userRole.name, UserRoleKey.user.name);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard()));
+        await prefs?.setString(UserKey.role.name, UserRole.user.name);
+        isSuccessful = true;
       }
-      isSuccessful = true;
+      else{
+        isSuccessful = false;
+      }
+
     }, onError: (e){
       CommonFunction().showSnackBar('Error: $e', context);
       isSuccessful = false;
     });
-
 
     return isSuccessful;
   }
@@ -109,11 +112,16 @@ class AuthController{
     try {
       await auth.signInWithEmailAndPassword(
           email: email, password: password).then((userCredential) async {
-        // User? user = userCredential.user;
-        await prefs?.setString(UserRoleKey.userRole.name, UserRoleKey.userRole.name);
-        await prefs?.setBool(UserRoleKey.isLogged.name, true);
-        await prefs?.setString(UserKey.email.name, email);
-        isSuccessful = true;
+        User? user = userCredential.user;
+        if(user != null){
+          await prefs?.setString(UserKey.role.name, UserRole.admin.name);
+          await prefs?.setBool(UserKey.login.name, true);
+          await prefs?.setString(UserKey.email.name, email);
+          isSuccessful = true;
+        }else{
+          isSuccessful = false;
+        }
+
       });
     }
     on FirebaseAuthException catch (e) {
@@ -131,8 +139,9 @@ class AuthController{
   userLogOut(context) async {
 
     await FirebaseAuth.instance.signOut();
-    prefs?.remove(UserRoleKey.isLogged.name);
-    prefs?.remove(UserRoleKey.userRole.name);
+    prefs?.remove(UserKey.login.name);
+    prefs?.remove(UserKey.role.name);
+    prefs?.remove(UserKey.email.name);
 
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage(),));
@@ -143,20 +152,22 @@ class AuthController{
 
     bool isSuccessful = false;
 
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((value){
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((value) async {
 
       var user = value.user;
       var userEmail = user?.email;
+
       if(user!=null){
-        prefs?.setString(AdminKey.adminUserId.name, user.uid);
+        prefs?.setString(UserKey.uid.name, user.uid);
       }
       if(userEmail!=null){
-        prefs?.setString(AdminKey.adminEmail.name, userEmail);
+        prefs?.setString(UserKey.email.name, userEmail);
       }
 
-      prefs?.setString(UserRoleKey.userRole.name, UserRoleKey.admin.name);
-      prefs?.setBool(UserRoleKey.isLogged.name, true);
-      saveCafeDetails(cafeDetails);
+      prefs?.setString(UserKey.role.name, UserRole.admin.name);
+      prefs?.setBool(UserKey.login.name, true);
+
+      await saveCafeDetails(cafeDetails);
       isSuccessful = true;
 
     }, onError: (e) {
@@ -172,7 +183,6 @@ class AuthController{
     cafeDetailsData = cafeDetails;
   }
 
-
   updateAdminEmail({required String oldEmail, required String password, required String newEmail, required context}) async {
 
     late bool isSuccessful;
@@ -180,7 +190,7 @@ class AuthController{
     await auth.signInWithEmailAndPassword(email: oldEmail, password: password).then((value) async {
       var user = value.user;
       await user?.updateEmail(newEmail);
-      await prefs?.setString(AdminKey.adminEmail.name, newEmail);
+      await prefs?.setString(UserKey.email.name, newEmail);
       isSuccessful = true;
     }, onError: (e){
       isSuccessful = false;
@@ -205,4 +215,11 @@ class AuthController{
     return isSuccessful;
   }
 
+  resetRequestForAdminPassword(email, context) async {
+    await auth.sendPasswordResetEmail(email: email).whenComplete((){
+      CommonFunction().showSnackBar('Check your mail for reset password', context);
+    }).onError((error, stackTrace){
+      // print(error);
+    });
+  }
 }

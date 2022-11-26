@@ -29,14 +29,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Future.delayed(const Duration(seconds: 3), () {
       if(prefs?.getBool('isNotFirstInstall') == true){
-        if(prefs?.getBool(UserRoleKey.isLogged.name) == true){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const DashBoard()));
-        }else{
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
-        }
+            if(prefs?.getBool(UserKey.login.name) == true){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const DashBoard()));
+            }else{
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+            }
 
       }else{
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const OnBoardingPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const OnBoardingPage()));
       }
 
     });

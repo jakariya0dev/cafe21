@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // String userRole = 'manager';
   bool isPasswordVisible = true;
-  String radioValue = UserRoleKey.user.name;
+  String radioValue = UserRole.user.name;
 
   @override
   initState() {
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                             contentPadding: EdgeInsets.zero,
                             isThreeLine: false,
                             title: const Text('User', style: TextStyle(fontWeight: FontWeight.bold),),
-                            value: UserRoleKey.user.name,
+                            value: UserRole.user.name,
                             groupValue: radioValue,
                             onChanged: (value) {
                               setState(() {
@@ -161,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                             contentPadding: EdgeInsets.zero,
                             isThreeLine: false,
                             title: const Text('Admin', style: TextStyle(fontWeight: FontWeight.bold),),
-                            value: UserRoleKey.admin.name,
+                            value: UserRole.admin.name,
                             groupValue: radioValue,
                             onChanged: (value) {
                               setState(() {
@@ -206,17 +206,33 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: const Text(
                         'Create admin account',
-                        style: TextStyle(color: Colors.purple),
+                        style: TextStyle(color: Colors.purple, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Lato'),
                       ),
-                    )
+                    ),
+                    const SizedBox(height: 10),
+                    InkWell(
+                      onTap: () {
+                        resetAdminPassword();
+                      },
+                      child: const Text(
+                        'Reset admin password',
+                        style: TextStyle(color: Colors.purple, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Lato'),
+                      ),
+                    ),
+
                   ],
                 ),
               ),
             ),
-            const Positioned(
+            Positioned(
               top: 16,
               right: 16,
-              child: CircleAvatar(child: Icon(Icons.question_mark)),
+              child: InkWell(
+                onTap: () => CommonFunction().showAboutDialog(context),
+                child: const CircleAvatar(
+                    radius: 16,
+                    child: Icon(Icons.question_mark, size: 20,)),
+              ),
             ),
           ],
         ),
@@ -224,16 +240,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // loginToAccount() {
-  //
-  //   if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
-  //     CommonFunction().showSnackBar('No internet connection', context);
-  //   }
-  //   else {
-  //     userLogin();
-  //   }
-  // }
-  // login with firebase auth
   loginToAccount() async {
 
     bool emailValid = RegExp(
@@ -254,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
       CommonFunction()
           .showSnackBar('No internet!\nCheck internet connection', context);
     }
-    else if(radioValue == UserRoleKey.user.name){
+    else if(radioValue == UserRole.user.name){
 
               isLoginButtonPressed = !isLoginButtonPressed;
               setState(() {});
@@ -273,7 +279,8 @@ class _LoginPageState extends State<LoginPage> {
                 setState(() {});
               }
     }
-    else if(radioValue == UserRoleKey.admin.name){
+    else if(radioValue == UserRole.admin.name){
+
           isLoginButtonPressed = !isLoginButtonPressed;
           setState(() {});
           bool isSuccessful = await AuthController().adminLogin(
@@ -290,6 +297,75 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {});
           }
         }
+  }
+
+  void resetAdminPassword() {
+
+      TextEditingController resetEmailController = TextEditingController();
+      String errorText = '';
+      // bool resetEmailValid = RegExp(
+      //     r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+      //     .hasMatch(resetEmailController.text);
+
+      showDialog(context: context, builder: (context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            backgroundColor: Colors.blue.shade50,
+            title: const Center(child: Text('Reset Admin Password', style: TextStyle(color: Colors.purple, fontWeight: FontWeight.w600),)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text('Enter admin email, an email for reset admin password will be sent', style: TextStyle(color: Colors.purple, fontWeight: FontWeight.w500, fontSize: 14), textAlign: TextAlign.center,),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: resetEmailController,
+                  decoration: InputDecoration(
+                      errorText: errorText,
+                      hintText: 'abc@mail.com',
+                      hintStyle: TextStyle(color: Colors.grey.shade300),
+                      border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.white
+
+                  ),
+                ),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.blue)),
+                  onPressed: () async {
+
+                    if (resetEmailController.text.isEmpty) {
+                      errorText = 'Enter your email';
+                      setState(() {});
+                    }
+                    // else if (resetEmailValid==false) {
+                    //   errorText = 'Email is not valid';
+                    //   setState(() {});
+                    // }
+                    else if (connectivityResult != ConnectivityResult.mobile &&
+                        connectivityResult != ConnectivityResult.wifi) {
+                      errorText = 'No internet!\nCheck internet connection';
+                      setState(() {});
+                    }
+                    else{
+                      Navigator.pop(context);
+                      await AuthController().resetRequestForAdminPassword(resetEmailController.text.trim(), context);
+                    }
+
+                  }, child: const Text('Submit')),
+              ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.green)),
+                  onPressed: () {
+                Navigator.pop(context);
+              }, child: const Text('Cancel'))
+            ],
+          );
+        },);
+      });
   }
 
 }

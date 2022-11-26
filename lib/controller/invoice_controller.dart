@@ -1,5 +1,11 @@
+import 'package:cafe21/controller/common_function.dart';
+import 'package:cafe21/model/data.dart';
+import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/cons/app_config.dart';
+import 'package:flutter/material.dart';
+
+import 'dashboard_controller.dart';
 
 class InvoiceController{
 
@@ -80,25 +86,16 @@ class InvoiceController{
     return msg;
   }
 
-  Future<List> getFoodData(String type) async {
+  updateInvoice({required String docId, required Map<String, dynamic> invoice, required context}){
 
-    var foodData = [];
-
-    await db
-        .collection(AppConfig.foodCollection)
-        .where('category', isEqualTo: type)
-        .get()
-        .then((value) {
-      for (var element in value.docs) {
-        foodData.add({
-          'name': element['name'],
-          'price': element['price'],
-          'id': element.id,
-        });
-      }
+    db.collection(AppConfig.invoiceCollection).doc(docId).update(invoice).whenComplete(() async {
+      allSellsData.clear();
+      await DashboardController().getAllSellsData();
+      Navigator.pop(context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
+    }).onError((error, stackTrace){
+      Navigator.pop(context);
+      CommonFunction().showSnackBar(error, context);
     });
-
-    return foodData;
-
   }
 }

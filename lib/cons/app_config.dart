@@ -1,12 +1,12 @@
 class AppConfig{
 
   // Restaurant profile
-  static const String restaurantName = 'Chef De Cuisine';
-  static const String restaurantCell = '01762940480';
+  // static const String restaurantName = 'Chef De Cuisine';
+  // static const String restaurantCell = '01762940480';
 
   /*
-  * Database name
-  * Don't edit this
+  * Database Name
+  * don't edit this
   */
   static String cafeDetails = 'cafe-details';
   static String categoryCollection = 'category-list';

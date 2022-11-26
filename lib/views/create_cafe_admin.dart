@@ -1,5 +1,6 @@
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/auth_controller.dart';
+import 'package:cafe21/controller/cafe_details_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cafe21/views/login_page.dart';
@@ -287,7 +288,7 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
                       borderRadius: BorderRadius.circular(10)),
                   child: const Center(
                       child: Text(
-                    'Save Data',
+                    'Create Admin Account',
                     style: TextStyle(color: Colors.white),
                   )),
                 ),
@@ -334,6 +335,8 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
     }
     else if (purchaseCodeController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter Purchase Code', context);
+    }else if (purchaseCodeController.text != '2#4#6#8#') {
+      CommonFunction().showSnackBar('Wrong Purchase Code', context);
     }
     else {
 
@@ -353,11 +356,10 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
       );
 
       if(isSuccessful){
-        await prefs.setBool('isLogged', true).then((value) async {
           await AdminDashboardController().addTestCategoryName();
-        });
-        Navigator.pop(context);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard()));
+          await CafeDetailsController().setDeveloperDetails();
+          Navigator.pop(context);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard()));
       }
       else{
 

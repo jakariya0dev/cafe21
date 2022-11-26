@@ -73,7 +73,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
               },
               separatorBuilder: (context, index) {
                 return const SizedBox(
-                  height: 4,
+                  height: 5,
                 );
               },
             ),

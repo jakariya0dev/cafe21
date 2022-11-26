@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cafe21/cons/app_color.dart';
+import 'package:cafe21/model/data.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/main.dart';
 
@@ -39,38 +39,6 @@ class CommonFunction {
             ),
           );
         });
-  }
-
-  saveDemoInvoice() {
-    DateTime dateTime = DateTime.now();
-    var year = dateTime.year;
-    var month = dateTime.month;
-    var hour = dateTime.hour;
-    var second = dateTime.second;
-    var ms = dateTime.millisecond;
-
-    var id = generateInvoiceId();
-
-    var db = FirebaseFirestore.instance;
-    db.collection('invoices')
-        .doc(id)
-        .set({
-      'customer': 'ABC ${dateTime.second}',
-      'phone': ms.toString(),
-      'address': month.toString(),
-      'discount': hour.toString(),
-      'discountType': '%',
-      'tax': month.toString(),
-      'waiterName': 'Jack',
-      'waiterId': '150',
-      'table': "7",
-      'dateTime': dateTime,
-      'paymentMethod': 'Online Payment',
-      'orders': [],
-      'subTotal': '140',
-      'total': '130',
-      'netBill': '155'
-    });
   }
 
   showSnackBar(msg, context) {
@@ -129,69 +97,166 @@ class CommonFunction {
     return id;
   }
 
-  static generateDatabase() async {
+  showAboutDialog(context){
 
-    var db = FirebaseFirestore.instance;
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        scrollable: true,
+        backgroundColor: Colors.purple.shade500,
+        elevation: 24,
+        actionsAlignment: MainAxisAlignment.center,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10)
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircleAvatar(
+              radius: 35,
+              backgroundImage: AssetImage('assets/images/logo.png'),
+            ),
+            const SizedBox(height: 16,),
+            const Text('System Developed By', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 12),),
+            Text(developerInfo['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 22, fontFamily: 'Michroma'),),
+            const SizedBox(height: 20),
+            buildTile(Icons.webhook, developerInfo['web']),
+            const SizedBox(height: 10),
+            buildTile(Icons.email_outlined, developerInfo['mail']),
+            const SizedBox(height: 10),
+            buildTile(Icons.phone, developerInfo['cell']+" (whatsApp)"),
+          ],
 
-    // testCategoryName
-      await db
-          .collection('food-categories')
-          .doc()
-          .set({'name': 'test category'}).then((value) => isCategoryDatabaseCreated = true, onError: (e) {
-              isCategoryDatabaseCreated = false;
-              print(e);
-          });
-
-    // testWaiterData
-      await db
-          .collection('waiter-list')
-          .doc('01300000000')
-          .set({
-        'id': '000',
-        'name': 'test waiter',
-        'phone': '01234567890',
-        'email': 'test@main.com',
-        'nid': '1234567890',
-        'address': 'CO road, Rangpur',
-        'image': '',
-      }).then((value) => isWaiterDatabaseCreated = true, onError: (e){
-        print(e);
-        return isWaiterDatabaseCreated = false;
-      });
-
-
-    // testFoodData
-      await db.collection('food-items').doc().set({
-        'category': 'test category',
-        'description': 'This is test description',
-        'name': 'This is test item',
-        'price': '0'
-      }).then((value) => isFoodDatabaseCreated = true, onError: (e) {
-        print(e);
-        return isFoodDatabaseCreated = false;
-      });
-
-    // testInvoice
-      await db.collection('invoice-list').doc().set({
-        'customer' : 'test customer',
-        'phone' : '01234567890',
-        'address' : 'CO road',
-        'discount' : '0',
-        'discountType' : '%',
-        'tax' : '0',
-        'waiterName' : 'Test waiter',
-        'waiterId' : '000',
-        'table' : '1',
-        'dateTime' : DateTime.now(),
-        'paymentMethod' : 'Payment due',
-        'orders' : [],
-        'subTotal': '100',
-        'total' : '80',
-        'netBill' : '90'
-      }).then((value) => isInvoiceDatabaseCreated = true, onError: (e) {
-        print(e);
-        return isInvoiceDatabaseCreated = false;
-      });
+        ),
+        actions: [
+          MaterialButton(
+            shape: const StadiumBorder(),
+            onPressed: () => Navigator.pop(context),
+            textColor: Colors.white,
+            color: const Color(AppColor.box7),
+            child: const Text('OK'),
+          )
+        ],
+      );
+    },);
 
   }
+
+  Container buildTile(IconData icon, String title) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4)
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 16,
+            child: Icon(icon, size: 16,),
+          ),
+          const SizedBox(width: 16),
+          Text(title, style: const TextStyle(fontSize: 12))
+        ],
+      ),);
+  }
+
+  // static generateDatabase() async {
+  //
+  //   var db = FirebaseFirestore.instance;
+  //
+  //   // testCategoryName
+  //     await db
+  //         .collection('food-categories')
+  //         .doc()
+  //         .set({'name': 'test category'}).then((value) => isCategoryDatabaseCreated = true, onError: (e) {
+  //             isCategoryDatabaseCreated = false;
+  //             print(e);
+  //         });
+  //
+  //   // testWaiterData
+  //     await db
+  //         .collection('waiter-list')
+  //         .doc('01300000000')
+  //         .set({
+  //       'id': '000',
+  //       'name': 'test waiter',
+  //       'phone': '01234567890',
+  //       'email': 'test@main.com',
+  //       'nid': '1234567890',
+  //       'address': 'CO road, Rangpur',
+  //       'image': '',
+  //     }).then((value) => isWaiterDatabaseCreated = true, onError: (e){
+  //       print(e);
+  //       return isWaiterDatabaseCreated = false;
+  //     });
+  //
+  //
+  //   // testFoodData
+  //     await db.collection('food-items').doc().set({
+  //       'category': 'test category',
+  //       'description': 'This is test description',
+  //       'name': 'This is test item',
+  //       'price': '0'
+  //     }).then((value) => isFoodDatabaseCreated = true, onError: (e) {
+  //       print(e);
+  //       return isFoodDatabaseCreated = false;
+  //     });
+  //
+  //   // testInvoice
+  //     await db.collection('invoice-list').doc().set({
+  //       'customer' : 'test customer',
+  //       'phone' : '01234567890',
+  //       'address' : 'CO road',
+  //       'discount' : '0',
+  //       'discountType' : '%',
+  //       'tax' : '0',
+  //       'waiterName' : 'Test waiter',
+  //       'waiterId' : '000',
+  //       'table' : '1',
+  //       'dateTime' : DateTime.now(),
+  //       'paymentMethod' : 'Payment due',
+  //       'orders' : [],
+  //       'subTotal': '100',
+  //       'total' : '80',
+  //       'netBill' : '90'
+  //     }).then((value) => isInvoiceDatabaseCreated = true, onError: (e) {
+  //       print(e);
+  //       return isInvoiceDatabaseCreated = false;
+  //     });
+  //
+  // }
+
+
+// saveDemoInvoice() {
+//   DateTime dateTime = DateTime.now();
+//   var year = dateTime.year;
+//   var month = dateTime.month;
+//   var hour = dateTime.hour;
+//   var second = dateTime.second;
+//   var ms = dateTime.millisecond;
+//
+//   var id = generateInvoiceId();
+//
+//   var db = FirebaseFirestore.instance;
+//   db.collection('invoices')
+//       .doc(id)
+//       .set({
+//     'customer': 'ABC ${dateTime.second}',
+//     'phone': ms.toString(),
+//     'address': month.toString(),
+//     'discount': hour.toString(),
+//     'discountType': '%',
+//     'tax': month.toString(),
+//     'waiterName': 'Jack',
+//     'waiterId': '150',
+//     'table': "7",
+//     'dateTime': dateTime,
+//     'paymentMethod': 'Online Payment',
+//     'orders': [],
+//     'subTotal': '140',
+//     'total': '130',
+//     'netBill': '155'
+//   });
+// }
 }

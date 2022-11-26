@@ -39,6 +39,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
   }
 
   init() async {
+
     for (var i = 0; i < widget.invoiceData.orders.length; i++) {
       totalAmount = totalAmount +
           (double.parse(widget.invoiceData.orders[i]['itemTotal']));
@@ -47,7 +48,6 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
         (totalAmount * (int.parse(widget.invoiceData.discount) / 100));
     netBill = totalAmountAfterDiscount +
         (totalAmountAfterDiscount * (int.parse(widget.invoiceData.tax) / 100));
-
   }
 
   @override
@@ -66,12 +66,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
             )),
         actions: [
           IconButton(
-              onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        InvoiceUpdate(invoiceData: widget.invoiceData),
-                  )),
+              onPressed: editInvoice,
               icon: const Icon(
                 Icons.edit,
                 color: Colors.white,
@@ -164,8 +159,8 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                       onPressed: () => Navigator.pop(context),
                     ),
                   ));
-                } else if (prefs?.getString(UserRoleKey.userRole.name) !=
-                    UserRoleKey.admin.name) {
+                } else if (prefs?.getString(UserKey.role.name) !=
+                    UserRole.admin.name) {
                   CommonFunction()
                       .showWarningDialog('Only admin can delete invoice', context);
                 } else {
@@ -195,16 +190,29 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
   }
 
   deleteInvoice() async {
-    CommonFunction().showLoadingIndicatorWithTitle(context: context, title: 'Deleting...');
-    await InvoiceController()
-        .deleteInvoice(widget.invoiceData.invoiceId);
-    allSellsData.clear(); // from data file
-    await DashboardController().getAllSellsData();
-    Navigator.pop(context);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
 
+    if(prefs?.get(UserKey.role.name) == UserRole.user.name){
+      CommonFunction().showWarningDialog('Only Admin Can Delete Invoices', context);
+    }
+    else{
+      CommonFunction().showLoadingIndicatorWithTitle(context: context, title: 'Deleting...');
+      await InvoiceController()
+          .deleteInvoice(widget.invoiceData.invoiceId);
+      allSellsData.clear(); // from data file
+      await DashboardController().getAllSellsData();
+      Navigator.pop(context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
+    }
   }
 
+  editInvoice(){
+        Navigator.push(
+        context,
+        MaterialPageRoute(
+        builder: (context) =>
+        InvoiceUpdate(invoiceData: widget.invoiceData),
+    ),);
+  }
 }
 
 class _BuildNameContainer extends StatelessWidget {
