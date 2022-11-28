@@ -1,3 +1,4 @@
+import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
@@ -76,8 +77,15 @@ class MyDrawer extends StatelessWidget {
                 ),
                 InkWell(
                   onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(index: 0),));
+                    if(userRoleData == UserRole.admin.toString()){
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(index: 0),));
+                    }
+                    else{
+                      Navigator.pop(context);
+                      CommonFunction().showWarningDialog('Only admin access.', context);
+                    }
+
                   },
                   child: const DrawerListTile(
                     icon: Icons.admin_panel_settings_outlined,

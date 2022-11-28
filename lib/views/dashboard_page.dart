@@ -34,10 +34,19 @@ class _DashBoardState extends State<DashBoard> {
   init() async {
 
     // getting all data from server
-    await DashboardController().getAllSellsData();
-    await DashboardController().getAllFood();
-    await DashboardController().getAllFoodCategory();
-    await DashboardController().getAllWaiter();
+    if(allSellsData.isEmpty){
+      await DashboardController().getAllSellsData();
+    }
+    if(allFoodsData.isEmpty){
+      await DashboardController().getAllFood();
+    }
+    if(allCategoryData.isEmpty){
+      await DashboardController().getAllFoodCategory();
+    }
+    if(allWaiterData.isEmpty){
+      await DashboardController().getAllWaiter();
+    }
+
     await DashboardController().getCafeDetails();
 
     // user role remember
