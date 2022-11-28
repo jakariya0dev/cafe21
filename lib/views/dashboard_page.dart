@@ -82,7 +82,7 @@ class _DashBoardState extends State<DashBoard> {
           ),
         ],
       ),
-      drawer: const MyDrawer(),
+      drawer: MyDrawer(updateSate: changeState),
       body: SafeArea(
         child: Container(
           constraints: const BoxConstraints.expand(),
@@ -90,7 +90,11 @@ class _DashBoardState extends State<DashBoard> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                BuildTitleCard(title: DashboardController.titleForData, width: width, value: DashboardController.totalWithTax,),
+                BuildTitleCard(
+                    title: DashboardController.titleForData,
+                    width: width, value: DashboardController.totalWithTax,
+                    updateSate: changeState,
+                ),
                 SizedBox(
                   height: 120,
                   child: Row(
@@ -186,4 +190,5 @@ class _DashBoardState extends State<DashBoard> {
   changeState(){
     setState(() {});
   }
+
 }

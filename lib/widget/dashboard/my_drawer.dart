@@ -7,7 +7,9 @@ import 'package:cafe21/views/on_boarding_page.dart';
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatelessWidget {
-  const MyDrawer({Key? key}) : super(key: key);
+  const MyDrawer({Key? key, required this.updateSate}) : super(key: key);
+
+  final VoidCallback updateSate;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +31,10 @@ class MyDrawer extends StatelessWidget {
             child: ListView(
               children: [
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
-                    DashboardController().getAllTotalData();
+                    await DashboardController().getAllTotalData();
+                    updateSate();
                   },
                   child: const DrawerListTile(
                     icon: Icons.account_balance_wallet_outlined,
@@ -39,9 +42,10 @@ class MyDrawer extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
-                    DashboardController().getDailyData();
+                    await DashboardController().getDailyData();
+                    updateSate();
                   },
                   child: const DrawerListTile(
                     icon: Icons.view_day_outlined,
@@ -49,9 +53,10 @@ class MyDrawer extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
-                    DashboardController().getWeeklyData();
+                    await DashboardController().getWeeklyData();
+                    updateSate();
                   },
                   child: const DrawerListTile(
                     icon: Icons.weekend_outlined,
@@ -59,9 +64,10 @@ class MyDrawer extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
-                    DashboardController().getMonthlyData();
+                    await DashboardController().getMonthlyData();
+                    updateSate();
                   },
                   child: const DrawerListTile(
                     icon: Icons.calendar_month,
@@ -72,7 +78,6 @@ class MyDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(index: 0),));
-
                   },
                   child: const DrawerListTile(
                     icon: Icons.admin_panel_settings_outlined,
@@ -83,7 +88,6 @@ class MyDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const OnBoardingPage()));
-
                   },
                   child: const DrawerListTile(
                     icon: Icons.admin_panel_settings_outlined,

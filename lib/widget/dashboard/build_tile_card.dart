@@ -2,19 +2,15 @@ import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:flutter/material.dart';
 
-class BuildTitleCard extends StatefulWidget {
+class BuildTitleCard extends StatelessWidget {
 
-  const BuildTitleCard({Key? key, required this.value, required this.width, required this.title}) : super(key: key);
+  const BuildTitleCard({Key? key, required this.value, required this.width, required this.title, required this.updateSate}) : super(key: key);
 
   final double value;
   final double width;
   final String title;
+  final VoidCallback updateSate;
 
-  @override
-  State<BuildTitleCard> createState() => _BuildTitleCardState();
-}
-
-class _BuildTitleCardState extends State<BuildTitleCard> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -22,8 +18,8 @@ class _BuildTitleCardState extends State<BuildTitleCard> {
         Container(
           margin: const EdgeInsets.all(8),
           padding: const EdgeInsets.all(16),
-          height: widget.width * 0.4,
-          width: widget.width,
+          height: width * 0.4,
+          width: width,
           decoration: const BoxDecoration(color: Color(0xff7c79ea)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,7 +30,7 @@ class _BuildTitleCardState extends State<BuildTitleCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.title,
+                    title,
                     style: const TextStyle(
                         color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
                   ),
@@ -49,7 +45,7 @@ class _BuildTitleCardState extends State<BuildTitleCard> {
                         child: const Text('Sells'),
                       ),
                       Text(
-                        '\$${widget.value.toStringAsFixed(2)}',
+                        '\$${value.toStringAsFixed(2)}',
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -67,17 +63,16 @@ class _BuildTitleCardState extends State<BuildTitleCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: () {
-                      DashboardController().getDataByDate(context);
-                      setState(() {});
-                      print('ref btn clc');
+                    onPressed: () async {
+                      await DashboardController().getDataByDate(context);
+                      updateSate();
                     },
                     icon: const Icon(Icons.calendar_month, color: Colors.white,),
                   ),
                   IconButton(
-                    onPressed: () {
-                      DashboardController().getDailyData();
-                      print('ref btn clc');
+                    onPressed: () async {
+                      await DashboardController().getDailyData();
+                      updateSate();
                     },
                     icon: const Icon(Icons.refresh, color: Colors.white,),
                   ),

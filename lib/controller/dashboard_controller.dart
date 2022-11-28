@@ -4,7 +4,6 @@ import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:flutter/material.dart';
 
-
 class DashboardController{
 
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -163,7 +162,8 @@ class DashboardController{
       idForCompare = year+month+day;
       allSellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
       calculationInvoiceData();
-      titleForData = 'Sells Data of $month/$day/$year';
+      titleForData = 'Sells Data of $day-$month-$year';
+
     }
 
   }
@@ -271,6 +271,5 @@ class DashboardController{
         countMostServingPersonBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
 
   }
-
 
 }
