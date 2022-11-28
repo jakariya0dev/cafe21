@@ -73,7 +73,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 pageIndex--;
                 setState(() {});
               },
-              child: const Text('Back'),
+              child: const Text('Back', style: TextStyle(fontWeight: FontWeight.w500),),
             ),
             Row(
               children: List.generate(4, (index) {
@@ -97,7 +97,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 pageIndex++;
                     setState(() {});
               },
-              child: pageIndex == 3 ? const Text('Finish') : const Text('Next'),
+              child: pageIndex == 3 ? const Text('Finish') : const Text('Next', style: TextStyle(fontWeight: FontWeight.w500),),
             )
           ],
         ),

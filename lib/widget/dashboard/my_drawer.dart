@@ -1,0 +1,140 @@
+import 'package:cafe21/controller/auth_controller.dart';
+import 'package:cafe21/controller/common_function.dart';
+import 'package:cafe21/controller/dashboard_controller.dart';
+import 'package:cafe21/model/data.dart';
+import 'package:cafe21/views/admin/admin_dashboard.dart';
+import 'package:cafe21/views/on_boarding_page.dart';
+import 'package:flutter/material.dart';
+
+class MyDrawer extends StatelessWidget {
+  const MyDrawer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: Column(
+        children: [
+          UserAccountsDrawerHeader(
+            accountName: Text(userRoleData.toString()[0].toUpperCase()+userRoleData.toString().substring(1), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+            accountEmail: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(userEmailData ?? ''),
+                const SizedBox(height: 4),
+                Text(cafeDetailsData['cafe-name'] ??'', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),)
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    DashboardController().getAllTotalData();
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.account_balance_wallet_outlined,
+                    text: 'Total summery',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    DashboardController().getDailyData();
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.view_day_outlined,
+                    text: 'Today\'s Data',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    DashboardController().getWeeklyData();
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.weekend_outlined,
+                    text: 'Weekly data',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    DashboardController().getMonthlyData();
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.calendar_month,
+                    text: 'Monthly data',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(index: 0),));
+
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.admin_panel_settings_outlined,
+                    text: 'Admin area',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const OnBoardingPage()));
+
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.admin_panel_settings_outlined,
+                    text: 'App Helper',
+                  ),
+                ),
+                InkWell(
+                  onTap: () async {
+                    await AuthController().userLogOut(context);
+                  },
+                  child: const DrawerListTile(
+                    icon: Icons.logout,
+                    text: 'Logout',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            dense: true,
+            title: const Center(child: Text('Developer info')),
+            onTap: () {
+              Navigator.pop(context);
+              CommonFunction().showAboutDialog(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DrawerListTile extends StatelessWidget {
+  const DrawerListTile({
+    Key? key, required this.icon, required this.text,
+
+  }) : super(key: key);
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 24, top: 8, bottom: 8),
+      child: Row(
+        children:  [
+          Icon(icon, color: Colors.grey.shade700),
+          const SizedBox(width: 20,),
+          Text(text, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),)],
+      ),
+    );
+  }
+}

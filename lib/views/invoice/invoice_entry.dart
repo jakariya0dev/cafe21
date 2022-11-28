@@ -70,13 +70,13 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
     ConnectionChecker().checkInternetConnection((){
       setState(() {});
     });
-    getData();
+    getData(foodCategoryIndex: 0);
     super.initState();
   }
 
-  getData() async {
+  getData({required int foodCategoryIndex}) async {
 
-    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[0]['id']).toList();
+    initialFoodData = allFoodsData.where((e) => e['category'] == allCategoryData[foodCategoryIndex]['id']).toList();
 
     // for managing 'Add data' dialog field
     for (var i = 0; i <= initialFoodData.length; i++) {
@@ -84,6 +84,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
       itemDiscountController.add(TextEditingController());
       itemDiscountType.add('%');
     }
+
   }
 
   void changeState() {
@@ -606,6 +607,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
   }
 
   openFoodCartDialog(BuildContext context) async {
+
     return showDialog(
       context: context,
       builder: (context) {
@@ -632,9 +634,9 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                                 return MaterialButton(
                                   onPressed: () async {
                                     selectedButton = index;
-                                    initialFoodData.clear();
-                                    initialFoodData = allFoodsData.where((e) => e['type'] == allCategoryData[index]['id']).toList();
-                                    // initialFoodData = await InvoiceEntryController().getFoodData(allCategoryData[index]);
+                                    // initialFoodData.clear();
+                                    // initialFoodData = allFoodsData.where((e) => e['category'] == allCategoryData[index]['id']).toList();
+                                    getData(foodCategoryIndex: index);
                                     setState(() {});
                                   },
                                   elevation: selectedButton == index ? 10 : 0,
@@ -657,7 +659,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                         const SizedBox(height: 16),
                         Expanded(
                           child: initialFoodData.isEmpty ? const Center(
-                            child: Text('Ohh! No food  data.'),
+                            child: Text('Ohh! No food data.'),
                           )
                               : ListView.separated(
                                   itemCount: initialFoodData.length,
@@ -683,7 +685,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                                             ),
                                           ),
                                           const SizedBox(
-                                            width: 16,
+                                            width: 16
                                           ),
                                           SizedBox(
                                             width: 55,

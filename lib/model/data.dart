@@ -10,6 +10,7 @@ List allFoodsData = [];
 List allWaiterData = [];
 List allCategoryData = [];
 List allAppUserData = [];
+List allSellsDataFiltered = [];
 
 /*
 cafeDetails = {
@@ -18,6 +19,7 @@ cafeDetails = {
   'cafe-phone': '',
 }
 */
+
 Map<String, dynamic> cafeDetailsData = {};
 Map<String, dynamic> developerInfo = {
   'name' : 'Brain Storm 21',

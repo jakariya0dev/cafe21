@@ -2,11 +2,21 @@ import 'package:cafe21/cons/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/model/data.dart';
+import 'package:flutter/material.dart';
 
 
 class DashboardController{
 
   FirebaseFirestore db = FirebaseFirestore.instance;
+  static String titleForData = 'Total Sells Data';
+
+  static double totalTax = 0;
+  static double totalWithTax = 0;
+  static double totalWithoutTax = 0;
+
+  // for calculating most selling things and waiter
+  static Map <String, int> countMostSellingFood = {};
+  static Map <String, int> countMostServingPerson = {};
 
   getAllSellsData() async {
 
@@ -121,5 +131,146 @@ class DashboardController{
       });
     });
   }
+
+  getDataByDate(context) async {
+
+    String idForCompare, year, month, day;
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime.now(),
+    );
+
+    if(date != null){
+      year = date.year.toString();
+      int pMonth = date.month;
+      int pDay = date.day;
+
+
+      if(pMonth<10) {
+        month = pMonth.toString().padLeft(2, '0');
+      }else {
+        month = pMonth.toString();
+      }
+      if(pDay<10) {
+        day = pDay.toString().padLeft(2, '0');
+      }else {
+        day = pDay.toString();
+      }
+
+      idForCompare = year+month+day;
+      allSellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+      calculationInvoiceData();
+      titleForData = 'Sells Data of $month/$day/$year';
+    }
+
+  }
+
+  getDailyData() async {
+
+    String idForCompare, year, month, day;
+    DateTime date = DateTime.now();
+
+
+    year = date.year.toString();
+    int pMonth = date.month;
+    int pDay = date.day;
+
+    if(pMonth<10) {
+      month = pMonth.toString().padLeft(2, '0');
+    }else {
+      month = pMonth.toString();
+    }
+    if(pDay<10) {
+      day = pDay.toString().padLeft(2, '0');
+    }else {
+      day = pDay.toString();
+    }
+
+    idForCompare = year+month+day;
+
+    allSellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+    calculationInvoiceData();
+    titleForData = 'Daily Sells Data';
+  }
+
+  getWeeklyData(){
+    var sevenDaysAgoFromNow = DateTime.now().subtract(const Duration(days: 7));
+    allSellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
+    calculationInvoiceData();
+    titleForData = 'Weekly Sells Data';
+    // setState(() {});
+  }
+
+  getMonthlyData(){
+    var now = DateTime.now();
+    var thirtyDaysAgoFromNow = DateTime(now.year, now.month-1, now.day);
+    allSellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
+    calculationInvoiceData();
+    titleForData = 'Monthly Sells Data';
+    // setState(() {});
+  }
+
+  getAllTotalData(){
+    allSellsDataFiltered = allSellsData;
+    calculationInvoiceData();
+    titleForData = 'Total Sells Data';
+    calculationInvoiceData();
+  }
+
+  calculationInvoiceData(){
+
+    totalWithTax = 0;
+    totalWithoutTax = 0;
+
+    for (var item in allSellsDataFiltered) {
+
+      totalWithTax = totalWithTax + double.parse(item.netBill);
+      totalWithoutTax = totalWithoutTax + double.parse(item.total);
+    }
+    // setState(() {});
+    // print(totalWithTax);
+    // print(totalWithoutTax);
+  }
+
+  calculateMostSells(){
+
+    List totalFoodIdFromInvoice = [];
+    List totalWaiterNameFromInvoice = [];
+
+    Map <String, int> countMostSellingFoodBeforeSort = {};
+    Map <String, int> countMostServingPersonBeforeSort = {};
+
+    // getting all food id and waiter name from invoices
+    for (var invoice in allSellsData) {
+
+      totalWaiterNameFromInvoice.add(invoice.waiterName);
+
+      for(var item in invoice.orders){
+        totalFoodIdFromInvoice.add(item['id']);
+      }
+
+    }
+
+    // SUM of food orders
+    for (var foodId in totalFoodIdFromInvoice){
+      countMostSellingFoodBeforeSort[foodId] = (countMostSellingFoodBeforeSort[foodId] ?? 0) + 1;
+    }
+
+    // SUM of waiter orders
+    for (var waiterName in totalWaiterNameFromInvoice){
+      countMostServingPersonBeforeSort[waiterName] = (countMostServingPersonBeforeSort[waiterName] ?? 0) + 1;
+    }
+
+    // reversed the map ex:321
+    countMostSellingFood = Map.fromEntries(
+        countMostSellingFoodBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
+    countMostServingPerson = Map.fromEntries(
+        countMostServingPersonBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
+
+  }
+
 
 }
