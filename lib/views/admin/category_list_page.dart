@@ -51,10 +51,10 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
             child: ListView.separated(
               itemCount: allCategoryData.length,
               itemBuilder: (context, index) {
+                List items = allFoodsData.where((e) => e['category'] == allCategoryData[index]['id']).toList();
                 return ListTile(
                   isThreeLine: false,
-                  shape:
-                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                   dense: true,
                   onTap: () {
                     editCategory(index);
@@ -73,18 +73,18 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        '100',
-                        style: TextStyle(
+                       Text(
+                        items.length.toString(),
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: 18,
                             color: Colors.black54),
                       ),
                       const SizedBox(
                         height: 4,
                       ),
                       Text(
-                        'Orders'.toUpperCase(),
+                        'items'.toUpperCase(),
                         style: const TextStyle(fontSize: 9),
                       )
                     ],
@@ -108,7 +108,6 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
   }
 
   // Category Data Manipulation
-
   editCategory(index) {
     TextEditingController nameController = TextEditingController(
         text: allCategoryData[index]['name']);
@@ -188,9 +187,9 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                       if (isSuccessful) {
                         Navigator.pop(context);
                         await getData();
-                        showSnackbar('Successfully updated');
+                        CommonFunction().showSnackBar('Successfully updated', context);
                       } else {
-                        showSnackbar('Cant update');
+                        CommonFunction().showSnackBar('Cant update', context);
                       }
                     }
                   },
@@ -232,10 +231,10 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                     Navigator.pop(context);
                     allCategoryData.clear();
                     getData();
-                    showSnackbar('Successfully deleted');
+                    CommonFunction().showSnackBar('Successfully deleted',context);
                   } else {
                     Navigator.pop(context);
-                    showSnackbar('Cant delete');
+                    CommonFunction().showSnackBar('Cant delete', context);
                   }
                 }
               },
@@ -261,7 +260,4 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
     );
   }
 
-  showSnackbar(msg) {
-    CommonFunction().showSnackBar(msg, context);
-  }
 }

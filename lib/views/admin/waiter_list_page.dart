@@ -32,6 +32,8 @@ class _WaiterListPageState extends State<WaiterListPage> {
             child: ListView.separated(
               itemCount: allWaiterData.length,
               itemBuilder: (context, index) {
+
+                List itemes = allSellsData.where((e) => e.waiterId == allWaiterData[index]['id']).toList();
                 return ListTile(
                   isThreeLine: false,
                   shape:
@@ -53,9 +55,9 @@ class _WaiterListPageState extends State<WaiterListPage> {
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        '100',
-                        style: TextStyle(
+                      Text(
+                        itemes.length.toString(),
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                             color: Colors.black54),
