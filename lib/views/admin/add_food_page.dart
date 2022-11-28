@@ -58,6 +58,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
         child: Scaffold(
           backgroundColor: AppColor.scaffoldColor,
           appBar: AppBar(
+            title: const Text('Admin area', style: TextStyle(fontSize: 16),),
             leading: BackButton(
               onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AdminDashboard(index: 0))),
             ),
@@ -68,13 +69,15 @@ class _AddFoodPageState extends State<AddFoodPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Image.asset('assets/icons/icon_food.png', height: 80, width: 80,),
+                const SizedBox(height: 16),
                 const Text(
                   'Add Food data',
                   style: TextStyle(
-                      fontWeight: FontWeight.w500, color: Colors.deepPurple, fontSize: 20),
+                      fontWeight: FontWeight.w500, color: Colors.deepPurple, fontSize: 20, fontFamily: 'Lato'),
                 ),
                 SizedBox(
-                  height: 32,
+                  height: 20,
                   child: Center(
                     child: Text(
                       msg,
@@ -83,69 +86,137 @@ class _AddFoodPageState extends State<AddFoodPage> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  height: 32,
-                  child: TextField(
-                    controller: nameController,
-                    style: TextStyle(
-                      color: Colors.deepPurple.shade900,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Food name',
-                      isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade200),
-                      suffixIcon: InkWell(
-                        onTap: () {
-                          nameController.clear();
-                          setState(() {});
-                        },
-                        child: Icon(
-                          Icons.clear,
-                          color: Colors.blue.shade300,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 16,
+                        child: Center(
+                          child: Text(
+                            msg,
+                            style: const TextStyle(color: Colors.red),
+                          ),
                         ),
                       ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        height: 32,
+                        child: TextField(
+                          controller: nameController,
+                          style: TextStyle(
+                            color: Colors.deepPurple.shade900,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: ' Food name',
+                            isDense: true,
+                            hintStyle: TextStyle(color: Colors.blue.shade200),
+                            // prefix: Icon(Icons.abc_outlined),
+                            prefix: const Text('Name:', style: TextStyle(color: Colors.blue),),
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                nameController.clear();
+                                setState(() {});
+                              },
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.blue.shade300,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        height: 32,
+                        child: TextField(
+                          controller: priceController,
+                          keyboardType: TextInputType.number,
+                          style: TextStyle(color: Colors.deepPurple.shade900),
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.currency_exchange),
+                            hintText: 'Food price',
+                            isDense: true,
+                            hintStyle: TextStyle(color: Colors.blue.shade200),
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                priceController.clear();
+                                setState(() {});
+                              },
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.blue.shade300,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 16,
+                        child: Center(
+                          child: Text(
+                            msg,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Category:'),
+                          const Expanded(child: SizedBox()),
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            height: 28,
+                            child: DropdownButton(
+                              isDense: true,
+                              alignment: Alignment.centerRight,
+                              hint: Text(
+                                dropDownHeader,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              items: allCategoryData
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(
+                                    e['name'].toString(),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ).toList(),
+                              onChanged: (value) {
+                                Map map = value as Map;
+                                dropDownHeader = map['name'];
+                                categoryId = map['id'];
+                                isCategorySelected = true;
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                  child: Center(
+                    child: Text(
+                      msg,
+                      style: const TextStyle(color: Colors.red),
                     ),
                   ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Category:'),
-                    const Expanded(child: SizedBox()),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      height: 28,
-                      child: DropdownButton(
-                        isDense: true,
-                        alignment: Alignment.centerRight,
-                        hint: Text(
-                          dropDownHeader,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        items: allCategoryData
-                            .map(
-                              (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e['name'].toString(),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ).toList(),
-                        onChanged: (value) {
-                          Map map = value as Map;
-                          dropDownHeader = map['name'];
-                          categoryId = map['id'];
-                          isCategorySelected = true;
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                  ],
-                ),
                 Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  height: 120,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10)
+                  ),
                   child: TextField(
                     minLines: 3,
                     maxLines: 8,
@@ -153,42 +224,20 @@ class _AddFoodPageState extends State<AddFoodPage> {
                     keyboardType: TextInputType.emailAddress,
                     style: TextStyle(color: Colors.deepPurple.shade900),
                     decoration: InputDecoration(
-                      labelText: 'Product description',
-                      // hintText: 'Product description',
-                      border: const OutlineInputBorder(),
+                      labelText: 'Product Description',
+
+                      // hintText: 'Type product description here',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: InputBorder.none,
                       isDense: true,
                       // hintStyle: TextStyle(color: Colors.blue.shade200),
                       labelStyle: TextStyle(color: Colors.blue.shade500, fontSize: 16),
                     ),
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  height: 32,
-                  child: TextField(
-                    controller: priceController,
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: Colors.deepPurple.shade900),
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.currency_exchange),
-                      hintText: 'Food price',
-                      isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade200),
-                      suffixIcon: InkWell(
-                        onTap: () {
-                          priceController.clear();
-                          setState(() {});
-                        },
-                        child: Icon(
-                          Icons.clear,
-                          color: Colors.blue.shade300,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
                 SizedBox(
-                  height: 32,
+                  height: 16,
                   child: Center(
                     child: Text(
                       msg,
@@ -201,6 +250,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                   children: [
                     Expanded(
                       child: MaterialButton(
+                        height: 50,
                         color: const Color(AppColor.box4),
                         onPressed: () {
                           nameController.clear();
@@ -219,6 +269,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                     ),
                     const SizedBox(width: 10,),
                     Expanded(child: MaterialButton(
+                      height: 50,
                       color: const Color(AppColor.box5),
                       onPressed: () async {
                         if (nameController.text.isEmpty) {

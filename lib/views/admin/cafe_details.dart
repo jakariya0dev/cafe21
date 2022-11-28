@@ -19,6 +19,7 @@ class CafeDetails extends StatefulWidget {
 class _CafeDetailsState extends State<CafeDetails> {
   
   int selectedCategoryButtonIndex = 0;
+  bool isEditable = false;
   TextEditingController cafeNameController =
       TextEditingController(text: cafeDetailsData['cafe-name']);
   TextEditingController cafeAddressController =
@@ -55,6 +56,9 @@ class _CafeDetailsState extends State<CafeDetails> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Image.asset('assets/icons/icon_cafe.png', height: 80, width: 80,),
+            SizedBox(height: containerGap),
+            const Text('Cafe Details', style: TextStyle(fontSize: 20, fontFamily: 'Lato'),),
             SizedBox(height: containerGap),
             Container(
               padding: containerPadding,
@@ -71,6 +75,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                     ),
                   ),
                   TextField(
+                    enabled: isEditable,
                     controller: cafeNameController,
                     decoration: const InputDecoration(
                       hintText: 'Enter Cafe Name',
@@ -97,6 +102,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                     ),
                   ),
                   TextField(
+                    enabled: isEditable,
                     controller: cafeAddressController,
                     decoration: const InputDecoration(
                       hintText: 'Enter Cafe Address',
@@ -123,6 +129,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                     ),
                   ),
                   TextField(
+                    enabled: isEditable,
                     controller: cafePhoneController,
                     decoration: const InputDecoration(
                       hintText: 'Enter Cafe Phone',
@@ -135,17 +142,17 @@ class _CafeDetailsState extends State<CafeDetails> {
             ),
             SizedBox(height: containerGap),
             InkWell(
-              onTap: updateData,
+              onTap: isEditable ? updateData : turnOnEditable,
               child: Container(
                 width: double.maxFinite,
                 height: 50,
                 decoration: BoxDecoration(
                     color: Colors.purple,
                     borderRadius: BorderRadius.circular(10)),
-                child: const Center(
+                child:  Center(
                     child: Text(
-                  'UPDATE CAFE DETAILS',
-                  style: TextStyle(color: Colors.white),
+                      isEditable ? 'UPDATE CAFE DETAILS' : 'EDIT CAFE DATA',
+                  style: const TextStyle(color: Colors.white),
                 )),
               ),
             ),
@@ -157,52 +164,65 @@ class _CafeDetailsState extends State<CafeDetails> {
                   style: TextStyle(
                       color: Colors.purple, fontWeight: FontWeight.w600),
                 )),
-            const SizedBox(height: 15),
+            SizedBox(height: containerGap),
             InkWell(
                 onTap: updateAdminPassword,
                 child: const Text(
                   'Reset Admin Password',
                   style: TextStyle(
                       color: Colors.purple, fontWeight: FontWeight.w600),
-                ))
+                )),
+            const SizedBox(height: 100)
           ],
         ),
       ),
     );
   }
 
+  turnOnEditable(){
+    isEditable = !isEditable;
+    setState(() {});
+  }
   updateData() async {
 
     if (cafeNameController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter Cafe Name', context);
-    } else if (cafeAddressController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter Cafe Address', context);
-    } else if (cafePhoneController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter Cafe Phone', context);
-    } else if (connectivityResult != ConnectivityResult.mobile &&
-        connectivityResult != ConnectivityResult.wifi) {
-      CommonFunction()
-          .showSnackBar('No internet!\nCheck internet connection', context);
-    } else {
-      CommonFunction().showLoadingIndicatorWithTitle(
-          title: 'Updating Data', context: context);
-      Map<String, dynamic> cafeMap = {
-        'cafe-name': cafeNameController.text,
-        'cafe-address': cafeAddressController.text,
-        'cafe-phone': cafePhoneController.text,
-      };
-      bool isSuccessful =
-          await CafeDetailsController().updateCafeDetails(cafeMap, context);
-      if (isSuccessful) {
-        cafeDetailsData.clear();
-        DashboardController().getCafeDetails();
-        Navigator.pop(context);
-        setState(() {});
-        CommonFunction().showSnackBar('Successfully updated', context);
-      } else {
-        Navigator.pop(context);
-      }
-    }
+              CommonFunction().showSnackBar('Enter Cafe Name', context);
+            }
+    else if (cafeAddressController.text.isEmpty) {
+              CommonFunction().showSnackBar('Enter Cafe Address', context);
+            }
+    else if (cafePhoneController.text.isEmpty) {
+              CommonFunction().showSnackBar('Enter Cafe Phone', context);
+            }
+    else if (connectivityResult != ConnectivityResult.mobile &&
+                connectivityResult != ConnectivityResult.wifi) {
+              CommonFunction()
+                  .showSnackBar('No internet!\nCheck internet connection', context);
+            }
+    else {
+                  CommonFunction().showLoadingIndicatorWithTitle(
+                      title: 'Updating Data', context: context);
+                  Map<String, dynamic> cafeMap = {
+                    'cafe-name': cafeNameController.text,
+                    'cafe-address': cafeAddressController.text,
+                    'cafe-phone': cafePhoneController.text,
+                  };
+                  bool isSuccessful =
+                  await CafeDetailsController().updateCafeDetails(cafeMap, context);
+                  if (isSuccessful) {
+                    cafeDetailsData.clear();
+                    DashboardController().getCafeDetails();
+                    Navigator.pop(context);
+                    setState(() {});
+                    CommonFunction().showSnackBar('Successfully updated', context);
+                  } else {
+                    Navigator.pop(context);
+                  }
+            }
+
+    isEditable = !isEditable;
+    setState(() {});
+
   }
 
   updateAdminEmail() {

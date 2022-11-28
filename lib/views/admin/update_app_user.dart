@@ -71,12 +71,14 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Image.asset('assets/icons/user_profile.png', height: 80, width: 80,),
+                  const SizedBox(height: 16),
                   const Text(
-                    'User Data',
+                    'User Profile',
                     style: TextStyle(
                         color: Colors.purple,
-                        fontSize: 16,
-                        fontFamily: 'Roboto'),
+                        fontSize: 20,
+                        fontFamily: 'Lato'),
                   ),
                   const SizedBox(height: 24),
                   Container(
@@ -247,6 +249,7 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
         CommonFunction().showSnackBar('Failed to update', context);
       }
     }
+
   }
 
 }

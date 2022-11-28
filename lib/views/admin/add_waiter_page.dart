@@ -47,6 +47,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
       },
       child: Scaffold(
         appBar: AppBar(
+          title: const Text('Admin area', style: TextStyle(fontSize: 16),),
           leading: BackButton(
             onPressed: () => Navigator.pushReplacement(
                 context,
@@ -63,12 +64,16 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
+                Image.asset('assets/icons/icon_waiter.png', height: 80, width: 80,),
+                const SizedBox(height: 16),
                 const Text(
                   'Add new waiter data',
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Colors.deepPurple,
-                      fontSize: 18),
+                      fontSize: 20,
+                    fontFamily: 'Lato'
+                  ),
                 ),
                 const SizedBox(height: 40),
                 Container(
@@ -82,7 +87,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.numbers),
                       hintText: 'Waiter ID',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade200),
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
                       suffixIcon: InkWell(
                         onTap: () {
                           idController.clear();
@@ -106,7 +111,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.person),
                       hintText: 'Waiter name',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade200),
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
                       suffixIcon: InkWell(
                         onTap: () {
                           nameController.clear();
@@ -131,7 +136,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.phone_android),
                       hintText: 'Phone number',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade200),
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
                       suffixIcon: InkWell(
                         onTap: () {
                           phoneController.clear();
@@ -156,7 +161,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.mail_outline),
                       hintText: 'Email Address',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade200),
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
                       suffixIcon: InkWell(
                         onTap: () {
                           emailController.clear();
@@ -181,7 +186,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       prefixIcon: const Icon(Icons.web),
                       hintText: 'National id number',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade200),
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
                       suffixIcon: InkWell(
                         onTap: () {
                           nidController.clear();
@@ -208,7 +213,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       hintText: 'Details Address',
                       labelText: 'Address',
                       isDense: true,
-                      hintStyle: TextStyle(color: Colors.blue.shade200),
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
                       suffixIcon: InkWell(
                         onTap: () {
                           addressController.clear();
@@ -226,12 +231,13 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                   msg,
                   style: const TextStyle(color: Colors.red),
                 ),
-                const SizedBox(height: 4),
+                // const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       child: MaterialButton(
+                        height: 50,
                         color: const Color(AppColor.box4),
                         onPressed: () {
                           idController.clear();
@@ -250,6 +256,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: MaterialButton(
+                        height: 50,
                         color: const Color(AppColor.box5),
                         onPressed: () async {
                           if (idController.text.isEmpty) {

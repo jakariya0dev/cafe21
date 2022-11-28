@@ -50,6 +50,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       },
       child: Scaffold(
         appBar: AppBar(
+          title: const Text('Admin area', style: TextStyle(fontSize: 16),),
           leading: BackButton(
             onPressed: () => Navigator.pushReplacement(
                 context,
@@ -65,30 +66,45 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
+              Image.asset('assets/icons/icon_food.png', height: 80, width: 80,),
+              const SizedBox(height: 16),
               const Text(
-                'Add new category name',
+                'Add new food category',
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.purple),
               ),
               const SizedBox(height: 50),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                    hintText: 'Enter category name',
-                    hintStyle: TextStyle(color: Colors.grey.shade500),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        nameController.clear();
-                      },
-                    )),
+              Container(padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Category Name', style: TextStyle(fontSize: 14, fontFamily: 'Lato'),),
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                          hintText: 'Enter category name',
+                          hintStyle: TextStyle(color: Colors.grey.shade500),
+                          border: InputBorder.none,
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              nameController.clear();
+                            },
+                          )),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
               MaterialButton(
                 minWidth: w,
-                height: 40,
+                height: 50,
                 color: Colors.purple,
                 onPressed: saveCategoryName,
                 child: const Text(

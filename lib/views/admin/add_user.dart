@@ -54,10 +54,7 @@ class _AddUserState extends State<AddUser> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Add new user',
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-          ),
+          title: const Text('Admin area', style: TextStyle(fontSize: 16),),
         ),
         body: Container(
           padding: const EdgeInsets.all(20),
@@ -66,6 +63,8 @@ class _AddUserState extends State<AddUser> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Image.asset('assets/icons/user_profile.png', height: 80, width: 80,),
+                  SizedBox(height: containerGap),
                   const Text(
                     'Fill New User Data',
                     style: TextStyle(
