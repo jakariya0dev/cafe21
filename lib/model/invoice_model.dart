@@ -1,4 +1,10 @@
 
+/*
+  *   Subtotal = 440  (adding all product)
+  *   Total = 420 (after total discount)
+  *   NetBill = 430 (after adding tax)
+  * */
+
 class InvoiceModel{
 
    final String invoiceId, customer, phone, address, discount, tax, waiterId, table;

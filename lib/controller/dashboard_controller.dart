@@ -1,4 +1,5 @@
 import 'package:cafe21/cons/app_config.dart';
+import 'package:cafe21/cons/const.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/model/data.dart';
@@ -12,6 +13,8 @@ class DashboardController{
   static double totalTax = 0;
   static double totalWithTax = 0;
   static double totalWithoutTax = 0;
+  static double totalDue = 0;
+  static List unpaidInvoice = [];
 
   // for calculating most selling things and waiter
   static Map <String, int> countMostSellingFood = {};
@@ -268,6 +271,15 @@ class DashboardController{
     countMostServingPerson = Map.fromEntries(
         countMostServingPersonBeforeSort.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)));
 
+  }
+
+  calculateUnPaidInvoice(){
+
+    unpaidInvoice.clear();
+    unpaidInvoice = allSellsDataFiltered.where((e) => e.paymentMethod == paymentMethodList[3]).toList();
+    for(var item in unpaidInvoice){
+      totalDue += double.parse(item.netBill);
+    }
   }
 
 }

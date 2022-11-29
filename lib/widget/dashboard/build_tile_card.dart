@@ -20,7 +20,13 @@ class BuildTitleCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           height: width * 0.4,
           width: width,
-          decoration: const BoxDecoration(color: Color(0xff7c79ea)),
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(colors: [
+               Color(0xff0f79ff),
+               Color(0xff7c79ea),
+
+              ]),
+              ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -32,7 +38,7 @@ class BuildTitleCard extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                        color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
+                        color: Colors.white, fontSize: 20, fontFamily: 'Lato', fontWeight: FontWeight.w500),
                   ),
                   Row(
                     children: [
@@ -42,14 +48,14 @@ class BuildTitleCard extends StatelessWidget {
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4)),
-                        child: const Text('Sells'),
+                        child: const Text('Total'),
                       ),
                       Text(
                         '\$${value.toStringAsFixed(2)}',
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
-                            fontWeight: FontWeight.w500),
+                            fontWeight: FontWeight.w600, letterSpacing: 0.75),
                       )
                     ],
                   ),

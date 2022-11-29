@@ -21,13 +21,6 @@ class InvoicePrint extends StatefulWidget {
 
 class _InvoicePrintState extends State<InvoicePrint> {
 
-  /*
-  *   Subtotal = 440  (adding all product)
-  *   Total = 420 (after total discount)
-  *   NetBill = 430 (after adding tax)
-  * */
-
-
   late String addedTax;
   String? selectDeviceName = 'Select Device';
 

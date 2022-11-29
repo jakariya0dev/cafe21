@@ -1,5 +1,4 @@
 import 'package:cafe21/cons/app_color.dart';
-import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/widget/dashboard/bottom_nav.dart';
 import 'package:cafe21/widget/dashboard/build_box_content.dart';
@@ -48,7 +47,7 @@ class _DashBoardState extends State<DashBoard> {
       await DashboardController().getAllWaiter();
     }
 
-
+    await DashboardController().calculateUnPaidInvoice();
     await DashboardController().getCafeDetails();
 
     // user role remember
@@ -113,16 +112,36 @@ class _DashBoardState extends State<DashBoard> {
                       BuildBoxContent(
                         title: 'Without Tax',
                         value: DashboardController.totalWithoutTax.toStringAsFixed(1),
-                        color: AppColor.boxOne,
+                        color: AppColor.box5,
                         isLoading: isDataLoading,
                       ),
                       BuildBoxContent(
                         title: 'Tax Collection',
                         value: (DashboardController.totalWithTax-DashboardController.totalWithoutTax).toStringAsFixed(2),
-                        color: AppColor.boxTwo,
+                        color: AppColor.box4,
                         isLoading: isDataLoading,
                       ),
-                      // BuildBoxContent(title: 'Tax Collection', value: '100', color: AppColor.boxThree,),
+                      // const BuildBoxContent(title: 'Tax Collection', value: '100', color: AppColor.boxThree, isLoading: true),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 120,
+                  child: Row(
+                    children: [
+                      BuildBoxContent(
+                        title: 'unpaid invoice',
+                        value: DashboardController.unpaidInvoice.length.toString(),
+                        color: AppColor.box7,
+                        isLoading: isDataLoading,
+                      ),
+                      BuildBoxContent(
+                        title: 'payment due',
+                        value: DashboardController.totalDue.toStringAsFixed(2),
+                        color: AppColor.box6,
+                        isLoading: isDataLoading,
+                      ),
+                      // const BuildBoxContent(title: 'Tax Collection', value: '100', color: AppColor.boxThree, isLoading: true),
                     ],
                   ),
                 ),
@@ -140,13 +159,13 @@ class _DashBoardState extends State<DashBoard> {
                       BuildBoxContent(
                         title: 'total Food',
                         value: '${allFoodsData.length}',
-                        color: AppColor.box4,
+                        color: AppColor.boxThree,
                         isLoading: isDataLoading,
                       ),
                       BuildBoxContent(
                         title: 'total Category',
                         value: '${allCategoryData.length}',
-                        color: AppColor.box5,
+                        color: AppColor.boxOne,
                         isLoading: isDataLoading,
                       ),
                       // BuildBoxContent(title: 'Tax Collection', value: '100', color: AppColor.boxThree,),
