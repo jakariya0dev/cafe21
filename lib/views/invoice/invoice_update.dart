@@ -82,7 +82,6 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         taxController = TextEditingController(text: widget.invoiceData.tax);
         tableController = TextEditingController(text: widget.invoiceData.table);
 
-        selectedWaiterName = widget.invoiceData.waiterName;
         selectedWaiterId = widget.invoiceData.waiterId;
         selectedPaymentMethod = widget.invoiceData.paymentMethod;
         orderedItemList = widget.invoiceData.orders;

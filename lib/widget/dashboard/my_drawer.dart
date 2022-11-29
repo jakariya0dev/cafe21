@@ -77,8 +77,10 @@ class MyDrawer extends StatelessWidget {
                 ),
                 InkWell(
                   onTap: () {
-                    if(userRoleData == UserRole.admin.toString()){
+                    print(userRoleData);
+                    print(UserRole.admin);
 
+                    if(userRoleData == UserRole.admin.name){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(index: 0),));
                     }
                     else{

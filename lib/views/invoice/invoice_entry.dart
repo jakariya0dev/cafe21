@@ -268,7 +268,6 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
           discount: discountController.text,
           discountType: totalDiscountType,
           tax: taxController.text,
-          waiterName: selectedWaiterName,
           waiterId: selectedWaiterId,
           table: tableController.text,
           dateTime: dated,
@@ -292,6 +291,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
             builder: (context) => InvoicePrint(
                 invoiceData: iv[0]),
           ));
+
     }
 
   }
@@ -398,7 +398,6 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
   }
 
   Container buildFinanceSection() {
-
     return Container(
         width: width,
         padding: const EdgeInsets.all(16),
@@ -488,11 +487,12 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                     onTap: () {},
                     items: allWaiterData
                         .map((e) =>
-                        DropdownMenuItem(value: e['id']+'. '+e['name'], child: Text(e['id']+'. '+e['name'].toString())))
+                        DropdownMenuItem(
+                            value: e['name'],
+                            child: Text(e['name'].toString())))
                         .toList(),
                     onChanged: (value) {
-                      selectedWaiterId = value.toString().substring(0, 3);
-                      selectedWaiterName = value.toString().substring(5);
+                      selectedWaiterId = value.toString();
                       isWaiterSelected = true;
                       setState(() {});
                     },

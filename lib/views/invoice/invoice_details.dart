@@ -103,7 +103,6 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                     id: widget.invoiceData.invoiceId,
                     name: widget.invoiceData.customer,
                     phone: widget.invoiceData.phone,
-                    waiterName: widget.invoiceData.waiterName,
                     waiterId: widget.invoiceData.waiterId,
                     paymentMethod: widget.invoiceData.paymentMethod,
                     date: DateFormat.yMMMd()
@@ -113,7 +112,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                     totalAmount: widget.invoiceData.subTotal,
                     totalAmountAfterDiscount: widget.invoiceData.total,
                     netAmount: widget.invoiceData.netBill,
-                    address: widget.invoiceData.address),
+                    address: widget.invoiceData.address,),
                 const SizedBox(height: 16),
                 _BuildBoxRow(
                     discount: widget.invoiceData.discount,
@@ -227,7 +226,6 @@ class _BuildNameContainer extends StatelessWidget {
     required this.totalAmountAfterDiscount,
     required this.netAmount,
     required this.address,
-    required this.waiterName,
     required this.waiterId,
   }) : super(key: key);
 
@@ -237,7 +235,6 @@ class _BuildNameContainer extends StatelessWidget {
       paymentMethod,
       date,
       address,
-      waiterName,
       waiterId;
   final String totalAmount, totalAmountAfterDiscount, netAmount;
 
@@ -350,7 +347,7 @@ class _BuildNameContainer extends StatelessWidget {
                       width: 4,
                     ),
                     Text(
-                      waiterName,
+                      waiterId,
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),

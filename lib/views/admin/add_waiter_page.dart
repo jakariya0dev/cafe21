@@ -3,7 +3,6 @@ import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
-import 'package:cafe21/model/data.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/views/admin/admin_dashboard.dart';
@@ -17,23 +16,15 @@ class AddWaiterPage extends StatefulWidget {
 }
 
 class _AddWaiterPageState extends State<AddWaiterPage> {
-  TextEditingController idController = TextEditingController();
+  // TextEditingController idController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController nidController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   double containerHeight = 40;
-  String msg = '';
+  String errorMsg = '';
 
-  getData() async {
-    allWaiterData.clear();
-    // allFoodsData.clear();
-    // allCategoryData.clear();
-    // await dashboardController.getAllFoodCategory();
-    // await dashboardController.getAllFood();
-    await DashboardController().getAllWaiter();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,21 +62,35 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Colors.deepPurple,
-                      fontSize: 20,
+                      fontSize: 18,
                     fontFamily: 'Lato'
                   ),
                 ),
-                const SizedBox(height: 40),
-                Container(
+                const SizedBox(height: 16),
+                Text(
+                  errorMsg,
+                  style: const TextStyle(color: Colors.red),
+                ),
+                const SizedBox(height: 16),
+               /* Container(
                   margin: const EdgeInsets.only(bottom: 6),
                   height: containerHeight,
                   child: TextField(
                     controller: idController,
                     keyboardType: TextInputType.number,
                     style: TextStyle(color: Colors.deepPurple.shade900),
+                    onChanged: (value) {
+                      if(value.length>3){
+                        errorMsg = 'Waiter id should unique and only 3 digit';
+                        setState(() {});
+                      }else{
+                        errorMsg = '';
+                        setState(() {});
+                      }
+                    },
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.numbers),
-                      hintText: 'Waiter ID',
+                      hintText: 'Unique Waiter ID',
                       isDense: true,
                       hintStyle: TextStyle(color: Colors.grey.shade400),
                       suffixIcon: InkWell(
@@ -100,7 +105,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       ),
                     ),
                   ),
-                ),
+                ),*/
                 Container(
                   margin: const EdgeInsets.only(bottom: 16),
                   height: containerHeight,
@@ -227,10 +232,6 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                     ),
                   ),
                 ),
-                Text(
-                  msg,
-                  style: const TextStyle(color: Colors.red),
-                ),
                 // const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -240,12 +241,14 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                         height: 50,
                         color: const Color(AppColor.box4),
                         onPressed: () {
-                          idController.clear();
+                          // idController.clear();
                           nameController.clear();
                           phoneController.clear();
                           nidController.clear();
                           emailController.clear();
                           addressController.clear();
+                          errorMsg = '';
+                          setState(() {});
                         },
                         child: const Text(
                           'CLEAR ALL',
@@ -258,55 +261,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                       child: MaterialButton(
                         height: 50,
                         color: const Color(AppColor.box5),
-                        onPressed: () async {
-                          if (idController.text.isEmpty) {
-                            msg = 'Error: Enter waiter id!';
-                            setState(() {});
-                          } else if (nameController.text.isEmpty) {
-                            msg = 'Error: Name is empty!';
-                            setState(() {});
-                          } else if (phoneController.text.isEmpty) {
-                            msg = 'Error: Enter phone number!';
-                            setState(() {});
-                          } else if (emailController.text.isEmpty) {
-                            msg = 'Error: Email is empty!';
-                            setState(() {});
-                          } else if (nidController.text.isEmpty) {
-                            msg = 'Error: Enter nid number!';
-                            setState(() {});
-                          } else if (addressController.text.isEmpty) {
-                            msg = 'Error: Address is Empty!';
-                            setState(() {});
-                          } else if (connectivityResult !=
-                                  ConnectivityResult.mobile &&
-                              connectivityResult != ConnectivityResult.wifi) {
-                            CommonFunction().showSnackBar(
-                                'No internet!\nCheck internet connection',
-                                context);
-                          } else {
-                            bool isSuccessful = await AdminDashboardController()
-                                .addNewWaiterData({
-                              'id': idController.text,
-                              'name': nameController.text,
-                              'phone': phoneController.text,
-                              'email': emailController.text,
-                              'nid': nidController.text,
-                              'address': addressController.text,
-                              'image': '',
-                            });
-                            if (isSuccessful) {
-                              idController.clear();
-                              nameController.clear();
-                              phoneController.clear();
-                              nidController.clear();
-                              emailController.clear();
-                              addressController.clear();
-                              getData();
-                              CommonFunction()
-                                  .showSnackBar('Successfully Saved', context);
-                            }
-                          }
-                        },
+                        onPressed: saveNewWaiterData,
                         child: const Text(
                           'SAVE DATA',
                           style: TextStyle(color: Colors.white),
@@ -321,5 +276,84 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
         ),
       ),
     );
+  }
+
+  saveNewWaiterData() async {
+
+    bool isWaiterEmailValid = CommonFunction.emailValidator(emailController.text);
+
+/*    if (idController.text.isEmpty) {
+      errorMsg = 'Error: Enter waiter id!';
+      setState(() {});
+    }
+    else if(idController.text.length>3){
+      errorMsg = 'Error: Waiter id should unique and only 3 digit';
+      setState(() {});
+    }
+    else if(allWaiterData.contains((e) => e.containsValue(emailController.text))){
+      errorMsg = 'Error: Waiter id already used';
+      setState(() {});
+    }*/
+
+    if (nameController.text.isEmpty) {
+      errorMsg = 'Error: Name is empty!';
+      setState(() {});
+    }
+    else if (phoneController.text.isEmpty) {
+      errorMsg = 'Error: Enter phone number!';
+      setState(() {});
+    }
+    else if (emailController.text.isEmpty) {
+      errorMsg = 'Error: Email is empty!';
+      setState(() {});
+    }
+    else if (!isWaiterEmailValid){
+      errorMsg = 'Error: Waiter email not valid';
+      setState(() {});
+    }
+    else if (nidController.text.isEmpty) {
+      errorMsg = 'Error: Enter nid number!';
+      setState(() {});
+    }
+    else if (addressController.text.isEmpty) {
+      errorMsg = 'Error: Address is Empty!';
+      setState(() {});
+    }
+    else if (connectivityResult != ConnectivityResult.mobile &&
+        connectivityResult != ConnectivityResult.wifi) {
+      CommonFunction().showSnackBar(
+          'No internet!\nCheck internet connection',
+          context);
+    }
+    else {
+
+      CommonFunction().showWarningDialog('Savin Data...', context);
+      bool isSuccessful = await AdminDashboardController()
+          .addNewWaiterData({
+        // 'id': idController.text,
+        'name': nameController.text,
+        'phone': phoneController.text,
+        'email': emailController.text,
+        'nid': nidController.text,
+        'address': addressController.text,
+        'image': '',
+      });
+      if (isSuccessful) {
+        // idController.clear();
+        nameController.clear();
+        phoneController.clear();
+        nidController.clear();
+        emailController.clear();
+        addressController.clear();
+        errorMsg = '';
+        Navigator.pop(context);
+        setState(() {});
+        await DashboardController().getAllWaiter();
+        CommonFunction()
+            .showSnackBar('Successfully Saved', context);
+      }else{
+        Navigator.pop(context);
+      }
+    }
   }
 }

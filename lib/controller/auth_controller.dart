@@ -54,7 +54,6 @@ class AuthController{
     return isSuccessful;
   }
 
-
   /*
   * Intentionally we didn't direct update here
   * First we add new doc and then delete old one
@@ -219,7 +218,7 @@ class AuthController{
     await auth.sendPasswordResetEmail(email: email).whenComplete((){
       CommonFunction().showSnackBar('Check your mail for reset password', context);
     }).onError((error, stackTrace){
-      // print(error);
+      CommonFunction().showSnackBar(error, context);
     });
   }
 }

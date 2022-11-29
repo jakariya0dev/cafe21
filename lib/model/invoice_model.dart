@@ -1,7 +1,7 @@
 
 class InvoiceModel{
 
-   final String invoiceId, customer, phone, address, discount, tax, waiterName, waiterId, table;
+   final String invoiceId, customer, phone, address, discount, tax, waiterId, table;
    final String discountType, paymentMethod, subTotal, total, netBill;
    final String? biller;
    final dateTime;
@@ -15,7 +15,6 @@ class InvoiceModel{
     required this.discount,
     required this.discountType,
     required this.tax,
-    required this.waiterName,
     required this.waiterId,
     required this.table,
     required this.dateTime,

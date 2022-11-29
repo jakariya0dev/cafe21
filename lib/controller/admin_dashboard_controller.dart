@@ -53,7 +53,7 @@ class AdminDashboardController {
     late bool isSuccessful;
     await db
         .collection('waiter-list')
-        .doc(waiterData['phone'])
+        .doc()
         .set(waiterData).then((value) => isSuccessful = true, onError: (e){
           // print(e);
           return isSuccessful = false;

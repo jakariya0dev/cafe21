@@ -65,7 +65,6 @@ class InvoiceController{
       'discount' : invoice.discount,
       'discountType' : invoice.discountType,
       'tax' : invoice.tax,
-      'waiterName' : invoice.waiterName,
       'waiterId' : invoice.waiterId,
       'table' : invoice.table,
       'dateTime' : invoice.dateTime,

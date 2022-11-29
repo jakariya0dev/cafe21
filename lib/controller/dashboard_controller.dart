@@ -27,7 +27,6 @@ class DashboardController{
             phone: element['phone'],
             discount: element['discount'],
             tax: element['tax'],
-            waiterName: element['waiterName'],
             waiterId: element['waiterId'],
             table: element['table'],
             dateTime: element['dateTime'],
@@ -85,8 +84,7 @@ class DashboardController{
 
       for(var item in value.docs){
         allWaiterData.add({
-          'docId' : item.id,
-          'id' : item['id'],
+          'id' : item.id,
           'name' : item['name'],
           'phone' : item['phone'],
           'email' : item['email'],
@@ -238,7 +236,7 @@ class DashboardController{
   calculateMostSells(){
 
     List totalFoodIdFromInvoice = [];
-    List totalWaiterNameFromInvoice = [];
+    List totalWaiterIdFromInvoice = [];
 
     Map <String, int> countMostSellingFoodBeforeSort = {};
     Map <String, int> countMostServingPersonBeforeSort = {};
@@ -246,7 +244,7 @@ class DashboardController{
     // getting all food id and waiter name from invoices
     for (var invoice in allSellsData) {
 
-      totalWaiterNameFromInvoice.add(invoice.waiterName);
+      totalWaiterIdFromInvoice.add(invoice.waiterId);
 
       for(var item in invoice.orders){
         totalFoodIdFromInvoice.add(item['id']);
@@ -260,7 +258,7 @@ class DashboardController{
     }
 
     // SUM of waiter orders
-    for (var waiterName in totalWaiterNameFromInvoice){
+    for (var waiterName in totalWaiterIdFromInvoice){
       countMostServingPersonBeforeSort[waiterName] = (countMostServingPersonBeforeSort[waiterName] ?? 0) + 1;
     }
 

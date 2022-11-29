@@ -33,7 +33,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
               itemCount: allWaiterData.length,
               itemBuilder: (context, index) {
 
-                List itemes = allSellsData.where((e) => e.waiterId == allWaiterData[index]['id']).toList();
+                List items = allSellsData.where((e) => e.waiterId == allWaiterData[index]['id']).toList();
                 return ListTile(
                   isThreeLine: false,
                   shape:
@@ -50,13 +50,13 @@ class _WaiterListPageState extends State<WaiterListPage> {
                     backgroundColor: Colors.blue,
                     child: Text((index + 1).toString(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                   ),
-                  title: Text('Name: ${allWaiterData[index]['name']}'),
+                  title: Text('Name: ${allWaiterData[index]['name']}', style: const TextStyle(fontSize: 15, fontFamily: 'Lato'),),
                   subtitle: Text('Phone: ${allWaiterData[index]['phone']}'),
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        itemes.length.toString(),
+                        items.length.toString(),
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -111,6 +111,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
               scrollable: true,
               title: const Text(
                 'Add waiter data',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                     fontWeight: FontWeight.w500, color: Colors.deepPurple),
               ),
@@ -271,16 +272,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
               alignment: Alignment.center,
               actionsAlignment: MainAxisAlignment.center,
               actions: [
-                MaterialButton(
-                  color: const Color(AppColor.box4),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    'CANCEL',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+
                 MaterialButton(
                   color: const Color(AppColor.box5),
                   onPressed: () async {
@@ -334,10 +326,21 @@ class _WaiterListPageState extends State<WaiterListPage> {
                     }
                   },
                   child: const Text(
-                    'OK',
+                    'UPDATE',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
+                MaterialButton(
+                  color: const Color(AppColor.box4),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+
               ],
             );
           },
@@ -345,7 +348,6 @@ class _WaiterListPageState extends State<WaiterListPage> {
       },
     );
   }
-
   deleteWaiter(index) {
     showDialog(
       context: context,

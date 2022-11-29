@@ -111,7 +111,7 @@ class _ProductListPageState extends State<ProductListPage> {
                           foodListCategoryWise[index]['name'],
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 16, color: Color(AppColor.darkBlue)),
+                              fontWeight: FontWeight.w500, fontSize: 15, fontFamily: 'Lato', color: Color(AppColor.darkBlue)),
                         ),
                         // subtitle: Text(categoryName[0]
                         //         [CategoryListKey.name.name]

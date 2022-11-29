@@ -83,7 +83,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           currentIndex: bottomNavIndex,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.deepPurple.shade900,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           unselectedItemColor: Colors.deepPurple,
           unselectedLabelStyle: const TextStyle(color: Colors.deepPurple),
           elevation: 8,

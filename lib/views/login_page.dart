@@ -242,9 +242,11 @@ class _LoginPageState extends State<LoginPage> {
 
   loginToAccount() async {
 
-    bool emailValid = RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(emailController.text);
+    bool emailValid = CommonFunction.emailValidator(emailController.text);
+
+    // bool emailValid = RegExp(
+    //         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+    //     .hasMatch(emailController.text);
 
     if (emailController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter your email', context);
@@ -303,9 +305,6 @@ class _LoginPageState extends State<LoginPage> {
 
       TextEditingController resetEmailController = TextEditingController();
       String errorText = '';
-      // bool resetEmailValid = RegExp(
-      //     r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-      //     .hasMatch(resetEmailController.text);
 
       showDialog(context: context, builder: (context) {
         return StatefulBuilder(builder: (context, setState) {
@@ -322,7 +321,7 @@ class _LoginPageState extends State<LoginPage> {
                   controller: resetEmailController,
                   decoration: InputDecoration(
                       errorText: errorText,
-                      hintText: 'abc@mail.com',
+                      hintText: 'admin@mail.com',
                       hintStyle: TextStyle(color: Colors.grey.shade300),
                       border: InputBorder.none,
                     filled: true,
