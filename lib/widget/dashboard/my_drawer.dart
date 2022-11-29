@@ -18,7 +18,7 @@ class MyDrawer extends StatelessWidget {
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text(userRoleData.toString()[0].toUpperCase()+userRoleData.toString().substring(1), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+            accountName: Text(userRoleData.toString()[0].toUpperCase()+userRoleData.toString().substring(1), style: const TextStyle(fontSize: 18, fontFamily: "Lato", fontWeight: FontWeight.w500),),
             accountEmail: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -77,8 +77,8 @@ class MyDrawer extends StatelessWidget {
                 ),
                 InkWell(
                   onTap: () {
-                    print(userRoleData);
-                    print(UserRole.admin);
+                    // print(userRoleData);
+                    // print(UserRole.admin);
 
                     if(userRoleData == UserRole.admin.name){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(index: 0),));
