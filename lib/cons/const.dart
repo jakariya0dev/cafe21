@@ -31,6 +31,9 @@ class Const {
   static const onBoarding3 = '';
   static const onBoarding4 = '';
   // <--- var for on boarding page ---> END
+
+  static TextStyle waiterEditDialogEditTextStyle= TextStyle(color: Colors.deepPurple.shade900, fontSize: 14);
+  static TextStyle errorMsgStyle = const TextStyle(fontSize: 15, color: Colors.red);
 }
 
 var dummyImage =

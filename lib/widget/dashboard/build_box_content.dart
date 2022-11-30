@@ -22,9 +22,9 @@ class BuildBoxContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              value.isEmpty ? '0.0' : value,
+              value.isEmpty ? '0.0' : value.padLeft(2, '0'),
               style: const TextStyle(
-                  fontSize: 28,
+                  fontSize: 25,
                   color: Colors.white,
                   fontWeight: FontWeight.normal),
             ),

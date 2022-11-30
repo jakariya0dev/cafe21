@@ -493,7 +493,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                         .toList(),
                     onChanged: (value) {
                       Map map = value as Map;
-                      selectedWaiterId = map['id'].toString();
+                      selectedWaiterId = map['docId'].toString();
                       selectedWaiterName = map['name'];
                       isWaiterSelected = true;
                       setState(() {});

@@ -7,6 +7,19 @@ String? userRoleData, userEmailData;
 
 List <InvoiceModel> allSellsData = [];
 List allFoodsData = [];
+
+/*
+
+allWaiterData = {
+          'docId' : item.id,
+          'name' : item['name'],
+          'phone' : item['phone'],
+          'email' : item['email'],
+          'nid' : item['nid'],
+          'address' : item['address'],
+          'image' : item['image']
+        }
+* */
 List allWaiterData = [];
 List allCategoryData = [];
 List allAppUserData = [];

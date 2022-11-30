@@ -1,3 +1,4 @@
+import 'package:cafe21/cons/const.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe21/cons/app_color.dart';
@@ -88,8 +89,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
   //  Waiter Data Manipulation
 
   editWaiter(index) {
-    TextEditingController idController =
-    TextEditingController(text: allWaiterData[index]['id']);
+
     TextEditingController nameController =
     TextEditingController(text: allWaiterData[index]['name']);
     TextEditingController phoneController =
@@ -100,6 +100,8 @@ class _WaiterListPageState extends State<WaiterListPage> {
     TextEditingController(text: allWaiterData[index]['email']);
     TextEditingController addressController =
     TextEditingController(text: allWaiterData[index]['address']);
+
+    String errorMsg = '';
 
     showDialog(
       context: context,
@@ -113,42 +115,20 @@ class _WaiterListPageState extends State<WaiterListPage> {
                 'Add waiter data',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontWeight: FontWeight.w500, color: Colors.deepPurple),
+                    fontWeight: FontWeight.w500, color: Colors.deepPurple, fontSize: 18, fontFamily: 'Lato'),
               ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 6),
-                      height: 28,
-                      child: TextField(
-                        controller: idController,
-                        style: TextStyle(color: Colors.deepPurple.shade900),
-                        decoration: InputDecoration(
-                          hintText: 'Waiter ID',
-                          prefix: const Text('ID: '),
-                          isDense: true,
-                          hintStyle: TextStyle(color: Colors.blue.shade300),
-                          suffixIcon: InkWell(
-                            onTap: () {
-                              idController.clear();
-                              setState(() {});
-                            },
-                            child: Icon(
-                              Icons.clear,
-                              color: Colors.blue.shade300,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    Text(errorMsg, style: Const.errorMsgStyle),
+                    const SizedBox(height: 8),
                     Container(
                       margin: const EdgeInsets.only(bottom: 16),
                       height: 28,
                       child: TextField(
                         controller: nameController,
-                        style: TextStyle(color: Colors.deepPurple.shade900),
+                        style: Const.waiterEditDialogEditTextStyle,
                         decoration: InputDecoration(
                           hintText: 'Waiter name',
                           prefix: const Text('Name: '),
@@ -173,7 +153,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
                       child: TextField(
                         controller: phoneController,
                         keyboardType: TextInputType.phone,
-                        style: TextStyle(color: Colors.deepPurple.shade900),
+                        style: Const.waiterEditDialogEditTextStyle,
                         decoration: InputDecoration(
                           hintText: 'Phone number',
                           prefix: const Text('Phone: '),
@@ -198,7 +178,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
                       child: TextField(
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
-                        style: TextStyle(color: Colors.deepPurple.shade900),
+                        style: Const.waiterEditDialogEditTextStyle,
                         decoration: InputDecoration(
                           hintText: 'Email Address',
                           prefix: const Text('Email: '),
@@ -223,7 +203,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
                       child: TextField(
                         controller: nidController,
                         keyboardType: TextInputType.number,
-                        style: TextStyle(color: Colors.deepPurple.shade900),
+                        style: Const.waiterEditDialogEditTextStyle,
                         decoration: InputDecoration(
                           hintText: 'National id number',
                           prefix: const Text('Nid: '),
@@ -244,14 +224,18 @@ class _WaiterListPageState extends State<WaiterListPage> {
                     ),
                     Container(
                       margin: const EdgeInsets.only(bottom: 16),
-                      height: 28,
+                      // height: 28,
                       child: TextField(
                         controller: addressController,
-                        style: TextStyle(color: Colors.deepPurple.shade900),
+                        style: Const.waiterEditDialogEditTextStyle,
+                        maxLines: 5,
+                        minLines: 3,
                         decoration: InputDecoration(
                           hintText: 'Details Address',
+                          label: const Text('Address:'),
                           isDense: true,
-                          prefix: const Text('Address: '),
+                          border: const OutlineInputBorder(),
+                          // prefix: const Text('Address: '),
                           hintStyle: TextStyle(color: Colors.blue.shade300),
                           suffixIcon: InkWell(
                             onTap: () {
@@ -276,28 +260,29 @@ class _WaiterListPageState extends State<WaiterListPage> {
                 MaterialButton(
                   color: const Color(AppColor.box5),
                   onPressed: () async {
-                    if(idController.text.isEmpty){
-                      CommonFunction().showSnackBar('Id can not be empty!', context);
-                    }
-                    else if(nameController.text.isEmpty){
-                      CommonFunction().showSnackBar('Name can not be empty!', context);
+                    if(nameController.text.isEmpty){
+                      errorMsg = 'Name can not be empty!';
+                      setState((){});
                     }
                     else if(phoneController.text.isEmpty){
-                      CommonFunction().showSnackBar('Phone can not be empty!', context);
+                      errorMsg = 'Phone number can not be empty!';
+                      setState((){});
                     }
                     else if(emailController.text.isEmpty){
-                      CommonFunction().showSnackBar('Email can not be empty!', context);
+                      errorMsg = 'Email can not be empty!';
+                      setState((){});
                     }
                     else if(nidController.text.isEmpty){
-                      CommonFunction().showSnackBar('NID can not be empty!', context);
+                      errorMsg = 'Nid can not be empty!';
+                      setState((){});
                     }
                     else if(addressController.text.isEmpty){
-                      CommonFunction().showSnackBar('Address can not be empty!', context);
-                    }else if(nidController.text.isEmpty){
-                      CommonFunction().showSnackBar('NID can not be empty!', context);
+                      errorMsg = 'Address can not be empty!';
+                      setState((){});
                     }
                     else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
-                      CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
+                      errorMsg = 'No internet!\nCheck internet connection';
+                      setState((){});
                     }
                     else{
                       Navigator.pop(context);
@@ -305,7 +290,6 @@ class _WaiterListPageState extends State<WaiterListPage> {
                       bool isSuccessful =
                       await AdminDashboardController().updateWaiterData({
                         'docId' : allWaiterData[index]['docId'],
-                        'id': idController.text,
                         'name': nameController.text,
                         'phone': phoneController.text,
                         'email': emailController.text,

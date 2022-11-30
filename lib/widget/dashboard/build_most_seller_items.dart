@@ -42,7 +42,7 @@ class BuildMostSellerList extends StatelessWidget {
                     children: [
                       Text('${index+1}. '),
                       Expanded(child: Text(waiter.isNotEmpty ? waiter[0]['name'] : 'Anonymous')),
-                      Text(items.values.elementAt(index).toString())
+                      Text(items.values.elementAt(index).toString().padLeft(2, '0'))
                     ],
                   ),
                 );

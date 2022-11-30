@@ -87,7 +87,7 @@ class DashboardController{
 
       for(var item in value.docs){
         allWaiterData.add({
-          'id' : item.id,
+          'docId' : item.id,
           'name' : item['name'],
           'phone' : item['phone'],
           'email' : item['email'],
@@ -282,7 +282,6 @@ class DashboardController{
       totalDue += double.parse(item.netBill);
     }
 
-    print(unpaidInvoice);
   }
 
 }

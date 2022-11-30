@@ -75,7 +75,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                        Text(
-                        items.length.toString(),
+                         items.length.toString().padLeft(2, '0'),
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,

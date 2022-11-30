@@ -48,6 +48,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
         (totalAmount * (int.parse(widget.invoiceData.discount) / 100));
     netBill = totalAmountAfterDiscount +
         (totalAmountAfterDiscount * (int.parse(widget.invoiceData.tax) / 100));
+
   }
 
   @override
@@ -241,7 +242,7 @@ class _BuildNameContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    List waiter = allWaiterData.where((e) => e['id'] == waiterId).toList();
+    List waiter = allWaiterData.where((e) => e['docId'] == waiterId).toList();
 
     return SizedBox(
       height: 230,

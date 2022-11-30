@@ -1,8 +1,7 @@
-import 'package:cafe21/controller/dashboard_controller.dart';
-import 'package:cafe21/model/data.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../cons/app_config.dart';
+import 'package:cafe21/cons/app_config.dart';
 
 
 class AdminDashboardController {
@@ -68,10 +67,9 @@ class AdminDashboardController {
   updateWaiterData(waiterList) async {
     late bool isSuccessful;
     await db
-        .collection('waiter-list')
+        .collection(AppConfig.waiterCollection)
         .doc(waiterList['docId'])
         .update({
-      'id': waiterList['id'],
       'name': waiterList['name'],
       'phone': waiterList['phone'],
       'email': waiterList['email'],

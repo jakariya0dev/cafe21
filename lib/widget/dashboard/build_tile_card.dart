@@ -51,7 +51,7 @@ class BuildTitleCard extends StatelessWidget {
                         child: const Text('Total'),
                       ),
                       Text(
-                        '\$${value.toStringAsFixed(2)}',
+                        '\$${value.toStringAsFixed(1)}',
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 25,

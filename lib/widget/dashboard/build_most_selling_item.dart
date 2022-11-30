@@ -41,7 +41,7 @@ class BuildMostSellingItem extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(child: foodName.isNotEmpty ? Text("${index+1}. ${foodName[0]['name']}") : Text("${index+1}. Anonymous")),
-                      Text(mostSellingItems.values.elementAt(index).toString())
+                      Text(mostSellingItems.values.elementAt(index).toString().padLeft(2, '0'))
                     ],
                   ),
                 );

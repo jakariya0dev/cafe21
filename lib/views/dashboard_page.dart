@@ -1,4 +1,5 @@
 import 'package:cafe21/cons/app_color.dart';
+import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/widget/dashboard/bottom_nav.dart';
 import 'package:cafe21/widget/dashboard/build_box_content.dart';
@@ -45,6 +46,9 @@ class _DashBoardState extends State<DashBoard> {
     }
     if(allWaiterData.isEmpty){
       await DashboardController().getAllWaiter();
+    }
+    if(allAppUserData.isEmpty){
+      await AuthController().getAppUserData();
     }
 
     await DashboardController().getCafeDetails();
@@ -118,7 +122,7 @@ class _DashBoardState extends State<DashBoard> {
                       ),
                       BuildBoxContent(
                         title: 'Tax Collection',
-                        value: (DashboardController.totalWithTax-DashboardController.totalWithoutTax).toStringAsFixed(2),
+                        value: (DashboardController.totalWithTax-DashboardController.totalWithoutTax).toStringAsFixed(1),
                         color: AppColor.box4,
                         isLoading: isDataLoading,
                       ),
@@ -138,7 +142,7 @@ class _DashBoardState extends State<DashBoard> {
                       ),
                       BuildBoxContent(
                         title: 'payment due',
-                        value: DashboardController.totalDue.toStringAsFixed(2),
+                        value: DashboardController.totalDue.toStringAsFixed(1),
                         color: AppColor.box6,
                         isLoading: isDataLoading,
                       ),

@@ -85,7 +85,7 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
         selectedWaiterId = widget.invoiceData.waiterId;
         selectedPaymentMethod = widget.invoiceData.paymentMethod;
-        print(widget.invoiceData.waiterId);
+
         List selectedWaiterData = allWaiterData.where((e) => e['id'] == widget.invoiceData.waiterId).toList();
         if(selectedWaiterData.isNotEmpty){
           selectedWaiterName = selectedWaiterData[0]['name'];
@@ -442,8 +442,8 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                     .toList(),
                 onChanged: (value) {
                   Map map = value as Map;
-                  selectedWaiterId = value['id'];
-                  selectedWaiterName = value['name'];
+                  selectedWaiterId = map['id'];
+                  selectedWaiterName = map['name'];
                   setState(() {});
                 },
               )
