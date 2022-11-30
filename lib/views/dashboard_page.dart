@@ -47,8 +47,8 @@ class _DashBoardState extends State<DashBoard> {
       await DashboardController().getAllWaiter();
     }
 
-    await DashboardController().calculateUnPaidInvoice();
     await DashboardController().getCafeDetails();
+
 
     // user role remember
     userRoleData = prefs?.getString(UserKey.role.name);
@@ -61,6 +61,7 @@ class _DashBoardState extends State<DashBoard> {
     DashboardController().getDailyData();
     DashboardController().calculationInvoiceData();
     DashboardController().calculateMostSells();
+    DashboardController().calculateUnPaidInvoice();
 
     // for stop loading indicator
     isDataLoading = false;

@@ -4,7 +4,6 @@ import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/controller/dashboard_controller.dart';
-import 'package:cafe21/main.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice/invoice_details.dart';
@@ -16,18 +15,20 @@ import 'package:cafe21/controller/invoice_controller.dart';
 import 'package:cafe21/views/dashboard_page.dart';
 
 class InvoiceList extends StatefulWidget {
+
   const InvoiceList({Key? key}) : super(key: key);
 
   @override
   State<InvoiceList> createState() => _InvoiceListState();
+
 }
 
 class _InvoiceListState extends State<InvoiceList> {
+
   List filteredInvoiceData = []; // all filtered data
   List invoiceData = []; // all data for ui rendering
-  List<String> buttonList = ['All', 'Paid', 'Unpaid'];
   String selectedButton = 'All';
-  String appbarTitle = 'All invoices';
+  late String appbarTitle;
   Widget bodyPlaceholder = const Text('No sells data available!');
 
   @override
@@ -40,10 +41,9 @@ class _InvoiceListState extends State<InvoiceList> {
   }
 
   getReadySellsData() async {
-    appbarTitle = 'all invoice';
+    appbarTitle = 'All invoice list';
     selectedButton = 'All';
-    filteredInvoiceData =
-        allSellsData; // so, first no filter assign all data here
+    filteredInvoiceData = allSellsData; // Filter data assign all data here
     invoiceData = filteredInvoiceData; // data assign for ui rendering
     setState(() {});
   }
@@ -108,7 +108,7 @@ class _InvoiceListState extends State<InvoiceList> {
                               onLongPress: (){
                                 if (prefs?.getString(UserKey.role.name) ==
                                     UserRole.admin.name) {
-                                  deleteInvoice(index);
+                                  invoiceDeleteConfirmDialog(index);
 
                                 } else {
                                   CommonFunction().showWarningDialog(
@@ -147,9 +147,7 @@ class _InvoiceListState extends State<InvoiceList> {
     );
   }
 
-  deleteInvoice(index) {
-
-    bodyPlaceholder = const CircularProgressIndicator();
+  invoiceDeleteConfirmDialog(index){
     showDialog(
       context: context,
       builder: (context) {
@@ -162,42 +160,9 @@ class _InvoiceListState extends State<InvoiceList> {
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             MaterialButton(
-              onPressed: () async {
-                if (connectivityResult == ConnectivityResult.mobile ||
-                    connectivityResult == ConnectivityResult.wifi) {
-                  String msg = await InvoiceController()
-                      .deleteInvoice(invoiceData[index].invoiceId);
-                  Navigator.pop(context);
-                  scaffoldMessengerKey.currentState
-                      ?.hideCurrentSnackBar(); // if previous snackBar available it will be dismiss
-                  allSellsData.clear(); // from data file
-                  await DashboardController().getAllSellsData();
-                  getReadySellsData();
-                  if (invoiceData.isEmpty) {
-                    bodyPlaceholder = const Text('No Sells Data Available');
-                  }
-                  SnackBar snackBar = SnackBar(
-                    backgroundColor: Colors.purple,
-                    content: Text(msg),
-                    action: SnackBarAction(
-                      label: 'OK',
-                      textColor: Colors.white,
-                      onPressed: () =>
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-                    ),
-                  );
-                  scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content:
-                    const Text('No internet!\nCheck internet connection'),
-                    action: SnackBarAction(
-                      label: 'close',
-                      onPressed: () =>
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-                    ),
-                  ));
-                }
+              onPressed: () {
+                Navigator.pop(context);
+                deleteInvoice(index);
               },
               color: const Color(AppColor.box5),
               child: const Text(
@@ -219,6 +184,32 @@ class _InvoiceListState extends State<InvoiceList> {
         );
       },
     );
+  }
+
+  deleteInvoice(index) async {
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+            CommonFunction().showLoadingIndicatorWithTitle(context: context, title: 'Invoice Deleting...');
+            bool isSuccessful = await InvoiceController()
+                .deleteInvoice(invoiceData[index].invoiceId);
+            if(isSuccessful){
+              allSellsData.clear(); // from data file
+              await DashboardController().getAllSellsData();
+              getReadySellsData();
+              Navigator.pop(context);
+              CommonFunction().showSnackBar('Successfully Deleted', context);
+            }
+            else{
+              Navigator.pop(context);
+              CommonFunction().showSnackBar('Failed to Delete', context);
+            }
+
+
+
+    } else {
+      CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
+
+    }
   }
 
   filterDataByDate() async {
@@ -276,6 +267,7 @@ class _InvoiceListState extends State<InvoiceList> {
 
     setState(() {});
   }
+
 }
 
 class BuildInvoiceListItem extends StatelessWidget {

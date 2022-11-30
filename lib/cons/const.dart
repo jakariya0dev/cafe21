@@ -9,6 +9,8 @@ List<String> paymentMethodList = [
   'Payment Due'
 ];
 
+List<String> buttonList = ['All', 'Paid', 'Unpaid'];
+
 class Const {
 
   static const double headerFontSize = 18;

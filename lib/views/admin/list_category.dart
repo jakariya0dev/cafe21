@@ -20,11 +20,11 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
 
   getData() async {
     allFoodsData.clear();
-    allWaiterData.clear();
+    // allWaiterData.clear();
     allCategoryData.clear();
     await dashboardController.getAllFoodCategory();
     await dashboardController.getAllFood();
-    await dashboardController.getAllWaiter();
+    // await dashboardController.getAllWaiter();
     setState(() {});
   }
 
@@ -38,6 +38,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       constraints: const BoxConstraints(),
       margin: const EdgeInsets.all(16),
@@ -224,18 +225,35 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                     connectivityResult != ConnectivityResult.wifi) {
                   CommonFunction().showSnackBar(
                       'No internet!\nCheck internet connection', context);
-                } else {
-                  bool isSuccessful =
-                      await AdminDashboardController().deleteCategory(id);
-                  if (isSuccessful) {
-                    Navigator.pop(context);
-                    allCategoryData.clear();
-                    getData();
-                    CommonFunction().showSnackBar('Successfully deleted',context);
-                  } else {
-                    Navigator.pop(context);
-                    CommonFunction().showSnackBar('Cant delete', context);
-                  }
+                }
+                else {
+
+                  // close warning dialog
+                  Navigator.pop(context);
+
+                  // show loading indicator
+                  CommonFunction().showLoadingIndicatorWithTitle(context: context, title: 'Deleting Data...');
+
+                  // calling for delete
+                  bool isSuccessful = await AdminDashboardController().deleteCategory(id);
+                    if (isSuccessful) {
+
+                      // Clear previous data & Getting new data after deleted
+                      await getData();
+
+                      // close loading indicator
+                      popContext();
+
+                      // show successful message
+                      showSnack();
+                    }
+                    else {
+                      // close loading indicator
+                      Navigator.pop(context);
+
+                      // show successful message
+                      CommonFunction().showSnackBar('Cant delete', context);
+                    }
                 }
               },
               color: const Color(AppColor.box5),
@@ -258,6 +276,14 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
         );
       },
     );
+  }
+
+  void popContext() {
+    Navigator.pop(context);
+  }
+
+  void showSnack() {
+    CommonFunction().showSnackBar('Successfully deleted',context);
   }
 
 }

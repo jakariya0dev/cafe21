@@ -18,7 +18,7 @@ class CommonFunction {
             title: const Text('Warning!'),
             content: Text(msg),
             actions: [
-              ElevatedButton(
+              TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },

@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 class DashboardController{
 
   FirebaseFirestore db = FirebaseFirestore.instance;
-  static String titleForData = 'Total Sells Data';
 
+  static String titleForData = 'Daily Sells Data';
   static double totalTax = 0;
   static double totalWithTax = 0;
   static double totalWithoutTax = 0;
@@ -273,13 +273,16 @@ class DashboardController{
 
   }
 
-  calculateUnPaidInvoice(){
+  calculateUnPaidInvoice() {
 
     unpaidInvoice.clear();
+    totalDue = 0;
     unpaidInvoice = allSellsDataFiltered.where((e) => e.paymentMethod == paymentMethodList[3]).toList();
     for(var item in unpaidInvoice){
       totalDue += double.parse(item.netBill);
     }
+
+    print(unpaidInvoice);
   }
 
 }

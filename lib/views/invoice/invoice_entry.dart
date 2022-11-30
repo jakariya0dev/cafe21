@@ -488,11 +488,13 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                     items: allWaiterData
                         .map((e) =>
                         DropdownMenuItem(
-                            value: e['name'],
+                            value: e,
                             child: Text(e['name'].toString())))
                         .toList(),
                     onChanged: (value) {
-                      selectedWaiterId = value.toString();
+                      Map map = value as Map;
+                      selectedWaiterId = map['id'].toString();
+                      selectedWaiterName = map['name'];
                       isWaiterSelected = true;
                       setState(() {});
                     },

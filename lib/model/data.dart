@@ -12,6 +12,8 @@ List allCategoryData = [];
 List allAppUserData = [];
 List allSellsDataFiltered = [];
 
+
+
 /*
 cafeDetails = {
   'cafe-name': '',

@@ -1,4 +1,8 @@
+import 'package:cafe21/controller/dashboard_controller.dart';
+import 'package:cafe21/model/data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../cons/app_config.dart';
 
 
 class AdminDashboardController {
@@ -130,7 +134,29 @@ class AdminDashboardController {
   }
 
   deleteCategory(id) async {
+
     late bool isSuccessful;
+    List docsIdBasedOnCategory = [];
+
+    /*
+    First getting all product doc
+    based on category id
+    which will be deleted
+    */
+
+    // First getting all doc of product based on category id
+    await db.collection(AppConfig.foodCollection).where('category', isEqualTo: id).get().then((value) {
+        for(DocumentSnapshot doc in value.docs){
+          docsIdBasedOnCategory.add(doc.id);
+        }
+    });
+
+    // delete all doc of product based on category id
+    for(String docId in docsIdBasedOnCategory){
+      await db.collection(AppConfig.foodCollection).doc(docId).delete();
+    }
+
+    // delete category doc
     await db
         .collection('category-list')
         .doc(id)
@@ -141,6 +167,7 @@ class AdminDashboardController {
     });
 
     return isSuccessful;
+
   }
 
   addTestCategoryName() async {

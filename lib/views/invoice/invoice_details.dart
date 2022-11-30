@@ -240,6 +240,9 @@ class _BuildNameContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    List waiter = allWaiterData.where((e) => e['id'] == waiterId).toList();
+
     return SizedBox(
       height: 230,
       child: Stack(
@@ -323,7 +326,7 @@ class _BuildNameContainer extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 3,
+                  height: 3
                 ),
                 Row(
                   children: [
@@ -337,17 +340,17 @@ class _BuildNameContainer extends StatelessWidget {
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
-                      width: 8,
+                      width: 8
                     ),
                     const Text(
                       'Served by',
                       style: Const.italicStyleSubHeading,
                     ),
                     const SizedBox(
-                      width: 4,
+                      width: 4
                     ),
                     Text(
-                      waiterId,
+                      waiter.isEmpty ? 'Anonymous' : waiter[0]['name'],
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),

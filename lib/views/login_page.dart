@@ -244,10 +244,6 @@ class _LoginPageState extends State<LoginPage> {
 
     bool emailValid = CommonFunction.emailValidator(emailController.text);
 
-    // bool emailValid = RegExp(
-    //         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-    //     .hasMatch(emailController.text);
-
     if (emailController.text.isEmpty) {
       CommonFunction().showSnackBar('Enter your email', context);
     }

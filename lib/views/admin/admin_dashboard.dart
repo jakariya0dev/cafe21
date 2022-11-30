@@ -2,14 +2,14 @@ import 'package:cafe21/cons/app_color.dart';
 import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:flutter/material.dart';
-import 'package:cafe21/views/admin/user_list.dart';
+import 'package:cafe21/views/admin/list_user.dart';
 import 'add_user.dart';
 import 'add_category_page.dart';
 import 'add_food_page.dart';
 import 'add_waiter_page.dart';
-import 'category_list_page.dart';
-import 'product_list_page.dart';
-import 'waiter_list_page.dart';
+import 'list_category.dart';
+import 'list_product.dart';
+import 'list_waiter.dart';
 import 'cafe_details.dart';
 
 class AdminDashboard extends StatefulWidget {

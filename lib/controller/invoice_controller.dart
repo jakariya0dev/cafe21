@@ -80,9 +80,9 @@ class InvoiceController{
   }
 
   deleteInvoice(invoiceId) async {
-    late String msg;
-    msg = await db.collection(AppConfig.invoiceCollection).doc(invoiceId).delete().then((value) => msg = 'Successfully Deleted!', onError: (e) => msg = 'Cant delete: $e');
-    return msg;
+    late bool isSuccessful;
+    await db.collection(AppConfig.invoiceCollection).doc(invoiceId).delete().then((value) => isSuccessful = true, onError: (e) => isSuccessful = false);
+    return isSuccessful;
   }
 
   updateInvoice({required String docId, required Map<String, dynamic> invoice, required context}){

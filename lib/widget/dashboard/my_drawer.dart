@@ -18,13 +18,16 @@ class MyDrawer extends StatelessWidget {
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text(userRoleData.toString()[0].toUpperCase()+userRoleData.toString().substring(1), style: const TextStyle(fontSize: 18, fontFamily: "Lato", fontWeight: FontWeight.w500),),
-            accountEmail: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            currentAccountPicture: CircleAvatar(
+              child: Text('${userRoleData.toString()[0].toUpperCase()}${userRoleData.toString().substring(1)}', style: const TextStyle(fontWeight: FontWeight.w500),),
+            ),
+            accountName: Text(cafeDetailsData['cafe-name'] ??'', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),),
+            accountEmail: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                const Text('mail:', style: TextStyle(fontWeight: FontWeight.w500),),
+                const SizedBox(width: 4),
                 Text(userEmailData ?? ''),
-                const SizedBox(height: 4),
-                Text(cafeDetailsData['cafe-name'] ??'', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),)
               ],
             ),
           ),

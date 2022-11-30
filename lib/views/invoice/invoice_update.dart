@@ -35,7 +35,8 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
 
   // for body drop down menu
-  late String selectedWaiterName, selectedWaiterId, selectedPaymentMethod;
+  late String selectedWaiterId, selectedPaymentMethod;
+  String selectedWaiterName = 'Anonymous';
 
   // FOR GENERAL USE
   dynamic height, width;
@@ -84,11 +85,22 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
 
         selectedWaiterId = widget.invoiceData.waiterId;
         selectedPaymentMethod = widget.invoiceData.paymentMethod;
+        print(widget.invoiceData.waiterId);
+        List selectedWaiterData = allWaiterData.where((e) => e['id'] == widget.invoiceData.waiterId).toList();
+        if(selectedWaiterData.isNotEmpty){
+          selectedWaiterName = selectedWaiterData[0]['name'];
+        }
+        else{
+          selectedWaiterName = 'Anonymous';
+        }
+
+
         orderedItemList = widget.invoiceData.orders;
 
         for(int i = 0; i < orderedItemList.length; i++){
           itemAddedInCartIdList.add(orderedItemList[i]['id']);
         }
+
 
         totalDiscountType = widget.invoiceData.discountType;
         totalDiscount =  widget.invoiceData.discount;
@@ -426,11 +438,12 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
                 onTap: () {},
                 items: allWaiterData
                     .map((e) =>
-                    DropdownMenuItem(value: e['id']+'. '+e['name'], child: Text(e['id']+'. '+e['name'].toString())))
+                    DropdownMenuItem(value: e, child: Text(e['name'].toString())))
                     .toList(),
                 onChanged: (value) {
-                  selectedWaiterId = value.toString().substring(0, 3);
-                  selectedWaiterName = value.toString().substring(5);
+                  Map map = value as Map;
+                  selectedWaiterId = value['id'];
+                  selectedWaiterName = value['name'];
                   setState(() {});
                 },
               )
@@ -819,7 +832,6 @@ class _InvoiceUpdate extends State<InvoiceUpdate> {
         'discount': discountController.text,
         'discountType': totalDiscountType,
         'tax': taxController.text,
-        'waiterName': selectedWaiterName,
         'waiterId': selectedWaiterId,
         'table': tableController.text,
         'dateTime': widget.invoiceData.dateTime,

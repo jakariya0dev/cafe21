@@ -54,13 +54,13 @@ class BuildTitleCard extends StatelessWidget {
                         '\$${value.toStringAsFixed(2)}',
                         style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600, letterSpacing: 0.75),
+                            fontSize: 25,
+                            fontWeight: FontWeight.w600, letterSpacing: 1),
                       )
                     ],
                   ),
                   Text(
-                    'Total No. invoice: ${allSellsDataFiltered.length}',
+                    'Total invoice No. 0${allSellsDataFiltered.length}',
                     style: const TextStyle(color: Colors.white),
                   )
                 ],
