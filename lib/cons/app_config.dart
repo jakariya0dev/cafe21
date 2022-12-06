@@ -1,8 +1,9 @@
 class AppConfig{
 
   // Restaurant profile
-  // static const String restaurantName = 'Chef De Cuisine';
-  // static const String restaurantCell = '01762940480';
+  static const String appName ='Cafe21';
+  static const String purchaseCode ='2#4#6#8#';
+
 
   /*
   * Database Name

@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "179382476765",
-    "project_id": "cafe-21",
-    "storage_bucket": "cafe-21.appspot.com"
+    "project_number": "26881882554",
+    "project_id": "ccr-ap",
+    "storage_bucket": "ccr-ap.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:179382476765:android:65332ae70e7b453b5fa034",
+        "mobilesdk_app_id": "1:26881882554:android:335362a8b16fb62a160583",
         "android_client_info": {
-          "package_name": "com.brainstorm21.cafe21"
+          "package_name": "com.mydomain.abc_cafe"
         }
       },
       "oauth_client": [
         {
-          "client_id": "179382476765-8cotaco5cm7tboej3m4gp2ie0ih37hs7.apps.googleusercontent.com",
+          "client_id": "26881882554-r4sipmlsjt6pv5n23cnv8q76plrsup8o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAmabeoCT8pUqn_qX4YhQzVIqBmsyvrziY"
+          "current_key": "AIzaSyCGveBfNp8IKq1bnUg7qVWhU1NjafLTurA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "179382476765-8cotaco5cm7tboej3m4gp2ie0ih37hs7.apps.googleusercontent.com",
+              "client_id": "26881882554-r4sipmlsjt6pv5n23cnv8q76plrsup8o.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

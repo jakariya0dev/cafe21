@@ -168,17 +168,25 @@ class AdminDashboardController {
 
   }
 
-  addTestCategoryName() async {
-    late bool isSuccessful;
-    await db
-        .collection('category-list')
-        .doc('test-category')
-        .set({'name': 'Test category'}).then((value) => isSuccessful = true, onError: (e) {
-      isSuccessful = false;
-      // print(e);
-    });
+  addTestData() async {
 
-    return isSuccessful;
+    await db
+        .collection(AppConfig.categoryCollection)
+        .doc('test-category')
+        .set({'name': 'Test category'});
+
+    await db
+        .collection(AppConfig.waiterCollection)
+        .doc('test-waiter')
+        .set({
+          'name' : 'Jack',
+          'phone' : '0123456789',
+          'email' : 'xyz@mail.com',
+          'nid' : '123456789',
+          'address' : 'CDC road',
+          'image' : ''
+        });
+
   }
 
 }

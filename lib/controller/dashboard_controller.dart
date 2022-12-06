@@ -81,9 +81,9 @@ class DashboardController{
 
   getAllWaiter() async {
 
-    await db.collection('waiter-list').get().then((value) {
+    allWaiterData.clear();
 
-      allWaiterData.clear();
+    await db.collection('waiter-list').get().then((value) {
 
       for(var item in value.docs){
         allWaiterData.add({

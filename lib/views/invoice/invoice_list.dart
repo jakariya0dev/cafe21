@@ -299,7 +299,7 @@ class BuildInvoiceListItem extends StatelessWidget {
           height: 65,
           margin: const EdgeInsets.only(left: 16, bottom: 4, top: 4),
           padding: const EdgeInsets.only(
-            left: 24,
+            left: 24
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(32),
@@ -322,11 +322,11 @@ class BuildInvoiceListItem extends StatelessWidget {
                       'id: ${invoiceData.invoiceId}',
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black54),
                     ),
                     const SizedBox(
-                      height: 2,
+                      height: 2
                     ),
                     Row(
                       children: [

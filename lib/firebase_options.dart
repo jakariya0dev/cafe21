@@ -17,15 +17,24 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,41 +52,11 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCvUL7niWCJ_SDCtjhKK9uo90MslC8VHa8',
-    appId: '1:179382476765:web:870beca3e79a9ad95fa034',
-    messagingSenderId: '179382476765',
-    projectId: 'cafe-21',
-    authDomain: 'cafe-21.firebaseapp.com',
-    storageBucket: 'cafe-21.appspot.com',
-    measurementId: 'G-WLC93DWKJ5',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAmabeoCT8pUqn_qX4YhQzVIqBmsyvrziY',
-    appId: '1:179382476765:android:65332ae70e7b453b5fa034',
-    messagingSenderId: '179382476765',
-    projectId: 'cafe-21',
-    storageBucket: 'cafe-21.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBHpf9uhCzVTc2Tp8B48BSMnh8jWplo1A4',
-    appId: '1:179382476765:ios:0d43f75a214689155fa034',
-    messagingSenderId: '179382476765',
-    projectId: 'cafe-21',
-    storageBucket: 'cafe-21.appspot.com',
-    iosClientId: '179382476765-pflr6ohecb9oa4gparpqou8up6plnt3e.apps.googleusercontent.com',
-    iosBundleId: 'com.example.cafe21',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBHpf9uhCzVTc2Tp8B48BSMnh8jWplo1A4',
-    appId: '1:179382476765:ios:0d43f75a214689155fa034',
-    messagingSenderId: '179382476765',
-    projectId: 'cafe-21',
-    storageBucket: 'cafe-21.appspot.com',
-    iosClientId: '179382476765-pflr6ohecb9oa4gparpqou8up6plnt3e.apps.googleusercontent.com',
-    iosBundleId: 'com.example.cafe21',
+    apiKey: 'AIzaSyCGveBfNp8IKq1bnUg7qVWhU1NjafLTurA',
+    appId: '1:26881882554:android:335362a8b16fb62a160583',
+    messagingSenderId: '26881882554',
+    projectId: 'ccr-ap',
+    storageBucket: 'ccr-ap.appspot.com',
   );
 }

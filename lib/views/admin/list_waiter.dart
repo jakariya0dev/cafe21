@@ -112,7 +112,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
               backgroundColor: AppColor.drawerListTileColor,
               scrollable: true,
               title: const Text(
-                'Add waiter data',
+                'Update waiter data',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontWeight: FontWeight.w500, color: Colors.deepPurple, fontSize: 18, fontFamily: 'Lato'),

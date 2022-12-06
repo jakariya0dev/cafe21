@@ -122,7 +122,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
             return AlertDialog(
               backgroundColor: AppColor.drawerListTileColor,
               title: const Text(
-                'Add waiter data',
+                'Update waiter data',
                 style: TextStyle(
                     fontWeight: FontWeight.w500, color: Colors.deepPurple),
               ),

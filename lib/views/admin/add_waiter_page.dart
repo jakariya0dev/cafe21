@@ -327,7 +327,7 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
     }
     else {
 
-      CommonFunction().showWarningDialog('Savin Data...', context);
+      CommonFunction().showLoadingIndicatorWithTitle(title: 'Savin Data...', context: context);
       bool isSuccessful = await AdminDashboardController()
           .addNewWaiterData({
         // 'id': idController.text,

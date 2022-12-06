@@ -356,8 +356,9 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
       );
 
       if(isSuccessful){
-          await AdminDashboardController().addTestCategoryName();
+
           await CafeDetailsController().setDeveloperDetails();
+          await AdminDashboardController().addTestData();
           Navigator.pop(context);
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard()));
       }

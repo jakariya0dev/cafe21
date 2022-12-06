@@ -700,7 +700,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
                                                   isDense: true,
                                                   suffix: InkWell(
                                                       onTap: () {
-                                                        if(itemDiscountType[index]=='%'){
+                                                        if(itemDiscountType[index]=='\$'){
                                                           itemDiscountType[index] = '\$';
                                                         }else{
                                                           itemDiscountType[index] = '%';

@@ -57,7 +57,7 @@ class AuthController{
   /*
   * Intentionally we didn't direct update here
   * First we add new doc and then delete old one
-  * this is why, we login user via doc name which is user email
+  * Because, we login user via doc name which is user email
   * */
 
   updateUser({required Map newUser, required String oldEmail}) async {
@@ -178,7 +178,7 @@ class AuthController{
   }
 
   saveCafeDetails(Map<String, dynamic> cafeDetails) async {
-    await db.collection('cafe-details').doc('admin').set(cafeDetails);
+    await db.collection(AppConfig.cafeDetails).doc('admin').set(cafeDetails);
     cafeDetailsData = cafeDetails;
   }
 
@@ -221,4 +221,5 @@ class AuthController{
       CommonFunction().showSnackBar(error, context);
     });
   }
+
 }
