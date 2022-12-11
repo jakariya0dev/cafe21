@@ -29,6 +29,9 @@ dependencies:
   flutter_svg: ^1.1.6
   flutter_launcher_icons:
   rename: ^2.0.1
+  get: ^4.6.5
+
+
 
 flutter_icons:
   image_path: "assets/icons/app_icon.png"

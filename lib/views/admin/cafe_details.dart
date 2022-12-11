@@ -38,11 +38,11 @@ class _CafeDetailsState extends State<CafeDetails> {
 
   @override
   initState() {
-    init();
+    _init();
     super.initState();
   }
 
-  init() async {
+  _init() async {
     await ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
@@ -142,7 +142,7 @@ class _CafeDetailsState extends State<CafeDetails> {
             ),
             SizedBox(height: containerGap),
             InkWell(
-              onTap: isEditable ? updateData : turnOnEditable,
+              onTap: isEditable ? _updateData : _turnOnEditable,
               child: Container(
                 width: double.maxFinite,
                 height: 50,
@@ -158,7 +158,7 @@ class _CafeDetailsState extends State<CafeDetails> {
             ),
             const SizedBox(height: 20),
             InkWell(
-                onTap: updateAdminEmail,
+                onTap: _updateAdminEmail,
                 child: const Text(
                   'Change Admin Email',
                   style: TextStyle(
@@ -166,7 +166,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                 )),
             SizedBox(height: containerGap),
             InkWell(
-                onTap: updateAdminPassword,
+                onTap: _updateAdminPassword,
                 child: const Text(
                   'Reset Admin Password',
                   style: TextStyle(
@@ -179,25 +179,25 @@ class _CafeDetailsState extends State<CafeDetails> {
     );
   }
 
-  turnOnEditable(){
+  _turnOnEditable(){
     isEditable = !isEditable;
     setState(() {});
   }
-  updateData() async {
+
+  _updateData() async {
 
     if (cafeNameController.text.isEmpty) {
-              CommonFunction().showSnackBar('Enter Cafe Name', context);
+              CommonFunction.showGetXSnackBar('Warning!', 'Enter Cafe Name');
             }
     else if (cafeAddressController.text.isEmpty) {
-              CommonFunction().showSnackBar('Enter Cafe Address', context);
+              CommonFunction.showGetXSnackBar('Warning!', 'Enter Cafe Address');
             }
     else if (cafePhoneController.text.isEmpty) {
-              CommonFunction().showSnackBar('Enter Cafe Phone', context);
+              CommonFunction.showGetXSnackBar('Warning!', 'Enter Cafe Phone');
             }
     else if (connectivityResult != ConnectivityResult.mobile &&
                 connectivityResult != ConnectivityResult.wifi) {
-              CommonFunction()
-                  .showSnackBar('No internet!\nCheck internet connection', context);
+              CommonFunction.showGetXSnackBar('No internet', 'Check internet connection');
             }
     else {
                   CommonFunction().showLoadingIndicatorWithTitle(
@@ -212,11 +212,11 @@ class _CafeDetailsState extends State<CafeDetails> {
                   if (isSuccessful) {
                     cafeDetailsData.clear();
                     DashboardController().getCafeDetails();
-                    Navigator.pop(context);
+                    _pop();
                     setState(() {});
-                    CommonFunction().showSnackBar('Successfully updated', context);
+                    CommonFunction.showGetXSnackBar('Message', 'Successfully updated');
                   } else {
-                    Navigator.pop(context);
+                    _pop();
                   }
             }
 
@@ -225,7 +225,7 @@ class _CafeDetailsState extends State<CafeDetails> {
 
   }
 
-  updateAdminEmail() {
+  _updateAdminEmail() {
     TextEditingController oldEmailController = TextEditingController();
     TextEditingController newEmailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
@@ -420,7 +420,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                         passwordController.clear();
 
                         Navigator.pop(context);
-                        showSnackbar('No internet connection');
+                        CommonFunction.showGetXSnackBar('No internet', 'Check internet connection');
                       }
                       else {
                         
@@ -432,10 +432,10 @@ class _CafeDetailsState extends State<CafeDetails> {
                             newEmail: newEmailController.text,
                             context: context);
                         if(isSuccessful){
-                          popContext();
-                          showSnackbar('Successfully updated');
+                          _pop();
+                          CommonFunction.showGetXSnackBar('Message!', 'Successfully updated');
                         }else{
-                          popContext();
+                          _pop();
                         }
                       }
                     },
@@ -458,7 +458,7 @@ class _CafeDetailsState extends State<CafeDetails> {
     );
   }
 
-  updateAdminPassword() {
+  _updateAdminPassword() {
     
     TextEditingController emailController = TextEditingController();
     TextEditingController oldPasswordController = TextEditingController();
@@ -643,7 +643,7 @@ class _CafeDetailsState extends State<CafeDetails> {
                       oldPasswordController.clear();
 
                       Navigator.pop(context);
-                      showSnackbar('No internet connection');
+                      CommonFunction.showGetXSnackBar('No internet', 'Check internet connection');
                     }
                     else {
 
@@ -655,10 +655,10 @@ class _CafeDetailsState extends State<CafeDetails> {
                           newPassword: newPasswordController.text.trim(),
                           context: context);
                       if(isSuccessful){
-                        popContext();
-                        showSnackbar('Successfully updated');
+                        _pop();
+                        CommonFunction.showGetXSnackBar('Message!', 'Successfully updated');
                       }else{
-                        popContext();
+                        _pop();
                       }
                     }
                   },
@@ -681,15 +681,12 @@ class _CafeDetailsState extends State<CafeDetails> {
 
   }
 
-  showSnackbar(String msg) {
-    CommonFunction().showSnackBar(msg, context);
-  }
 
   showLoadingIndicator(String msg) {
     CommonFunction().showLoadingIndicatorWithTitle(context: context, title: msg);
   }
-  
-  popContext(){
+
+  _pop() {
     Navigator.pop(context);
   }
 

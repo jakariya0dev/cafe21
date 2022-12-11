@@ -1,34 +1,122 @@
 {
   "project_info": {
-    "project_number": "26881882554",
-    "project_id": "ccr-ap",
-    "storage_bucket": "ccr-ap.appspot.com"
+    "project_number": "796323034333",
+    "firebase_url": "https://alpha-90050.firebaseio.com",
+    "project_id": "alpha-90050",
+    "storage_bucket": "alpha-90050.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:26881882554:android:335362a8b16fb62a160583",
+        "mobilesdk_app_id": "1:796323034333:android:0ef717f8a11a42f1f01734",
         "android_client_info": {
-          "package_name": "com.mydomain.abc_cafe"
+          "package_name": "com.brainstorm21.cafe21"
         }
       },
       "oauth_client": [
         {
-          "client_id": "26881882554-r4sipmlsjt6pv5n23cnv8q76plrsup8o.apps.googleusercontent.com",
+          "client_id": "796323034333-so337633hn9c8c39mbp3p6u2saur9anj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCGveBfNp8IKq1bnUg7qVWhU1NjafLTurA"
+          "current_key": "AIzaSyD2nhEeh4qmQDCzWiipWm5UgA5pbzTSSSo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "26881882554-r4sipmlsjt6pv5n23cnv8q76plrsup8o.apps.googleusercontent.com",
+              "client_id": "796323034333-7n7i51dvhgdu56a3fudat00luld3996e.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "796323034333-21jhkcf821o2s0b7sbn9vhkqchs4tt3j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cafe21"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796323034333:android:65350762acfb8ac5f01734",
+        "android_client_info": {
+          "package_name": "com.mydomain.abc_cafe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "796323034333-so337633hn9c8c39mbp3p6u2saur9anj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2nhEeh4qmQDCzWiipWm5UgA5pbzTSSSo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "796323034333-7n7i51dvhgdu56a3fudat00luld3996e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "796323034333-21jhkcf821o2s0b7sbn9vhkqchs4tt3j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cafe21"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796323034333:android:ef2131a1129ee5b6f01734",
+        "android_client_info": {
+          "package_name": "com.shineuplabs.colornotepad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "796323034333-98nmmqj2c8b12bp777umrf02jq66c2ds.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shineuplabs.colornotepad",
+            "certificate_hash": "e3bfa510b54fbe268d3ff1f25946d0cc77efc8c5"
+          }
+        },
+        {
+          "client_id": "796323034333-so337633hn9c8c39mbp3p6u2saur9anj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2nhEeh4qmQDCzWiipWm5UgA5pbzTSSSo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "796323034333-7n7i51dvhgdu56a3fudat00luld3996e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "796323034333-21jhkcf821o2s0b7sbn9vhkqchs4tt3j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cafe21"
+              }
             }
           ]
         }

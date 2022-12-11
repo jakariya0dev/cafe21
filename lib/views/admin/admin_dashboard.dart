@@ -32,22 +32,21 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   @override
   initState() {
-    init();
+    _init();
     super.initState();
   }
 
-  init() async {
+  _init() async {
     bottomNavIndex = widget.index;
     if(allAppUserData.isEmpty){
       await AuthController().getAppUserData();
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
 
-    setButtonText();
+    _setButtonText();
 
     return Scaffold(
       extendBody: true,
@@ -113,7 +112,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  void setButtonText() {
+  _setButtonText() {
     if(bottomNavIndex==0){
       addButtonText = 'Add product';
     }

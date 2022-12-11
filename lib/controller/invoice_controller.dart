@@ -94,7 +94,7 @@ class InvoiceController{
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
     }).onError((error, stackTrace){
       Navigator.pop(context);
-      CommonFunction().showSnackBar(error, context);
+      CommonFunction.showGetXSnackBar('Error!', error.toString());
     });
   }
 }

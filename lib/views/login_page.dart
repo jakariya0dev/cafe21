@@ -4,7 +4,7 @@ import 'package:cafe21/views/create_cafe_admin.dart';
 import 'package:cafe21/views/dashboard_page.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
@@ -17,10 +17,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   bool isLoginButtonPressed = false;
-  SharedPreferences? prefs;
+  // SharedPreferences? prefs;
 
   // String userRole = 'manager';
   bool isPasswordVisible = true;
@@ -28,11 +29,11 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   initState() {
-    init();
+    _init();
     super.initState();
   }
 
-  init() async {
+  _init() async {
     ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
@@ -185,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                                         color: Colors.white),
                                   )
                                 : TextButton(
-                                    onPressed: loginToAccount,
+                                    onPressed: _loginToAccount,
                                     child: const Text(
                                       'Log in',
                                       style: TextStyle(color: Colors.white),
@@ -212,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 10),
                     InkWell(
                       onTap: () {
-                        resetAdminPassword();
+                        _resetAdminPassword();
                       },
                       child: const Text(
                         'Reset admin password',
@@ -224,7 +225,8 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            Positioned(
+            // Dev info
+            /*Positioned(
               top: 16,
               right: 16,
               child: InkWell(
@@ -233,30 +235,31 @@ class _LoginPageState extends State<LoginPage> {
                     radius: 16,
                     child: Icon(Icons.question_mark, size: 20,)),
               ),
-            ),
+            ),*/
           ],
         ),
       ),
     );
   }
 
-  loginToAccount() async {
+  _loginToAccount() async {
 
     bool emailValid = CommonFunction.emailValidator(emailController.text);
 
     if (emailController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter your email', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Enter your email');
+      // CommonFunction.showGetXSnackBar('Enter your email', context);
     }
     else if (!emailValid) {
-      CommonFunction().showSnackBar('Email is not valid', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Email is not valid');
     }
     else if (passwordController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter your password', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Enter your password');
     }
     else if (connectivityResult != ConnectivityResult.mobile &&
         connectivityResult != ConnectivityResult.wifi) {
-      CommonFunction()
-          .showSnackBar('No internet!\nCheck internet connection', context);
+      CommonFunction
+          .showGetXSnackBar('No internet', 'Check internet connection');
     }
     else if(radioValue == UserRole.user.name){
 
@@ -268,9 +271,7 @@ class _LoginPageState extends State<LoginPage> {
                   context
               );
               if(isSuccessful) {
-
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const DashBoard()));
+                Get.off(() => const DashBoard());
               }
               else {
                 isLoginButtonPressed = !isLoginButtonPressed;
@@ -287,8 +288,7 @@ class _LoginPageState extends State<LoginPage> {
               context
           );
           if(isSuccessful) {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const DashBoard()));
+            Get.to(()=> const DashBoard());
           }
           else {
             isLoginButtonPressed = !isLoginButtonPressed;
@@ -297,7 +297,7 @@ class _LoginPageState extends State<LoginPage> {
         }
   }
 
-  void resetAdminPassword() {
+  _resetAdminPassword() {
 
       TextEditingController resetEmailController = TextEditingController();
       String errorText = '';

@@ -15,10 +15,10 @@ class AddUser extends StatefulWidget {
 
 class _AddUserState extends State<AddUser> {
 
-  TextEditingController userEmailController = TextEditingController();
-  TextEditingController userPasswordController = TextEditingController();
+  final userEmailController = TextEditingController();
+  final userPasswordController = TextEditingController();
 
-  List<String> userRoleList = ['Manager', 'Cashier', 'Waiter', 'Other'];
+  final List<String> _userRoleList = ['Manager', 'Cashier', 'Waiter', 'Other'];
   String selectedUserRole = 'Select Role';
   bool isUserRoleSelected = false;
 
@@ -32,11 +32,11 @@ class _AddUserState extends State<AddUser> {
 
   @override
   initState() {
-    init();
+    _init();
     super.initState();
   }
 
-  init() async {
+  _init() async {
     await ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
@@ -161,7 +161,7 @@ class _AddUserState extends State<AddUser> {
                         const SizedBox(width: 16),
                         DropdownButton(
                           hint: Text(selectedUserRole),
-                          items: userRoleList
+                          items: _userRoleList
                               .map((e) => DropdownMenuItem(
                                     value: e,
                                     child: Text(e),
@@ -178,7 +178,7 @@ class _AddUserState extends State<AddUser> {
                   ),
                   const SizedBox(height: 24),
                   InkWell(
-                    onTap: saveNewUser,
+                    onTap: _saveNewUser,
                     child: Container(
                       width: double.maxFinite,
                       height: 50,
@@ -201,27 +201,27 @@ class _AddUserState extends State<AddUser> {
     );
   }
 
-  saveNewUser() async {
+  _saveNewUser() async {
     bool emailValid = RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(userEmailController.text);
 
     if (userEmailController.text.isEmpty) {
-      CommonFunction().showSnackBar('User mail can\'t empty', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'User mail can\'t empty');
     }
     else if (emailValid == false) {
-      CommonFunction().showSnackBar('Not valid email', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Not valid email');
     }
     else if (userPasswordController.text.isEmpty) {
-      CommonFunction().showSnackBar('User password can\'t empty', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'User password can\'t empty');
     }
     else if (isUserRoleSelected == false) {
-      CommonFunction().showSnackBar('Select user role', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Select user role');
     }
     else if (connectivityResult != ConnectivityResult.mobile &&
         connectivityResult != ConnectivityResult.wifi) {
-      CommonFunction()
-          .showSnackBar('No internet!\nCheck internet connection', context);
+      CommonFunction
+          .showGetXSnackBar('Warning!', 'No internet!\nCheck internet connection');
     }
     else {
       CommonFunction().showLoadingIndicatorWithTitle(
@@ -236,16 +236,20 @@ class _AddUserState extends State<AddUser> {
         userPasswordController.clear();
         allAppUserData.clear();
         await AuthController().getAppUserData();
-        Navigator.pop(context);
-        CommonFunction()
-            .showSnackBar('Successfully Added', context);
+        _pop();
+        CommonFunction
+            .showGetXSnackBar('Message!','Successfully Added',);
       }
       else{
-        Navigator.pop(context);
-        CommonFunction()
-            .showSnackBar('Failed to add user', context);
+        _pop();
+        CommonFunction
+            .showGetXSnackBar('Error!','Failed to add user');
       }
     }
+  }
+
+  _pop() {
+    Navigator.pop(context);
   }
 
 }

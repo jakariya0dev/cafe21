@@ -79,13 +79,13 @@ class AuthController{
 
   userLogin(email, password, context) async {
 
-    await db.collection('user-list').doc(email).get().then((value) async {
+    await db.collection(AppConfig.userCollection).doc(email).get().then((value) async {
       if(!value.exists){
-        CommonFunction().showSnackBar('User does not exist', context);
+        CommonFunction.showGetXSnackBar('Warning!', 'User does not exist');
         isSuccessful = false;
       }
       else if(value.exists && (value['user-password'] != password)){
-        CommonFunction().showSnackBar('Password does\'t matched', context);
+        CommonFunction.showGetXSnackBar('Warning!', 'Password does\'t matched');
         isSuccessful = false;
       }
       else if(value.exists && (value['user-password'] == password)){
@@ -99,7 +99,7 @@ class AuthController{
       }
 
     }, onError: (e){
-      CommonFunction().showSnackBar('Error: $e', context);
+      CommonFunction.showGetXSnackBar('Error!', e);
       isSuccessful = false;
     });
 
@@ -126,10 +126,10 @@ class AuthController{
     on FirebaseAuthException catch (e) {
       isSuccessful = false;
       if (e.code == 'user-not-found') {
-        CommonFunction().showSnackBar('No user found for that email.', context);
+        CommonFunction.showGetXSnackBar('Error!', 'No user found for that email.');
       }
       else if (e.code == 'wrong-password') {
-        CommonFunction().showSnackBar('Wrong password provided.', context);
+        CommonFunction.showGetXSnackBar('Error!', 'Wrong password provided.');
       }
     }
     return isSuccessful;
@@ -171,7 +171,7 @@ class AuthController{
 
     }, onError: (e) {
       isSuccessful = false;
-      CommonFunction().showSnackBar('Error: $e', context);
+      CommonFunction.showGetXSnackBar('Error!', e.toString());
     });
 
     return isSuccessful;
@@ -193,7 +193,7 @@ class AuthController{
       isSuccessful = true;
     }, onError: (e){
       isSuccessful = false;
-      CommonFunction().showSnackBar('Error: $e', context);
+      CommonFunction.showGetXSnackBar('Error!', e.toString());
     });
 
     return isSuccessful;
@@ -208,7 +208,7 @@ class AuthController{
       isSuccessful = true;
     }, onError: (e){
       isSuccessful = false;
-      CommonFunction().showSnackBar('Error: $e', context);
+      CommonFunction.showGetXSnackBar('Error!', e.toString());
     });
 
     return isSuccessful;
@@ -216,9 +216,9 @@ class AuthController{
 
   resetRequestForAdminPassword(email, context) async {
     await auth.sendPasswordResetEmail(email: email).whenComplete((){
-      CommonFunction().showSnackBar('Check your mail for reset password', context);
+      CommonFunction.showGetXSnackBar('Message!', 'Check your mail for reset password');
     }).onError((error, stackTrace){
-      CommonFunction().showSnackBar(error, context);
+      CommonFunction.showGetXSnackBar('Error!', error.toString());
     });
   }
 

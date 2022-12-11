@@ -18,14 +18,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-
-    init();
+    _init();
     super.initState();
 
   }
 
 
-  init() async {
+  _init() async {
 
     Future.delayed(const Duration(seconds: 3), () {
       if(prefs?.getBool('isNotFirstInstall') == true){

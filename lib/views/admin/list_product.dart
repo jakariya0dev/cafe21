@@ -15,16 +15,17 @@ class ProductListPage extends StatefulWidget {
 }
 
 class _ProductListPageState extends State<ProductListPage> {
-  List<dynamic> foodListCategoryWise = [];
-  int selectedCategoryButtonIndex = 0;
-  DashboardController dashboardController = DashboardController();
+  
+  List<dynamic> _foodListCategoryWise = [];
+  int _selectedCategoryButtonIndex = 0;
+  final _dashboardController = DashboardController();
 
   @override
   void initState() {
     ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
-    setData();
+    _setData();
     super.initState();
   }
 
@@ -45,21 +46,21 @@ class _ProductListPageState extends State<ProductListPage> {
                 itemBuilder: (context, index) {
                   return Container(
                     decoration: BoxDecoration(
-                        border: index == selectedCategoryButtonIndex
+                        border: index == _selectedCategoryButtonIndex
                             ? const Border(
                                 bottom: BorderSide(
                                     color: Colors.deepPurple, width: 2))
                             : null),
                     child: TextButton(
                       onPressed: () {
-                        selectedCategoryButtonIndex = index;
-                        foodListCategoryWise.clear();
-                        setData();
+                        _selectedCategoryButtonIndex = index;
+                        _foodListCategoryWise.clear();
+                        _setData();
                       },
                       child: Text(
                         allCategoryData[index]['name'],
                         style: TextStyle(
-                            fontWeight: index == selectedCategoryButtonIndex
+                            fontWeight: index == _selectedCategoryButtonIndex
                                 ? FontWeight.bold
                                 : FontWeight.normal),
                       ),
@@ -76,16 +77,16 @@ class _ProductListPageState extends State<ProductListPage> {
           const SizedBox(
             height: 10,
           ),
-          foodListCategoryWise.isNotEmpty
+          _foodListCategoryWise.isNotEmpty
               ? Expanded(
                   child: ListView.separated(
-                    itemCount: foodListCategoryWise.length,
+                    itemCount: _foodListCategoryWise.length,
                     itemBuilder: (context, index) {
                       // find category name by id
                       // List categoryName = allCategoryData
                       //     .where((e) =>
                       //         e[CategoryListKey.id.name] ==
-                      //         foodListCategoryWise[index]['category'])
+                      //         _foodListCategoryWise[index]['category'])
                       //     .toList();
                       return ListTile(
                         isThreeLine: false,
@@ -93,10 +94,10 @@ class _ProductListPageState extends State<ProductListPage> {
                             borderRadius: BorderRadius.circular(5)),
                         dense: true,
                         onTap: () {
-                          editFoodItem(index);
+                          _editFoodItem(index);
                         },
                         onLongPress: () {
-                          deleteFoodItem(index);
+                          _deleteFoodItem(index);
                         },
                         tileColor: Colors.white,
                         leading: CircleAvatar(
@@ -108,7 +109,7 @@ class _ProductListPageState extends State<ProductListPage> {
                           ),
                         ),
                         title: Text(
-                          foodListCategoryWise[index]['name'],
+                          _foodListCategoryWise[index]['name'],
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 15, fontFamily: 'Lato', color: Color(AppColor.darkBlue)),
@@ -117,7 +118,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         //         [CategoryListKey.name.name]
                         //     .toString()),
                         trailing: Text(
-                          '\$${foodListCategoryWise[index]['price']}',
+                          '\$${_foodListCategoryWise[index]['price']}',
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -140,11 +141,11 @@ class _ProductListPageState extends State<ProductListPage> {
     );
   }
 
-  setData() {
-    foodListCategoryWise = allFoodsData
+  _setData() {
+    _foodListCategoryWise = allFoodsData
         .where((e) =>
             e['category'] ==
-            allCategoryData[selectedCategoryButtonIndex]
+            allCategoryData[_selectedCategoryButtonIndex]
                 ['id'])
         .toList();
     setState(() {});
@@ -152,22 +153,22 @@ class _ProductListPageState extends State<ProductListPage> {
 
   //  Foods Data Manipulation
 
-  editFoodItem(index) {
+  _editFoodItem(index) {
     TextEditingController nameController =
-        TextEditingController(text: foodListCategoryWise[index]['name']);
+        TextEditingController(text: _foodListCategoryWise[index]['name']);
     TextEditingController descriptionController =
-        TextEditingController(text: foodListCategoryWise[index]['description']);
+        TextEditingController(text: _foodListCategoryWise[index]['description']);
     TextEditingController priceController =
-        TextEditingController(text: foodListCategoryWise[index]['price']);
+        TextEditingController(text: _foodListCategoryWise[index]['price']);
 
     String errorMsg = '';
 
     // getting specific category map
     List category = allCategoryData
-        .where((e) => e['id'] == foodListCategoryWise[index]['category'])
+        .where((e) => e['id'] == _foodListCategoryWise[index]['category'])
         .toList();
     String dropDownHeader = category[0]['name'];
-    String categoryId = foodListCategoryWise[index]['category'];
+    String categoryId = _foodListCategoryWise[index]['category'];
 
     showDialog(
       context: context,
@@ -317,8 +318,7 @@ class _ProductListPageState extends State<ProductListPage> {
                             ConnectivityResult.mobile &&
                         connectivityResult != ConnectivityResult.wifi) {
                       Navigator.pop(context);
-                      CommonFunction().showSnackBar(
-                          'No internet!\nCheck internet connection', context);
+                      CommonFunction.showGetXSnackBar('No internet', 'Check internet connection');
                     } else {
                       Navigator.pop(context);
                       String msg =
@@ -327,9 +327,9 @@ class _ProductListPageState extends State<ProductListPage> {
                         'category': categoryId,
                         'description': descriptionController.text,
                         'price': priceController.text
-                      }, foodListCategoryWise[index]['id']);
-                      await fetchUpdatedData();
-                      showSnackbar(msg);
+                      }, _foodListCategoryWise[index]['id']);
+                      await _fetchUpdatedData();
+                      CommonFunction.showGetXSnackBar('Message!', msg);
                     }
                   },
                   child: const Text(
@@ -355,7 +355,7 @@ class _ProductListPageState extends State<ProductListPage> {
     );
   }
 
-  deleteFoodItem(index) {
+  _deleteFoodItem(index) {
     showDialog(
       context: context,
       builder: (context) {
@@ -371,14 +371,13 @@ class _ProductListPageState extends State<ProductListPage> {
               onPressed: () async {
                 if (connectivityResult != ConnectivityResult.mobile &&
                     connectivityResult != ConnectivityResult.wifi) {
-                  CommonFunction().showSnackBar(
-                      'No internet!\nCheck internet connection', context);
+                  CommonFunction.showGetXSnackBar('No internet', 'Check internet connection');
                 } else {
                   Navigator.pop(context);
                   String msg = await AdminDashboardController()
-                      .deleteFoodData(foodListCategoryWise[index]['id'], context);
-                  await fetchUpdatedData();
-                  showSnackbar(msg);
+                      .deleteFoodData(_foodListCategoryWise[index]['id'], context);
+                  await _fetchUpdatedData();
+                  CommonFunction.showGetXSnackBar('Message!', msg);
                 }
               },
               color: const Color(AppColor.box5),
@@ -403,14 +402,10 @@ class _ProductListPageState extends State<ProductListPage> {
     );
   }
 
-  showSnackbar(msg) {
-    CommonFunction().showSnackBar(msg, context);
-  }
-
-  fetchUpdatedData() async {
-    foodListCategoryWise.clear();
+  _fetchUpdatedData() async {
+    _foodListCategoryWise.clear();
     allFoodsData.clear();
-    await dashboardController.getAllFood();
-    setData();
+    await _dashboardController.getAllFood();
+    _setData();
   }
 }

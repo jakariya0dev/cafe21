@@ -2,13 +2,12 @@ import 'package:cafe21/cons/app_color.dart';
 import 'package:cafe21/model/data.dart';
 import 'package:cafe21/widget/about_dialog_list_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:cafe21/main.dart';
+import 'package:get/get.dart';
 
 class CommonFunction {
 
-
-  static bool isCategoryDatabaseCreated = false, isWaiterDatabaseCreated = false;
-  static bool isFoodDatabaseCreated = false, isInvoiceDatabaseCreated = false;
+  // static bool isCategoryDatabaseCreated = false, isWaiterDatabaseCreated = false;
+  // static bool isFoodDatabaseCreated = false, isInvoiceDatabaseCreated = false;
 
   showWarningDialog(msg, context) {
     showDialog(
@@ -42,17 +41,21 @@ class CommonFunction {
         });
   }
 
-  showSnackBar(msg, context) {
-    SnackBar snackBar = SnackBar(
-      content: Text(msg),
-      action: SnackBarAction(
-          label: 'ok',
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          }),
-    );
-    scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+  static showGetXSnackBar(String title, String message){
+    Get.snackbar(title, message, );
   }
+
+  // showSnackBar(msg, context) {
+  //   SnackBar snackBar = SnackBar(
+  //     content: Text(msg),
+  //     action: SnackBarAction(
+  //         label: 'ok',
+  //         onPressed: () {
+  //           ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  //         }),
+  //   );
+  //   scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+  // }
 
   String generateInvoiceId() {
     String id, year, month, day, hour, minute, second;
@@ -149,103 +152,5 @@ class CommonFunction {
     return isEmailValid;
   }
 
-/*  static generateDatabase() async {
-
-    var db = FirebaseFirestore.instance;
-
-    // testCategoryName
-      await db
-          .collection('food-categories')
-          .doc()
-          .set({'name': 'test category'}).then((value) => isCategoryDatabaseCreated = true, onError: (e) {
-              isCategoryDatabaseCreated = false;
-              print(e);
-          });
-
-    // testWaiterData
-      await db
-          .collection('waiter-list')
-          .doc('01300000000')
-          .set({
-        'id': '000',
-        'name': 'test waiter',
-        'phone': '01234567890',
-        'email': 'test@main.com',
-        'nid': '1234567890',
-        'address': 'CO road, Rangpur',
-        'image': '',
-      }).then((value) => isWaiterDatabaseCreated = true, onError: (e){
-        print(e);
-        return isWaiterDatabaseCreated = false;
-      });
-
-
-    // testFoodData
-      await db.collection('food-items').doc().set({
-        'category': 'test category',
-        'description': 'This is test description',
-        'name': 'This is test item',
-        'price': '0'
-      }).then((value) => isFoodDatabaseCreated = true, onError: (e) {
-        print(e);
-        return isFoodDatabaseCreated = false;
-      });
-
-    // testInvoice
-      await db.collection('invoice-list').doc().set({
-        'customer' : 'test customer',
-        'phone' : '01234567890',
-        'address' : 'CO road',
-        'discount' : '0',
-        'discountType' : '%',
-        'tax' : '0',
-        'waiterName' : 'Test waiter',
-        'waiterId' : '000',
-        'table' : '1',
-        'dateTime' : DateTime.now(),
-        'paymentMethod' : 'Payment due',
-        'orders' : [],
-        'subTotal': '100',
-        'total' : '80',
-        'netBill' : '90'
-      }).then((value) => isInvoiceDatabaseCreated = true, onError: (e) {
-        print(e);
-        return isInvoiceDatabaseCreated = false;
-      });
-
-  }
-
-
-saveDemoInvoice() {
-  DateTime dateTime = DateTime.now();
-  var year = dateTime.year;
-  var month = dateTime.month;
-  var hour = dateTime.hour;
-  var second = dateTime.second;
-  var ms = dateTime.millisecond;
-
-  var id = generateInvoiceId();
-
-  var db = FirebaseFirestore.instance;
-  db.collection('invoices')
-      .doc(id)
-      .set({
-    'customer': 'ABC ${dateTime.second}',
-    'phone': ms.toString(),
-    'address': month.toString(),
-    'discount': hour.toString(),
-    'discountType': '%',
-    'tax': month.toString(),
-    'waiterName': 'Jack',
-    'waiterId': '150',
-    'table': "7",
-    'dateTime': dateTime,
-    'paymentMethod': 'Online Payment',
-    'orders': [],
-    'subTotal': '140',
-    'total': '130',
-    'netBill': '155'
-  });
-}*/
 
 }

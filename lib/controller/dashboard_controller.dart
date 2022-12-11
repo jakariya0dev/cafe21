@@ -51,7 +51,7 @@ class DashboardController{
 
   getAllFood() async {
 
-    await db.collection('food-list').get().then((value) {
+    await db.collection(AppConfig.foodCollection).get().then((value) {
 
       for(var doc in value.docs){
         allFoodsData.add({
@@ -67,7 +67,7 @@ class DashboardController{
 
   getAllFoodCategory()async{
 
-    await db.collection('category-list').get().then((value) {
+    await db.collection(AppConfig.categoryCollection).get().then((value) {
       for (var doc in value.docs){
           allCategoryData.add({
             'id' : doc.id,
@@ -83,7 +83,7 @@ class DashboardController{
 
     allWaiterData.clear();
 
-    await db.collection('waiter-list').get().then((value) {
+    await db.collection(AppConfig.waiterCollection).get().then((value) {
 
       for(var item in value.docs){
         allWaiterData.add({
@@ -103,7 +103,7 @@ class DashboardController{
   
   getCafeDetails() async {
 
-    var data = await db.collection('cafe-details').doc('admin').get();
+    var data = await db.collection(AppConfig.cafeDetails).doc('admin').get();
 
     cafeDetailsData.addAll({
       'cafe-address' : data['cafe-address'],
@@ -121,9 +121,9 @@ class DashboardController{
     filteredInvoiceData = sellsData.where((element) => element.dateTime.toDate().isAfter(dayBeforeAWeek)).toList();
     return filteredInvoiceData;
   }
-  
+
   getDeveloperInfo() async {
-    await db.collection('developer-details').doc('details').get().then((value){
+    await db.collection(AppConfig.cafeDetails).doc('details').get().then((value){
       developerInfo.addAll({
         'name' : value['name'],
         'web' : value['web'],
@@ -169,7 +169,7 @@ class DashboardController{
 
   }
 
-  getDailyData() async {
+  getDailyData() {
 
     String idForCompare, year, month, day;
     DateTime date = DateTime.now();
@@ -192,14 +192,14 @@ class DashboardController{
 
     idForCompare = year+month+day;
 
-    allSellsDataFiltered = allSellsData.where((element) => element.invoiceId.toString().substring(0, 8) == idForCompare).toList();
+    allSellsDataFiltered = allSellsData.where((e) => e.invoiceId.toString().substring(0, 8) == idForCompare).toList();
     calculationInvoiceData();
     titleForData = 'Daily Sells Data';
   }
 
   getWeeklyData(){
     var sevenDaysAgoFromNow = DateTime.now().subtract(const Duration(days: 7));
-    allSellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
+    allSellsDataFiltered = allSellsData.where((e) => e.dateTime.toDate().isAfter(sevenDaysAgoFromNow)).toList();
     calculationInvoiceData();
     titleForData = 'Weekly Sells Data';
     // setState(() {});
@@ -208,7 +208,7 @@ class DashboardController{
   getMonthlyData(){
     var now = DateTime.now();
     var thirtyDaysAgoFromNow = DateTime(now.year, now.month-1, now.day);
-    allSellsDataFiltered = allSellsData.where((element) => element.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
+    allSellsDataFiltered = allSellsData.where((e) => e.dateTime.toDate().isAfter(thirtyDaysAgoFromNow)).toList();
     calculationInvoiceData();
     titleForData = 'Monthly Sells Data';
     // setState(() {});
@@ -231,9 +231,7 @@ class DashboardController{
       totalWithTax = totalWithTax + double.parse(item.netBill);
       totalWithoutTax = totalWithoutTax + double.parse(item.total);
     }
-    // setState(() {});
-    // print(totalWithTax);
-    // print(totalWithoutTax);
+    calculateUnPaidInvoice();
   }
 
   calculateMostSells(){

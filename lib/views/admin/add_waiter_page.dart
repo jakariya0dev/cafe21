@@ -17,12 +17,12 @@ class AddWaiterPage extends StatefulWidget {
 
 class _AddWaiterPageState extends State<AddWaiterPage> {
   // TextEditingController idController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController nidController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
-  double containerHeight = 40;
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final nidController = TextEditingController();
+  final emailController = TextEditingController();
+  final addressController = TextEditingController();
+  final containerHeight = 40.0;
   String errorMsg = '';
 
 
@@ -321,9 +321,8 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
     }
     else if (connectivityResult != ConnectivityResult.mobile &&
         connectivityResult != ConnectivityResult.wifi) {
-      CommonFunction().showSnackBar(
-          'No internet!\nCheck internet connection',
-          context);
+      CommonFunction.showGetXSnackBar(
+          'Error!', 'No internet!\nCheck internet connection');
     }
     else {
 
@@ -346,14 +345,18 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
         emailController.clear();
         addressController.clear();
         errorMsg = '';
-        Navigator.pop(context);
+        _pop();
         setState(() {});
         await DashboardController().getAllWaiter();
-        CommonFunction()
-            .showSnackBar('Successfully Saved', context);
+        CommonFunction
+            .showGetXSnackBar('Massage!', 'Successfully Saved');
       }else{
-        Navigator.pop(context);
+        _pop();
       }
     }
+  }
+
+  _pop() {
+    Navigator.pop(context);
   }
 }

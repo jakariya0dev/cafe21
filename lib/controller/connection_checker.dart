@@ -15,5 +15,6 @@ class ConnectionChecker{
       widgetSetState();
       // print(connectivityResult);
     });
+
   }
 }

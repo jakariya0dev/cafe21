@@ -41,10 +41,10 @@ class _WaiterListPageState extends State<WaiterListPage> {
                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                   dense: true,
                   onTap: () {
-                    editWaiter(index);
+                    _editWaiter(index);
                   },
                   onLongPress: () {
-                    deleteWaiter(index);
+                    _deleteWaiter(index);
                   },
                   tileColor: Colors.white,
                   leading: CircleAvatar(
@@ -88,7 +88,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
 
   //  Waiter Data Manipulation
 
-  editWaiter(index) {
+  _editWaiter(index) {
 
     TextEditingController nameController =
     TextEditingController(text: allWaiterData[index]['name']);
@@ -286,7 +286,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
                     }
                     else{
                       Navigator.pop(context);
-                      showLoadingDialog('Updating...');
+                      _showLoadingDialog('Updating...');
                       bool isSuccessful =
                       await AdminDashboardController().updateWaiterData({
                         'docId' : allWaiterData[index]['docId'],
@@ -298,14 +298,14 @@ class _WaiterListPageState extends State<WaiterListPage> {
                         'image': '',
                       });
                       if(isSuccessful){
-                        await fetchUpdatedData();
-                        pop();
-                        showSnackbar('Successfully deleted');
+                        await _fetchUpdatedData();
+                        _pop();
+                        CommonFunction.showGetXSnackBar('Message!', 'Successfully deleted');
 
                       }
                       else{
-                        pop();
-                        showSnackbar('Failed to delete');
+                        _pop();
+                        CommonFunction.showGetXSnackBar('Error!', 'Failed to delete');
                       }
                     }
                   },
@@ -332,7 +332,8 @@ class _WaiterListPageState extends State<WaiterListPage> {
       },
     );
   }
-  deleteWaiter(index) {
+
+  _deleteWaiter(index) {
     showDialog(
       context: context,
       builder: (context) {
@@ -348,17 +349,17 @@ class _WaiterListPageState extends State<WaiterListPage> {
               onPressed: () async {
                 if (connectivityResult != ConnectivityResult.mobile &&
                     connectivityResult != ConnectivityResult.wifi) {
-                  CommonFunction().showSnackBar(
-                      'No internet!\nCheck internet connection', context);
+                  CommonFunction.showGetXSnackBar(
+                      'No internet!', 'Check internet connection');
                 } else {
                   Navigator.pop(context);
                   bool isSuccessful = await AdminDashboardController()
                       .deleteWaiterData(allWaiterData[index]['docId']);
                   if(isSuccessful){
-                    await fetchUpdatedData();
-                    showSnackbar('Successfully deleted');
+                    await _fetchUpdatedData();
+                    CommonFunction.showGetXSnackBar('Message!', 'Successfully deleted');
                   }else{
-                    showSnackbar('Failed to delete');
+                    CommonFunction.showGetXSnackBar('Error!', 'Failed to delete');
                   }
                 }
               },
@@ -383,18 +384,19 @@ class _WaiterListPageState extends State<WaiterListPage> {
       },
     );
   }
-  pop(){
+
+  _pop(){
     Navigator.pop(context);
   }
-  fetchUpdatedData() async {
+
+  _fetchUpdatedData() async {
     allWaiterData.clear();
     await DashboardController().getAllWaiter();
     setState(() {});
   }
-  showSnackbar(String msg){
-    CommonFunction().showSnackBar(msg, context);
-  }
-  showLoadingDialog(String title){
+
+
+  _showLoadingDialog(String title){
     CommonFunction().showLoadingIndicatorWithTitle(context: context, title: title);
   }
 }

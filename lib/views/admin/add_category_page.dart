@@ -17,8 +17,8 @@ class AddCategoryPage extends StatefulWidget {
 
 class _AddCategoryPageState extends State<AddCategoryPage> {
 
-  DashboardController dashboardController = DashboardController();
-  TextEditingController nameController = TextEditingController();
+  final dashboardController = DashboardController();
+  final nameController = TextEditingController();
 
   getData() async {
     allFoodsData.clear();
@@ -122,7 +122,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
   saveCategoryName() async {
 
     if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
-      CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
+      CommonFunction.showGetXSnackBar('Error!', 'No internet!\nCheck internet connection');
     }
     else{
       CommonFunction()
@@ -130,15 +130,21 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       bool isSuccessful = await AdminDashboardController()
           .addNewCategoryName(name: nameController.text);
 
+      _pop();
+
       if (isSuccessful) {
         nameController.clear();
         await getData();
-        Navigator.pop(context);
-        CommonFunction().showSnackBar('Successfully added', context);
+
+        CommonFunction.showGetXSnackBar('Message!','Successfully added',);
       }
       else {
-        CommonFunction().showSnackBar('Cant add category', context);
+        CommonFunction.showGetXSnackBar('Error!', 'Cant add category',);
       }
     }
+  }
+
+   _pop() {
+    Navigator.pop(context);
   }
 }

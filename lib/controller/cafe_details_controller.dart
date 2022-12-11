@@ -1,3 +1,4 @@
+import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -6,14 +7,13 @@ class CafeDetailsController{
 
   var db = FirebaseFirestore.instance;
 
-
   updateCafeDetails(Map<String, dynamic> cafeMap, context) async {
 
     bool isSuccessful = false;
-    await db.collection('cafe-details').doc('admin').update(cafeMap).then((value){
+    await db.collection(AppConfig.cafeDetails).doc('admin').update(cafeMap).then((value){
       isSuccessful = true;
     }, onError: (e){
-      CommonFunction().showSnackBar('Error: $e', context);
+      CommonFunction.showGetXSnackBar('Error!', e.toString());
     });
 
     return isSuccessful;
@@ -29,9 +29,9 @@ class CafeDetailsController{
     };
 
     // bool isSuccessful = false;
-    await db.collection('developer-details').doc('details').get().then((doc) async {
+    await db.collection(AppConfig.cafeDetails).doc('details').get().then((doc) async {
       if(!doc.exists){
-        await db.collection('developer-details').doc('details').set(developerDetails);
+        await db.collection(AppConfig.cafeDetails).doc('details').set(developerDetails);
       }
     });
 

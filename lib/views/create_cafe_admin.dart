@@ -5,6 +5,7 @@ import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cafe21/views/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateCafeAdmin extends StatefulWidget {
@@ -18,28 +19,18 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
 
   late SharedPreferences prefs;
 
-  TextEditingController cafeNameController = TextEditingController();
-  TextEditingController cafeAddressController = TextEditingController();
-  TextEditingController cafePhoneController = TextEditingController();
-  TextEditingController adminEmailController = TextEditingController();
-  TextEditingController cafePasswordController = TextEditingController();
-  TextEditingController purchaseCodeController = TextEditingController();
+  final cafeNameController = TextEditingController();
+  final cafeAddressController = TextEditingController();
+  final cafePhoneController = TextEditingController();
+  final adminEmailController = TextEditingController();
+  final cafePasswordController = TextEditingController();
+  final purchaseCodeController = TextEditingController();
 
-  EdgeInsets containerPadding =
-      const EdgeInsets.only(left: 0, right: 0, top: 4);
-  BoxDecoration containerDecoration = BoxDecoration(
+  final containerPadding = const EdgeInsets.only(left: 0, right: 0, top: 4);
+  final containerDecoration = BoxDecoration(
       color: Colors.white, borderRadius: BorderRadius.circular(10));
-  double containerGap = 16;
+  final containerGap = 16.0;
 
-  @override
-  void initState() {
-    init();
-    super.initState();
-  }
-
-  init() async {
-    prefs = await SharedPreferences.getInstance();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +270,7 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
               ),
               SizedBox(height: containerGap),
               InkWell(
-                onTap: saveData,
+                onTap: _saveData,
                 child: Container(
                   width: double.maxFinite,
                   height: 50,
@@ -310,33 +301,33 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
     );
   }
 
-  saveData() async {
+  _saveData() async {
     bool isEmailValid = RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(adminEmailController.text);
 
     if (cafeNameController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter Cafe Name', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Enter Cafe Name');
     }
     else if (cafeAddressController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter Cafe Address', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Enter Cafe Address');
     }
     else if (cafePhoneController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter Cafe Phone', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Enter Cafe Phone');
     }
     else if (adminEmailController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter Email Address', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Enter Email Address');
     }
     else if (isEmailValid == false) {
-      CommonFunction().showSnackBar('Email not valid', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Email not valid');
     }
     else if (cafePasswordController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter Admin Password', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Enter Admin Password');
     }
     else if (purchaseCodeController.text.isEmpty) {
-      CommonFunction().showSnackBar('Enter Purchase Code', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Enter Purchase Code');
     }else if (purchaseCodeController.text != '2#4#6#8#') {
-      CommonFunction().showSnackBar('Wrong Purchase Code', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Wrong Purchase Code');
     }
     else {
 
@@ -359,15 +350,18 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
 
           await CafeDetailsController().setDeveloperDetails();
           await AdminDashboardController().addTestData();
-          Navigator.pop(context);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashBoard()));
+          _pop();
+          Get.to(()=> const DashBoard());
       }
       else{
-
-        Navigator.pop(context);
+        _pop();
         // showing error snack bar from controller
       }
 
     }
+  }
+
+  _pop() {
+    Navigator.pop(context);
   }
 }

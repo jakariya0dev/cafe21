@@ -36,6 +36,7 @@ cafeDetails = {
 */
 
 Map<String, dynamic> cafeDetailsData = {};
+
 Map<String, dynamic> developerInfo = {
   'name' : 'Brain Storm 21',
   'mail' : 'query@brainstorm21.com',

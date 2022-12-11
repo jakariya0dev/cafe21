@@ -18,30 +18,29 @@ class AddFoodPage extends StatefulWidget {
 
 class _AddFoodPageState extends State<AddFoodPage> {
 
-  CommonFunction commonFunction = CommonFunction();
-  DashboardController dashboardController = DashboardController();
-
-  TextEditingController nameController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
+  final _commonFunction = CommonFunction();
+  final _dashboardController = DashboardController();
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final priceController = TextEditingController();
 
   String msg = '';
   String dropDownHeader = 'Select';
   String categoryId = '';
   bool isCategorySelected = false;
 
-  getData() async {
+  _getData() async {
     allFoodsData.clear();
     allWaiterData.clear();
     allCategoryData.clear();
-    await dashboardController.getAllFoodCategory();
-    await dashboardController.getAllFood();
-    await dashboardController.getAllWaiter();
+    await _dashboardController.getAllFoodCategory();
+    await _dashboardController.getAllFood();
+    await _dashboardController.getAllWaiter();
     setState(() {});
   }
 
   @override
-  void initState() {
+  initState() {
     ConnectionChecker().checkInternetConnection((){
       setState(() {});
     });
@@ -281,11 +280,11 @@ class _AddFoodPageState extends State<AddFoodPage> {
                           else if (connectivityResult !=
                               ConnectivityResult.mobile &&
                               connectivityResult != ConnectivityResult.wifi) {
-                            commonFunction.showSnackBar(
-                                'No internet!\nCheck internet connection', context);
+                            CommonFunction.showGetXSnackBar('Error!',
+                                'No internet!\nCheck internet connection');
                           }
                           else {
-                            commonFunction.showLoadingIndicatorWithTitle(
+                            _commonFunction.showLoadingIndicatorWithTitle(
                                 context: context,
                                 title: 'Product adding please wait');
                             bool isSuccessful =
@@ -296,11 +295,11 @@ class _AddFoodPageState extends State<AddFoodPage> {
                               'price': priceController.text
                             });
                                 if(isSuccessful){
-                                  Navigator.pop(context);
-                                  getData();
-                                  commonFunction.showSnackBar('Successfully added', context);
+                                  _pop();
+                                  _getData();
+                                  CommonFunction.showGetXSnackBar('Message', 'Successfully added');
                                 }else{
-                                  commonFunction.showSnackBar('Can not save data', context);
+                                  CommonFunction.showGetXSnackBar('Error!', 'Can not save data');
                                 }
                           }
                         },
@@ -318,6 +317,10 @@ class _AddFoodPageState extends State<AddFoodPage> {
           ),
         ),
     );
+  }
+
+  _pop() {
+    Navigator.pop(context);
   }
 
 }

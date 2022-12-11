@@ -1,5 +1,4 @@
 import 'package:cafe21/cons/app_color.dart';
-import 'package:cafe21/cons/const.dart';
 import 'package:cafe21/cons/enums.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
@@ -9,9 +8,12 @@ import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:cafe21/views/invoice/invoice_print.dart';
 import 'package:cafe21/views/invoice/invoice_update.dart';
-import 'package:cafe21/widget/discount_container.dart';
+import 'package:cafe21/widget/invoice_details/build_name_container.dart';
+import 'package:cafe21/widget/invoice_details/build_order_item_list.dart';
+import 'package:cafe21/widget/invoice_details/build_row_box.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:cafe21/controller/invoice_controller.dart';
 
@@ -35,10 +37,10 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
     ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
-    init();
+    _init();
   }
 
-  init() async {
+  _init() async {
 
     for (var i = 0; i < widget.invoiceData.orders.length; i++) {
       totalAmount = totalAmount +
@@ -67,13 +69,13 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
             )),
         actions: [
           IconButton(
-              onPressed: editInvoice,
+              onPressed: _editInvoice,
               icon: const Icon(
                 Icons.edit,
                 color: Colors.white,
               )),
           IconButton(
-              onPressed: deleteInvoice,
+              onPressed: _showWarningBeforeDeleteInvoice,
               icon: const Icon(
                 Icons.delete_forever,
                 color: Colors.white,
@@ -100,7 +102,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _BuildNameContainer(
+                BuildNameContainer(
                     id: widget.invoiceData.invoiceId,
                     name: widget.invoiceData.customer,
                     phone: widget.invoiceData.phone,
@@ -115,12 +117,12 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                     netAmount: widget.invoiceData.netBill,
                     address: widget.invoiceData.address,),
                 const SizedBox(height: 16),
-                _BuildBoxRow(
+                BuildBoxRow(
                     discount: widget.invoiceData.discount,
                     discountType: widget.invoiceData.discountType,
                     tax: widget.invoiceData.tax,
                     table: widget.invoiceData.table),
-                _BuildOrderItemList(
+                BuildOrderItemList(
                   orders: widget.invoiceData.orders,
                 ),
               ],
@@ -135,7 +137,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
     );
   }
 
-  showWarningBeforeDeleteInvoice(){
+  _showWarningBeforeDeleteInvoice(){
     showDialog(
       context: context,
       builder: (context) {
@@ -159,12 +161,13 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                       onPressed: () => Navigator.pop(context),
                     ),
                   ));
-                } else if (prefs?.getString(UserKey.role.name) !=
-                    UserRole.admin.name) {
+                }
+                else if (prefs?.getString(UserKey.role.name) != UserRole.admin.name) {
                   CommonFunction()
                       .showWarningDialog('Only admin can delete invoice', context);
-                } else {
-                    deleteInvoice();
+                }
+                else {
+                  _deleteInvoice();
                 }
               },
               color: const Color(AppColor.box5),
@@ -189,7 +192,7 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
     );
   }
 
-  deleteInvoice() async {
+  _deleteInvoice() async {
 
     if(prefs?.get(UserKey.role.name) == UserRole.user.name){
       CommonFunction().showWarningDialog('Only Admin Can Delete Invoices', context);
@@ -200,12 +203,12 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
           .deleteInvoice(widget.invoiceData.invoiceId);
       allSellsData.clear(); // from data file
       await DashboardController().getAllSellsData();
-      Navigator.pop(context);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvoiceList()));
+      _pop();
+      Get.off(()=> const InvoiceList());
     }
   }
 
-  editInvoice(){
+  _editInvoice(){
         Navigator.push(
         context,
         MaterialPageRoute(
@@ -213,478 +216,20 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
         InvoiceUpdate(invoiceData: widget.invoiceData),
     ),);
   }
-}
 
-class _BuildNameContainer extends StatelessWidget {
-  const _BuildNameContainer({
-    Key? key,
-    required this.id,
-    required this.name,
-    required this.phone,
-    required this.paymentMethod,
-    required this.date,
-    required this.totalAmount,
-    required this.totalAmountAfterDiscount,
-    required this.netAmount,
-    required this.address,
-    required this.waiterId,
-  }) : super(key: key);
-
-  final String id,
-      name,
-      phone,
-      paymentMethod,
-      date,
-      address,
-      waiterId;
-  final String totalAmount, totalAmountAfterDiscount, netAmount;
-
-  @override
-  Widget build(BuildContext context) {
-
-    List waiter = allWaiterData.where((e) => e['docId'] == waiterId).toList();
-
-    return SizedBox(
-      height: 230,
-      child: Stack(
-        children: [
-          Container(
-            height: 180,
-            width: double.maxFinite,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                  Colors.blue.shade800,
-                  Colors.blue.shade500,
-                ])),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(32),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const CircleAvatar(
-                            radius: 10,
-                            child: Text(
-                              'id',
-                              style: TextStyle(fontSize: 11),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(id,
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.black45,
-                                  fontWeight: FontWeight.bold))
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      date,
-                      style: Const.italicStyleSubHeading,
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        paymentMethod,
-                        style: Const.italicStyleSubHeading,
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 3
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      'Cell: ',
-                      style: Const.italicStyleSubHeading,
-                    ),
-                    Text(
-                      phone,
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      width: 8
-                    ),
-                    const Text(
-                      'Served by',
-                      style: Const.italicStyleSubHeading,
-                    ),
-                    const SizedBox(
-                      width: 4
-                    ),
-                    Text(
-                      waiter.isEmpty ? 'Anonymous' : waiter[0]['name'],
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-          _BuildPriceCard(
-            totalAmount: totalAmount,
-            totalAmountAfterDiscount: totalAmountAfterDiscount,
-            netAmount: netAmount,
-          )
-        ],
-      ),
-    );
+  void _pop() {
+    Navigator.pop(context);
   }
 }
 
-class _BuildPriceCard extends StatelessWidget {
-  const _BuildPriceCard({
-    Key? key,
-    required this.totalAmount,
-    required this.totalAmountAfterDiscount,
-    required this.netAmount,
-  }) : super(key: key);
 
-  final String totalAmount, totalAmountAfterDiscount, netAmount;
 
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        height: 100,
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.grey,
-              )
-            ]),
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(left: 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Total Amount'.toUpperCase(),
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 2),
-                    RichText(
-                      text: TextSpan(
-                          text: '\$',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.grey.shade400),
-                          children: [
-                            TextSpan(
-                              text: totalAmount,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade700),
-                            )
-                          ]),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'After discount'.toUpperCase(),
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 2),
-                    RichText(
-                      text: TextSpan(
-                          text: '\$',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.grey.shade400),
-                          children: [
-                            TextSpan(
-                              text: totalAmountAfterDiscount,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade700),
-                            )
-                          ]),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            VerticalDivider(
-              color: Colors.grey.shade300,
-              thickness: 1,
-              endIndent: 10,
-              indent: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Net bill'.toUpperCase(),
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: RichText(
-                      text: TextSpan(
-                        text: '\$',
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.grey.shade400),
-                        children: [
-                          TextSpan(
-                            text: netAmount,
-                            style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey.shade700),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '\$${(double.parse(netAmount) - double.parse(totalAmountAfterDiscount)).toStringAsFixed(1)} Service tax added',
-                    style: const TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey,
-                        fontStyle: FontStyle.italic),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-class _BuildBoxRow extends StatelessWidget {
-  const _BuildBoxRow({
-    Key? key,
-    required this.discount,
-    required this.tax,
-    required this.table,
-    required this.discountType,
-  }) : super(key: key);
 
-  final String discount, discountType, tax, table;
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _BuildBoxContent(
-            title: 'discount',
-            value: discount,
-            type: discountType,
-            color: 0xfffbb35f),
-        _BuildBoxContent(
-            title: 'service Tax', value: tax, type: '%', color: 0xff09af80),
-        _BuildBoxContent(
-            title: 'Table no', value: table, type: '', color: 0xff656565),
-      ],
-    );
-  }
-}
 
-class _BuildBoxContent extends StatelessWidget {
-  const _BuildBoxContent(
-      {Key? key,
-      required this.title,
-      required this.value,
-      required this.type,
-      required this.color})
-      : super(key: key);
 
-  final String title, value, type;
-  final int color;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 85,
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-          color: Color(color), borderRadius: BorderRadius.circular(5)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          RichText(
-              text: TextSpan(
-                  text: value,
-                  style: const TextStyle(
-                      fontSize: 28,
-                      color: Colors.white,
-                      fontWeight: FontWeight.normal),
-                  children: [
-                TextSpan(
-                    text: type,
-                    style: const TextStyle(fontSize: 14, color: Colors.white70))
-              ])),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            title.toUpperCase(),
-            style: const TextStyle(fontSize: 11, color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
-class _BuildOrderItemList extends StatelessWidget {
-  const _BuildOrderItemList({
-    Key? key,
-    required this.orders,
-  }) : super(key: key);
 
-  final List orders;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: ListView.separated(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return _BuildListTile(
-            index: index,
-            orders: orders,
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            height: 10,
-          );
-        },
-        itemCount: orders.length,
-      ),
-    );
-  }
-}
-
-class _BuildListTile extends StatelessWidget {
-  const _BuildListTile({
-    Key? key,
-    required this.index,
-    required this.orders,
-  }) : super(key: key);
-
-  final int index;
-  final List orders;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 85,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.09),
-          border: const Border(left: BorderSide(color: Colors.blue, width: 5))),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                orders[index]["price"].toString(),
-                style: Const.invDetailsListTitle,
-              ),
-              const Icon(
-                Icons.close,
-                color: Colors.grey,
-                size: 16,
-              ),
-              Text(
-                orders[index]["quantity"].toString(),
-                style: Const.invDetailsListTitle,
-              ),
-              const SizedBox(width: 5),
-              DiscountContainer(
-                discount: orders[index]["discount"],
-                type: orders[index]["discountType"],
-              ),
-              const Expanded(child: SizedBox()),
-              RichText(
-                  text: TextSpan(
-                      text: '\$',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.blueGrey.shade200),
-                      children: [
-                    TextSpan(
-                      text: orders[index]['itemTotal'],
-                      style: Const.invDetailsListPrice,
-                    )
-                  ]))
-            ],
-          ),
-          Text(
-            '${index + 1}. ${orders[index]["name"]}',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-              color: Colors.grey.shade700,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}

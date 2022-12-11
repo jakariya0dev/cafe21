@@ -17,11 +17,11 @@ class _UserListState extends State<UserList> {
 
   @override
   initState() {
-    init();
+    _init();
     super.initState();
   }
 
-  init() async {
+  _init() async {
     await ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
@@ -62,9 +62,9 @@ class _UserListState extends State<UserList> {
                     trailing: PopupMenuButton(
                       onSelected: (value) {
                         if(value=='delete'){
-                          deleteUser(index);
+                          _deleteUser(index);
                         }else{
-                          updateUser(index);
+                          _updateUser(index);
                         }
                       },
                       itemBuilder: (context) {
@@ -85,11 +85,10 @@ class _UserListState extends State<UserList> {
     );
   }
 
-  deleteUser(int index) async {
+  _deleteUser(int index) async {
     if (connectivityResult != ConnectivityResult.mobile &&
         connectivityResult != ConnectivityResult.wifi) {
-      CommonFunction()
-          .showSnackBar('No internet!\nCheck internet connection', context);
+      CommonFunction.showGetXSnackBar('No internet!','Check internet connection');
     } else {
 
       CommonFunction().showLoadingIndicatorWithTitle(title: 'Deleting user', context: context);
@@ -98,20 +97,24 @@ class _UserListState extends State<UserList> {
       if(isSuccessful){
         allAppUserData.clear();
         await AuthController().getAppUserData();
-        Navigator.pop(context);
-        CommonFunction().showSnackBar('Successfully deleted', context);
+        _pop();
+        CommonFunction.showGetXSnackBar('Message!', 'Successfully deleted');
         setState(() {
 
         });
       }else{
-        CommonFunction().showSnackBar('Failed to deleted', context);
+        CommonFunction.showGetXSnackBar('Error!', 'Failed to deleted');
       }
     }
 
   }
 
-  updateUser(int index) async {
+  _updateUser(int index) async {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UpdateAppUser(user: allAppUserData[index])));
+  }
+
+  _pop() {
+    Navigator.pop(context);
   }
 
 }

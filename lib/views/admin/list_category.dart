@@ -58,10 +58,10 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                   dense: true,
                   onTap: () {
-                    editCategory(index);
+                    _editCategory(index);
                   },
                   onLongPress: () async {
-                    await deleteCategory(
+                    await _deleteCategory(
                         allCategoryData[index]['id']);
                     setState(() {});
                   },
@@ -109,7 +109,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
   }
 
   // Category Data Manipulation
-  editCategory(index) {
+  _editCategory(index) {
     TextEditingController nameController = TextEditingController(
         text: allCategoryData[index]['name']);
     String errorMsg = '';
@@ -172,13 +172,13 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                   color: const Color(AppColor.box5),
                   onPressed: () async {
                     if (nameController.text.isEmpty) {
-                      CommonFunction()
-                          .showSnackBar('Add ordered item in list!', context);
+                      CommonFunction
+                          .showGetXSnackBar('Message', 'Add ordered item in list!');
                     } else if (connectivityResult !=
                             ConnectivityResult.mobile &&
                         connectivityResult != ConnectivityResult.wifi) {
-                      CommonFunction().showSnackBar(
-                          'No internet!\nCheck internet connection.', context);
+                      CommonFunction.showGetXSnackBar(
+                          'No internet', 'Check internet connection.');
                     } else {
                       bool isSuccessful =
                           await AdminDashboardController().updateCategoryName(
@@ -186,11 +186,11 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                         name: nameController.text,
                       );
                       if (isSuccessful) {
-                        Navigator.pop(context);
+                        _pop();
                         await getData();
-                        CommonFunction().showSnackBar('Successfully updated', context);
+                        CommonFunction.showGetXSnackBar('Message!', 'Successfully updated');
                       } else {
-                        CommonFunction().showSnackBar('Cant update', context);
+                        CommonFunction.showGetXSnackBar('Error!', 'Can not update');
                       }
                     }
                   },
@@ -207,7 +207,7 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
     );
   }
 
-  deleteCategory(id) {
+  _deleteCategory(id) {
     showDialog(
       context: context,
       builder: (context) {
@@ -223,8 +223,8 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
               onPressed: () async {
                 if (connectivityResult != ConnectivityResult.mobile &&
                     connectivityResult != ConnectivityResult.wifi) {
-                  CommonFunction().showSnackBar(
-                      'No internet!\nCheck internet connection', context);
+                  CommonFunction.showGetXSnackBar(
+                      'No internet', 'Check internet connection');
                 }
                 else {
 
@@ -242,17 +242,17 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
                       await getData();
 
                       // close loading indicator
-                      popContext();
+                      _pop();
 
                       // show successful message
-                      showSnack();
+                      CommonFunction.showGetXSnackBar('Message!', 'Successfully deleted');
                     }
                     else {
                       // close loading indicator
-                      Navigator.pop(context);
+                      _pop();
 
                       // show successful message
-                      CommonFunction().showSnackBar('Cant delete', context);
+                      CommonFunction.showGetXSnackBar('Message', 'Can not delete');
                     }
                 }
               },
@@ -278,12 +278,8 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
     );
   }
 
-  void popContext() {
+  _pop() {
     Navigator.pop(context);
-  }
-
-  void showSnack() {
-    CommonFunction().showSnackBar('Successfully deleted',context);
   }
 
 }

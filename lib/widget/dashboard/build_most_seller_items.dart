@@ -1,12 +1,13 @@
+import 'package:cafe21/model/data.dart';
 import 'package:flutter/material.dart';
 
 class BuildMostSellerList extends StatelessWidget {
   const BuildMostSellerList({
-    Key? key, required this.items, required this.height, required this.width, required this.waiterList, required this.title, required this.isLoading,
+    Key? key, required this.items, required this.height, required this.width, required this.title, required this.isLoading,
   }) : super(key: key);
 
   final Map items;
-  final List waiterList;
+  // final List waiterList;
   final double height, width;
   final String title;
   final bool isLoading;
@@ -32,7 +33,7 @@ class BuildMostSellerList extends StatelessWidget {
               itemCount: items.length,
               itemBuilder: (context, index) {
 
-                List waiter = waiterList.where((element) => element['name'] == items.keys.elementAt(index)).toList();
+                List waiter = allWaiterData.where((e) => e['docId'] == items.keys.elementAt(index)).toList();
 
                 return Container(
                   height: 32,

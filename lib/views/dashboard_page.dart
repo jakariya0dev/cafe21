@@ -28,11 +28,11 @@ class _DashBoardState extends State<DashBoard> {
   @override
   void initState() {
     allSellsData.clear();
-    init();
+    _init();
     super.initState();
   }
 
-  init() async {
+  _init() async {
 
     // getting all data from server
     if(allSellsData.isEmpty){
@@ -65,7 +65,7 @@ class _DashBoardState extends State<DashBoard> {
     DashboardController().getDailyData();
     DashboardController().calculationInvoiceData();
     DashboardController().calculateMostSells();
-    DashboardController().calculateUnPaidInvoice();
+    // DashboardController().calculateUnPaidInvoice();
 
     // for stop loading indicator
     isDataLoading = false;
@@ -97,7 +97,7 @@ class _DashBoardState extends State<DashBoard> {
           ),
         ],
       ),
-      drawer: MyDrawer(updateSate: changeState),
+      drawer: MyDrawer(updateSate: _changeState),
       body: SafeArea(
         child: Container(
           constraints: const BoxConstraints.expand(),
@@ -108,7 +108,7 @@ class _DashBoardState extends State<DashBoard> {
                 BuildTitleCard(
                     title: DashboardController.titleForData,
                     width: width, value: DashboardController.totalWithTax,
-                    updateSate: changeState,
+                    updateSate: _changeState,
                 ),
                 SizedBox(
                   height: 120,
@@ -201,7 +201,7 @@ class _DashBoardState extends State<DashBoard> {
                   width: width,
                   height: height,
                   items: DashboardController.countMostServingPerson,
-                  waiterList: allWaiterData,
+                  // waiterList: allWaiterData,
                   title: 'Most Serving Waiter',
                   isLoading: isDataLoading,
                 ),
@@ -222,7 +222,7 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
-  changeState(){
+  _changeState(){
     setState(() {});
   }
 

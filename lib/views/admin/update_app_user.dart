@@ -19,8 +19,8 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
   TextEditingController userEmailController = TextEditingController();
   TextEditingController userPasswordController = TextEditingController();
 
-  List<String> userRoleList = ['Manager', 'Cashier', 'Waiter', 'Other'];
-  String selectedUserRole = 'Select Role';
+  final List<String> _userRoleList = ['Manager', 'Cashier', 'Waiter', 'Other'];
+  String _selectedUserRole = 'Select Role';
 
   // <-Start-> variable for container decoration
   EdgeInsets containerPadding =
@@ -33,15 +33,15 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
 
   @override
   initState() {
-    init();
+    _init();
     super.initState();
   }
 
-  init() async {
+  _init() async {
 
     userEmailController.text = widget.user['user-email'];
     userPasswordController.text = widget.user['user-password'];
-    selectedUserRole = widget.user['user-role'];
+    _selectedUserRole = widget.user['user-role'];
     ConnectionChecker().checkInternetConnection(() {
       setState(() {});
     });
@@ -168,15 +168,15 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
                         ),
                         const SizedBox(width: 16),
                         DropdownButton(
-                          hint: Text(selectedUserRole),
-                          items: userRoleList
+                          hint: Text(_selectedUserRole),
+                          items: _userRoleList
                               .map((e) => DropdownMenuItem(
                             value: e,
                             child: Text(e),
                           ))
                               .toList(),
                           onChanged: (value) {
-                            selectedUserRole = value.toString();
+                            _selectedUserRole = value.toString();
                             setState(() {});
                           },
                         )
@@ -217,18 +217,17 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
         .hasMatch(userEmailController.text);
 
     if (userEmailController.text.isEmpty) {
-      CommonFunction().showSnackBar('User mail can\'t empty', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'User mail can\'t empty');
     }
     else if (emailValid == false) {
-      CommonFunction().showSnackBar('Not valid email', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Not valid email');
     }
     else if (userPasswordController.text.isEmpty) {
-      CommonFunction().showSnackBar('User password can\'t empty', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'User password can\'t empty');
     }
     else if (connectivityResult != ConnectivityResult.mobile &&
         connectivityResult != ConnectivityResult.wifi) {
-      CommonFunction()
-          .showSnackBar('No internet!\nCheck internet connection', context);
+      CommonFunction.showGetXSnackBar('No internet!', 'Check internet connection');
     }
     else {
       CommonFunction().showLoadingIndicatorWithTitle(
@@ -236,20 +235,24 @@ class _UpdateAppUserState extends State<UpdateAppUser> {
       bool isSuccessful = await AuthController().updateUser(newUser: {
         'user-email' : userEmailController.text,
         'user-password' : userPasswordController.text,
-        'user-role' : selectedUserRole,
+        'user-role' : _selectedUserRole,
       }, oldEmail: widget.user['user-email']);
       if(isSuccessful){
         allAppUserData.clear();
         await AuthController().getAppUserData();
-        Navigator.pop(context);
-        CommonFunction().showSnackBar('Successfully updated', context);
+        _pop();
+        CommonFunction.showGetXSnackBar('Message!', 'Successfully updated');
       }
       else{
-        Navigator.pop(context);
-        CommonFunction().showSnackBar('Failed to update', context);
+        _pop();
+        CommonFunction.showGetXSnackBar('Message!', 'Failed to update');
       }
     }
 
+  }
+
+  void _pop() {
+    Navigator.pop(context);
   }
 
 }

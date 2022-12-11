@@ -6,6 +6,7 @@ import 'package:cafe21/controller/dashboard_controller.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:cafe21/cons/const.dart';
 import 'package:cafe21/model/order_item_model.dart';
@@ -26,7 +27,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
 
   // FOR GENERATING INVOICE ID
   late String invoiceId;
-  DateTime dated = DateTime.now();
+  final dated = DateTime.now();
 
   List initialFoodData = [];
 
@@ -216,18 +217,18 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
         taxController.text.isEmpty ||
         addressController.text.isEmpty ||
         tableController.text.isEmpty) {
-      CommonFunction().showSnackBar('Fill all the field!', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Fill all the field!');
 
     }else if(isWaiterSelected == false){
-      CommonFunction().showSnackBar('Select waiter name!', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Select waiter name!');
     }else if(isPaymentMethodSelected == false){
-      CommonFunction().showSnackBar('Select payment method!', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Select payment method!');
     }
     else if(orderedItemList.isEmpty){
-      CommonFunction().showSnackBar('Add ordered item in list!', context);
+      CommonFunction.showGetXSnackBar('Warning!', 'Add ordered item in list!');
     }
     else if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
-      CommonFunction().showSnackBar('No internet!\nCheck internet connection', context);
+      CommonFunction.showGetXSnackBar('No internet!', 'Check internet connection');
     }
     else {
 
@@ -285,12 +286,7 @@ class _InvoiceEntryState extends State<InvoiceEntry> {
       // for getting just added invoice data from server data
       List iv = allSellsData.where((e) => e.invoiceId== invoiceId).toList();
 
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => InvoicePrint(
-                invoiceData: iv[0]),
-          ));
+      Get.off(()=>InvoicePrint(invoiceData: iv[0],));
 
     }
 

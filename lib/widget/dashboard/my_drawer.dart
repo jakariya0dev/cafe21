@@ -84,6 +84,7 @@ class MyDrawer extends StatelessWidget {
                     // print(UserRole.admin);
 
                     if(userRoleData == UserRole.admin.name){
+                      Navigator.pop(context);
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard(index: 0),));
                     }
                     else{
@@ -119,14 +120,15 @@ class MyDrawer extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
+          // for dev ino display
+          /*ListTile(
             dense: true,
             title: const Center(child: Text('Developer info')),
             onTap: () {
               Navigator.pop(context);
               CommonFunction().showAboutDialog(context);
             },
-          ),
+          ),*/
         ],
       ),
     );

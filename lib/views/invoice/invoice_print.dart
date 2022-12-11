@@ -4,6 +4,9 @@ import 'package:cafe21/model/data.dart';
 import 'package:cafe21/model/invoice_model.dart';
 import 'package:cafe21/views/invoice/invoice_list.dart';
 import 'package:cafe21/views/invoice/invoice_update.dart';
+import 'package:cafe21/widget/invoice/print_invoice_row.dart';
+import 'package:cafe21/widget/invoice/print_invoice_row_last.dart';
+import 'package:cafe21/widget/invoice/print_order_title.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cafe21/widget/title_text.dart';
@@ -25,7 +28,7 @@ class _InvoicePrintState extends State<InvoicePrint> {
   String? selectDeviceName = 'Select Device';
 
   // printing services
-  BlueThermalPrinter printer = BlueThermalPrinter.instance;
+  final printer = BlueThermalPrinter.instance;
   List<BluetoothDevice> devices = [];
   BluetoothDevice? selectedDevice;
 
@@ -33,12 +36,12 @@ class _InvoicePrintState extends State<InvoicePrint> {
   void initState() {
 
     addedTax = (double.parse(widget.invoiceData.netBill) - double.parse(widget.invoiceData.total)).toStringAsFixed(2);
-    initPrinter();
+    _initPrinter();
     super.initState();
 
   }
 
-  Future<void> initPrinter() async {
+  Future<void> _initPrinter() async {
     devices = await printer.getBondedDevices();
     setState(() {});
   }
@@ -193,93 +196,6 @@ class _InvoicePrintState extends State<InvoicePrint> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class BuildInvoiceRowLast extends StatelessWidget {
-  const BuildInvoiceRowLast({
-    Key? key, required this.title, required this.value,
-  }) : super(key: key);
-
-  final String title, value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children:  [
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        Text(
-          value,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class BuildInvoiceRow extends StatelessWidget {
-  const BuildInvoiceRow(this.title, this.value, {Key? key}) : super(key: key);
-
-  final String title, value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              value,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        const Divider(),
-      ],
-    );
-  }
-}
-
-class BuildOrderTitle extends StatelessWidget {
-  const BuildOrderTitle(this.title, {Key? key}) : super(key: key);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 5,
-        )
-      ],
     );
   }
 }
