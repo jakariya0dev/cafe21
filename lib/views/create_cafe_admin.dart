@@ -1,3 +1,4 @@
+import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/auth_controller.dart';
 import 'package:cafe21/controller/cafe_details_controller.dart';
@@ -36,7 +37,7 @@ class _CreateCafeAdminState extends State<CreateCafeAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cafe21'),
+        title: const Text(AppConfig.appName),
         centerTitle: true,
         automaticallyImplyLeading: false,
         actions: [

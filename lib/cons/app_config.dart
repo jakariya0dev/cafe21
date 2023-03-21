@@ -2,6 +2,7 @@ class AppConfig{
 
   // App Config
   static const String appName ='Cafe21';
+  static const String companyName ='Brain Storm 21';
   static const String purchaseCode ='2#4#6#8#';
 
   /*

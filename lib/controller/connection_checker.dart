@@ -2,15 +2,16 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-// Connection Checker
+// referenced from here
 ConnectivityResult? connectivityResult;
-late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
 class ConnectionChecker{
 
+  late StreamSubscription<ConnectivityResult> connectivitySubscription;
+
   checkInternetConnection(Function widgetSetState) async {
     connectivityResult = await Connectivity().checkConnectivity();
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((result) {
+    connectivitySubscription = Connectivity().onConnectivityChanged.listen((result) {
       connectivityResult = result;
       widgetSetState();
       // print(connectivityResult);

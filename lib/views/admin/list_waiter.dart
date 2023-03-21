@@ -6,7 +6,6 @@ import 'package:cafe21/controller/admin_dashboard_controller.dart';
 import 'package:cafe21/controller/common_function.dart';
 import 'package:cafe21/controller/connection_checker.dart';
 import 'package:cafe21/model/data.dart';
-
 import 'package:cafe21/controller/dashboard_controller.dart';
 
 class WaiterListPage extends StatefulWidget {
@@ -34,7 +33,6 @@ class _WaiterListPageState extends State<WaiterListPage> {
               itemCount: allWaiterData.length,
               itemBuilder: (context, index) {
 
-                List items = allSellsData.where((e) => e.waiterId == allWaiterData[index]['id']).toList();
                 return ListTile(
                   isThreeLine: false,
                   shape:
@@ -57,7 +55,7 @@ class _WaiterListPageState extends State<WaiterListPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        items.length.toString(),
+                        DashboardController.countMostServingPerson.values.elementAt(index).toString().padLeft(2, '0'),
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,

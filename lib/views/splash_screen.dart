@@ -1,4 +1,5 @@
 
+import 'package:cafe21/cons/app_config.dart';
 import 'package:cafe21/views/dashboard_page.dart';
 import 'package:cafe21/views/login_page.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: const Color(0xff004aad),
       body: Container(
         constraints: const BoxConstraints.expand(),
-        child: Center(child: Image.asset('assets/images/sp_logo.png'),),
+        child: Center(child: Image.asset('assets/icons/app_icon.png'),),
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(bottom: 16),
@@ -55,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisSize: MainAxisSize.min,
           children: const [
             Text('Developed By', style: TextStyle(color: Colors.white, fontSize: 10, fontStyle: FontStyle.italic),),
-            Text('Brain Storm 21', style: TextStyle(color: Colors.white, fontFamily: 'Michroma'),),
+            Text(AppConfig.companyName, style: TextStyle(color: Colors.white, fontFamily: 'Michroma'),),
           ],
         ),
       ),

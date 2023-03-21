@@ -72,40 +72,6 @@ class _AddWaiterPageState extends State<AddWaiterPage> {
                   style: const TextStyle(color: Colors.red),
                 ),
                 const SizedBox(height: 16),
-               /* Container(
-                  margin: const EdgeInsets.only(bottom: 6),
-                  height: containerHeight,
-                  child: TextField(
-                    controller: idController,
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: Colors.deepPurple.shade900),
-                    onChanged: (value) {
-                      if(value.length>3){
-                        errorMsg = 'Waiter id should unique and only 3 digit';
-                        setState(() {});
-                      }else{
-                        errorMsg = '';
-                        setState(() {});
-                      }
-                    },
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.numbers),
-                      hintText: 'Unique Waiter ID',
-                      isDense: true,
-                      hintStyle: TextStyle(color: Colors.grey.shade400),
-                      suffixIcon: InkWell(
-                        onTap: () {
-                          idController.clear();
-                          setState(() {});
-                        },
-                        child: Icon(
-                          Icons.clear,
-                          color: Colors.blue.shade300,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),*/
                 Container(
                   margin: const EdgeInsets.only(bottom: 16),
                   height: containerHeight,

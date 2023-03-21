@@ -16,7 +16,7 @@ class DashboardController{
   static double totalDue = 0;
   static List unpaidInvoice = [];
 
-  // for calculating most selling things and waiter
+  // for calculating most selling things and most serving waiter
   static Map <String, int> countMostSellingFood = {};
   static Map <String, int> countMostServingPerson = {};
 

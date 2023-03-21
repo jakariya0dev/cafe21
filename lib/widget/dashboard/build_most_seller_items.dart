@@ -47,7 +47,8 @@ class BuildMostSellerList extends StatelessWidget {
                     ],
                   ),
                 );
-              },),
+              },
+            ),
           )
         ],
       ),
