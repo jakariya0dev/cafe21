@@ -31,5 +31,17 @@ Designed with a **clean MVC architecture**, this app offers **role-based managem
 
 ---
 
-## 📂 Folder Structure  
+## 📸 Screenshots & Live Preview  
+
+**Live Preview:** [Cafe21 on CodeCanyon](https://codecanyon.net/item/cafe21-online-restaurant-management-mobile-app-with-firebase-and-bluetooth-pos-printer/42275817)  
+**Video Preview:** [YouTube Demo Video](https://www.youtube.com/watch?v=pTmSQlxBnp4)  
+
+---
+
+## 📦 Contact For Setup  
+
+1. **Email**  : jhalhadi@gmail.com
+1. **WhatsApp**  : +8801762940480
+[www.jakariya.dev](https://www.jakariya.com/)
+
 
