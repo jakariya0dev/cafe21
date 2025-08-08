@@ -42,6 +42,7 @@ Designed with a **clean MVC architecture**, this app offers **role-based managem
 
 1. **Email**  : jhalhadi@gmail.com
 1. **WhatsApp**  : +8801762940480
-[www.jakariya.dev](https://www.jakariya.com/)
+
+## [www.jakariya.dev](https://www.jakariya.com/)
 
 
